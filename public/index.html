@@ -1,9 +1,9 @@
-SDS <!DOCTYPE html>
+﻿SDS <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CheckViatura — SCI Cuiabá</title>
+<title>CheckViatura â€” SCI CuiabÃ¡</title>
 <style>
 :root{
   --azul:#E8520A;--azul2:#C43D00;--azul-claro:#FFF0E8;--azul-borda:#F47B3A;
@@ -36,7 +36,7 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:12p
 .page{display:none;padding:20px;max-width:1200px;margin:0 auto;}
 .page.active{display:block;}
 
-/* SELEÇÃO DE VIATURA */
+/* SELEÃ‡ÃƒO DE VIATURA */
 .viaturas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px;}
 .viatura-card{background:var(--branco);border:2px solid var(--cinza-borda);border-radius:14px;padding:20px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
 .viatura-card:hover{border-color:var(--azul-borda);transform:translateY(-2px);box-shadow:0 4px 16px rgba(24,95,165,.12);}
@@ -49,7 +49,7 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:12p
 .vc-form-badges{display:flex;flex-wrap:wrap;gap:4px;}
 .form-badge{background:var(--cinza-claro);color:var(--texto-sec);font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--cinza-borda);}
 
-/* SELEÇÃO DE FORMULÁRIO */
+/* SELEÃ‡ÃƒO DE FORMULÃRIO */
 .form-selector{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:20px;}
 .form-option{background:var(--branco);border:2px solid var(--cinza-borda);border-radius:12px;padding:18px;cursor:pointer;transition:all .15s;}
 .form-option:hover{border-color:var(--azul-borda);background:var(--azul-claro);}
@@ -70,7 +70,7 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:12p
 .form-group textarea{resize:vertical;min-height:80px;}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--azul-borda);}
 
-/* FORMULÁRIO ESTILO ORIGINAL — TABELA */
+/* FORMULÃRIO ESTILO ORIGINAL â€” TABELA */
 .form-header-box{background:var(--azul2);color:#fff;padding:10px 16px;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
 .fhb-title{font-size:13px;font-weight:700;}
 .fhb-meta{font-size:11px;opacity:.8;}
@@ -100,7 +100,7 @@ table.cl-table{width:100%;border-collapse:collapse;font-size:12px;min-width:600p
 .cl-table tr:hover td{background:#F8FAFF;}
 .cl-table tr:last-child td{border-bottom:none;}
 
-/* BOTÕES C / NC / NA */
+/* BOTÃ•ES C / NC / NA */
 .status-btn-group{display:flex;gap:2px;justify-content:center;}
 .sbtn{width:22px;height:22px;border-radius:4px;border:1.5px solid;font-size:9px;font-weight:800;cursor:pointer;background:transparent;transition:all .1s;display:flex;align-items:center;justify-content:center;}
 .sbtn-c{border-color:#5A9E2F;color:#5A9E2F;}
@@ -182,8 +182,8 @@ canvas.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-ac
       <img src="/logo-medplus.png" alt="med+ Group" style="height:48px;width:auto;">medplus.png" alt="med+ Group" style="height:42px;width:auto;filter:invert(1);"></div>
       <div>
         <div style="font-size:10px;color:rgba(255,255,255,.75);letter-spacing:1px;margin-bottom:1px;">med+ Group</div>
-        <div style="font-size:16px;font-weight:800;letter-spacing:.5px;">CheckViatura — SCI Cuiabá</div>
-        <div style="font-size:10px;opacity:.65;">Formulário MMS.BR.BA.FOR.007 • Versão 00</div>
+        <div style="font-size:16px;font-weight:800;letter-spacing:.5px;">CheckViatura â€” SCI CuiabÃ¡</div>
+        <div style="font-size:10px;opacity:.65;">FormulÃ¡rio MMS.BR.BA.FOR.007 â€¢ VersÃ£o 00</div>
       </div>
     </div>
   </div>
@@ -192,85 +192,85 @@ canvas.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-ac
 
 <div class="step-bar">
   <div class="step active" id="step1"><div class="step-num">1</div> Viatura</div>
-  <div class="step" id="step2"><div class="step-num">2</div> Formulário</div>
-  <div class="step" id="step3"><div class="step-num">3</div> Identificação</div>
-  <div class="step" id="step4"><div class="step-num">4</div> Inspeção</div>
+  <div class="step" id="step2"><div class="step-num">2</div> FormulÃ¡rio</div>
+  <div class="step" id="step3"><div class="step-num">3</div> IdentificaÃ§Ã£o</div>
+  <div class="step" id="step4"><div class="step-num">4</div> InspeÃ§Ã£o</div>
   <div class="step" id="step5"><div class="step-num">5</div> Assinaturas</div>
 </div>
 
-<!-- ══ PAGE 1: SELECIONAR VIATURA ══ -->
+<!-- â•â• PAGE 1: SELECIONAR VIATURA â•â• -->
 <div class="page active" id="page-1">
   <div class="page-header" style="margin-top:20px;">
-    <div><div class="page-title">Selecione a Viatura</div><div class="page-sub">SCI: Cuiabá — Mês/Ano: <span id="mes-ano-label"></span></div></div>
-    <a href="/admin.html" class="btn btn-outline" style="font-size:12px;">⚙ Painel Admin</a>
+    <div><div class="page-title">Selecione a Viatura</div><div class="page-sub">SCI: CuiabÃ¡ â€” MÃªs/Ano: <span id="mes-ano-label"></span></div></div>
+    <a href="/admin.html" class="btn btn-outline" style="font-size:12px;">âš™ Painel Admin</a>
   </div>
   <div class="viaturas-grid" id="viaturas-grid"></div>
 </div>
 
-<!-- ══ PAGE 2: SELECIONAR FORMULÁRIO ══ -->
+<!-- â•â• PAGE 2: SELECIONAR FORMULÃRIO â•â• -->
 <div class="page" id="page-2">
   <div class="page-header" style="margin-top:20px;">
-    <div><div class="page-title" id="p2-title">Selecione o Formulário</div><div class="page-sub" id="p2-sub"></div></div>
-    <button class="btn btn-outline" onclick="goPage(1)">← Voltar</button>
+    <div><div class="page-title" id="p2-title">Selecione o FormulÃ¡rio</div><div class="page-sub" id="p2-sub"></div></div>
+    <button class="btn btn-outline" onclick="goPage(1)">â† Voltar</button>
   </div>
   <div class="form-selector" id="form-selector"></div>
 </div>
 
-<!-- ══ PAGE 3: IDENTIFICAÇÃO ══ -->
+<!-- â•â• PAGE 3: IDENTIFICAÃ‡ÃƒO â•â• -->
 <div class="page" id="page-3">
   <div class="page-header" style="margin-top:20px;">
-    <div><div class="page-title">Identificação</div></div>
-    <button class="btn btn-outline" onclick="goPage(2)">← Voltar</button>
+    <div><div class="page-title">IdentificaÃ§Ã£o</div></div>
+    <button class="btn btn-outline" onclick="goPage(2)">â† Voltar</button>
   </div>
   <div class="card">
-    <div class="card-title">📋 Dados do Preenchimento</div>
+    <div class="card-title">ðŸ“‹ Dados do Preenchimento</div>
     <div class="form-row tri">
-      <div class="form-group"><label>SCI</label><input type="text" id="id-sci" value="CUIABÁ" readonly style="background:var(--cinza-claro);"></div>
+      <div class="form-group"><label>SCI</label><input type="text" id="id-sci" value="CUIABÃ" readonly style="background:var(--cinza-claro);"></div>
       <div class="form-group"><label>Viatura</label><input type="text" id="id-viatura" readonly style="background:var(--cinza-claro);"></div>
       <div class="form-group"><label>Modelo</label><input type="text" id="id-modelo" readonly style="background:var(--cinza-claro);"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Mês e Ano</label><input type="month" id="id-mes"></div>
-      <div class="form-group"><label>Dia de hoje (inspeção)</label><input type="number" id="id-dia" min="1" max="31" placeholder="Ex: 15"></div>
+      <div class="form-group"><label>MÃªs e Ano</label><input type="month" id="id-mes"></div>
+      <div class="form-group"><label>Dia de hoje (inspeÃ§Ã£o)</label><input type="number" id="id-dia" min="1" max="31" placeholder="Ex: 15"></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label>Nome de Guerra / Nome Completo</label><input type="text" id="id-nome" placeholder="Ex: Pedro / Pedro Silva"></div>
-      <div class="form-group"><label>Matrícula / CPF / Login Gov.br</label><input type="text" id="id-cpf" placeholder="000.000.000-00"></div>
+      <div class="form-group"><label>MatrÃ­cula / CPF / Login Gov.br</label><input type="text" id="id-cpf" placeholder="000.000.000-00"></div>
     </div>
     <div class="form-row full" id="row-nome-guerra-ba" style="display:none;">
       <div class="form-group"><label>Nome de Guerra "BA-2" por Extenso</label><input type="text" id="id-nome-ba" placeholder="Nome de guerra BA-2"></div>
     </div>
-    <button class="btn btn-primary" onclick="goPage(4)">Iniciar Inspeção →</button>
+    <button class="btn btn-primary" onclick="goPage(4)">Iniciar InspeÃ§Ã£o â†’</button>
   </div>
 </div>
 
-<!-- ══ PAGE 4: INSPEÇÃO ══ -->
+<!-- â•â• PAGE 4: INSPEÃ‡ÃƒO â•â• -->
 <div class="page" id="page-4">
   <div style="margin-top:20px;">
-    <!-- Cabeçalho estilo formulário original -->
+    <!-- CabeÃ§alho estilo formulÃ¡rio original -->
     <div class="form-header-box">
       <div>
-        <div style="font-size:10px;opacity:.7;margin-bottom:2px;">med+ Group — FORMULÁRIO</div>
-        <div id="form-titulo" style="font-size:14px;font-weight:700;">Checklist Inspeção Viaturas</div>
+        <div style="font-size:10px;opacity:.7;margin-bottom:2px;">med+ Group â€” FORMULÃRIO</div>
+        <div id="form-titulo" style="font-size:14px;font-weight:700;">Checklist InspeÃ§Ã£o Viaturas</div>
       </div>
       <div style="text-align:right;font-size:11px;opacity:.85;">
-        <div>CÓDIGO: MMS.BR.BA.FOR.007</div>
-        <div>VERSÃO: 00 &nbsp;|&nbsp; DATA CRIAÇÃO: 06//2025</div>
+        <div>CÃ“DIGO: MMS.BR.BA.FOR.007</div>
+        <div>VERSÃƒO: 00 &nbsp;|&nbsp; DATA CRIAÃ‡ÃƒO: 06//2025</div>
       </div>
     </div>
     <div class="form-info-bar">
-      <div class="fib-item"><div class="fib-label">SCI</div><div class="fib-val" id="fi-sci">CUIABÁ</div></div>
-      <div class="fib-item"><div class="fib-label">CCI</div><div class="fib-val" id="fi-cci">—</div></div>
-      <div class="fib-item"><div class="fib-label">Viatura</div><div class="fib-val" id="fi-viatura">—</div></div>
-      <div class="fib-item"><div class="fib-label">Modelo</div><div class="fib-val" id="fi-modelo">—</div></div>
-      <div class="fib-item"><div class="fib-label">Mês e Ano</div><div class="fib-val" id="fi-mes">—</div></div>
-      <div class="fib-item"><div class="fib-label">Preenchido por</div><div class="fib-val" id="fi-nome">—</div></div>
+      <div class="fib-item"><div class="fib-label">SCI</div><div class="fib-val" id="fi-sci">CUIABÃ</div></div>
+      <div class="fib-item"><div class="fib-label">CCI</div><div class="fib-val" id="fi-cci">â€”</div></div>
+      <div class="fib-item"><div class="fib-label">Viatura</div><div class="fib-val" id="fi-viatura">â€”</div></div>
+      <div class="fib-item"><div class="fib-label">Modelo</div><div class="fib-val" id="fi-modelo">â€”</div></div>
+      <div class="fib-item"><div class="fib-label">MÃªs e Ano</div><div class="fib-val" id="fi-mes">â€”</div></div>
+      <div class="fib-item"><div class="fib-label">Preenchido por</div><div class="fib-val" id="fi-nome">â€”</div></div>
     </div>
     <div class="legenda-bar">
-      <strong style="font-size:11px;">REFERÊNCIA:</strong>
+      <strong style="font-size:11px;">REFERÃŠNCIA:</strong>
       <div class="leg-item"><span class="leg-btn leg-c">C</span> Conforme</div>
-      <div class="leg-item"><span class="leg-btn leg-nc">NC</span> Não Conforme</div>
-      <div class="leg-item"><span class="leg-btn leg-na">NA</span> Não Aplicável / Não Existente</div>
+      <div class="leg-item"><span class="leg-btn leg-nc">NC</span> NÃ£o Conforme</div>
+      <div class="leg-item"><span class="leg-btn leg-na">NA</span> NÃ£o AplicÃ¡vel / NÃ£o Existente</div>
       <div style="margin-left:auto;" id="progress-info-text" class="badge badge-pendente">0 / 0</div>
     </div>
 
@@ -290,67 +290,67 @@ canvas.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-ac
     <div class="progress-wrap" style="margin:12px 0 4px;"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
     <div class="progress-info"><span id="progress-left">0 itens avaliados</span><span id="progress-right">0 restantes</span></div>
 
-    <!-- OBSERVAÇÕES -->
+    <!-- OBSERVAÃ‡Ã•ES -->
     <div class="card" style="margin-top:16px;">
-      <div class="card-title">📝 Alterações e Observações</div>
-      <div class="alert alert-info" style="font-size:12px;margin-bottom:10px;">Para todos os itens NC o chefe de equipe responsável deverá ser comunicado. Qualquer alteração discriminar abaixo:</div>
+      <div class="card-title">ðŸ“ AlteraÃ§Ãµes e ObservaÃ§Ãµes</div>
+      <div class="alert alert-info" style="font-size:12px;margin-bottom:10px;">Para todos os itens NC o chefe de equipe responsÃ¡vel deverÃ¡ ser comunicado. Qualquer alteraÃ§Ã£o discriminar abaixo:</div>
       <div class="form-group">
-        <textarea id="cl-obs" rows="4" placeholder="Descreva aqui as alterações e observações (itens NC, avarias, substituições realizadas...)"></textarea>
+        <textarea id="cl-obs" rows="4" placeholder="Descreva aqui as alteraÃ§Ãµes e observaÃ§Ãµes (itens NC, avarias, substituiÃ§Ãµes realizadas...)"></textarea>
       </div>
     </div>
 
     <div class="btns-row" style="padding:0 0 20px;">
-      <button class="btn btn-outline" onclick="goPage(3)">← Voltar</button>
-      <button class="btn btn-primary" onclick="goPage(5)">Assinar e Finalizar →</button>
+      <button class="btn btn-outline" onclick="goPage(3)">â† Voltar</button>
+      <button class="btn btn-primary" onclick="goPage(5)">Assinar e Finalizar â†’</button>
     </div>
   </div>
 </div>
 
-<!-- ══ PAGE 5: ASSINATURAS ══ -->
+<!-- â•â• PAGE 5: ASSINATURAS â•â• -->
 <div class="page" id="page-5">
   <div class="page-header" style="margin-top:20px;">
     <div><div class="page-title">Assinaturas</div><div class="page-sub">Assine e encaminhe ao chefe de equipe</div></div>
-    <button class="btn btn-outline" onclick="goPage(4)">← Voltar</button>
+    <button class="btn btn-outline" onclick="goPage(4)">â† Voltar</button>
   </div>
 
   <div class="card">
-    <div class="card-title">✍️ Assinaturas</div>
+    <div class="card-title">âœï¸ Assinaturas</div>
     <div class="sig-grid">
       <div class="sig-box">
-        <div class="gov-badge">🟦 Gov.br — <strong id="sig-cpf-label">CPF: —</strong></div>
-        <div class="form-group" style="margin-bottom:8px;"><label>PIN Gov.br (simulado)</label><input type="password" id="gov-pin" placeholder="••••••" maxlength="8"></div>
+        <div class="gov-badge">ðŸŸ¦ Gov.br â€” <strong id="sig-cpf-label">CPF: â€”</strong></div>
+        <div class="form-group" style="margin-bottom:8px;"><label>PIN Gov.br (simulado)</label><input type="password" id="gov-pin" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢" maxlength="8"></div>
         <div class="sig-label-top" id="sig1-label-top">ASSINATURA DO MOTORISTA</div>
         <div class="sig-canvas-wrap"><canvas class="sig-canvas" id="canvas-motorista"></canvas></div>
-        <div class="sig-name-label" id="sig-motorista-nome">—</div>
+        <div class="sig-name-label" id="sig-motorista-nome">â€”</div>
         <button class="sig-clear" onclick="clearCanvas('canvas-motorista')">Limpar assinatura</button>
       </div>
       <div class="sig-box">
-        <div class="form-group" style="margin-bottom:8px;"><label>Nome do Chefe de Equipe</label><input type="text" id="nome-chefe" placeholder="Nome do chefe" oninput="document.getElementById('sig-chefe-nome').textContent=this.value||'—'"></div>
+        <div class="form-group" style="margin-bottom:8px;"><label>Nome do Chefe de Equipe</label><input type="text" id="nome-chefe" placeholder="Nome do chefe" oninput="document.getElementById('sig-chefe-nome').textContent=this.value||'â€”'"></div>
         <div class="sig-label-top">VISTO CHEFE DE EQUIPE</div>
         <div class="sig-canvas-wrap"><canvas class="sig-canvas" id="canvas-chefe"></canvas></div>
-        <div class="sig-name-label" id="sig-chefe-nome">—</div>
+        <div class="sig-name-label" id="sig-chefe-nome">â€”</div>
         <button class="sig-clear" onclick="clearCanvas('canvas-chefe')">Limpar assinatura</button>
       </div>
     </div>
   </div>
 
   <div class="card" id="resumo-nc" style="display:none;">
-    <div class="card-title">⚠️ Itens Não Conformes identificados</div>
+    <div class="card-title">âš ï¸ Itens NÃ£o Conformes identificados</div>
     <div id="nc-list"></div>
   </div>
 
   <div class="btns-row" style="padding-bottom:30px;">
-    <button class="btn btn-outline" onclick="goPage(4)">← Voltar</button>
-    <button class="btn btn-success" id="btn-salvar" onclick="salvarChecklist()">✅ Salvar e Encaminhar ao Chefe</button>
+    <button class="btn btn-outline" onclick="goPage(4)">â† Voltar</button>
+    <button class="btn btn-success" id="btn-salvar" onclick="salvarChecklist()">âœ… Salvar e Encaminhar ao Chefe</button>
   </div>
 </div>
 
 <!-- MODAL SUCESSO -->
 <div class="modal-overlay" id="modal-ok">
   <div class="modal" style="text-align:center;">
-    <div style="font-size:48px;margin-bottom:12px;">✅</div>
+    <div style="font-size:48px;margin-bottom:12px;">âœ…</div>
     <div class="modal-title" style="justify-content:center;">Checklist salvo com sucesso!</div>
-    <div style="font-size:13px;color:var(--texto-sec);margin-bottom:16px;">O formulário foi registrado e encaminhado ao chefe de equipe.</div>
+    <div style="font-size:13px;color:var(--texto-sec);margin-bottom:16px;">O formulÃ¡rio foi registrado e encaminhado ao chefe de equipe.</div>
     <div id="modal-nc-aviso"></div>
     <div class="modal-btns" style="justify-content:center;">
       <button class="btn btn-outline" onclick="novoChecklist()">+ Novo Checklist</button>
@@ -360,9 +360,9 @@ canvas.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-ac
 
 <script src="formularios.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ESTADO GLOBAL
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let state = {
   viaturaKey: null,
   formularioId: null,
@@ -381,15 +381,15 @@ const now = new Date();
 document.getElementById('hdr-date').textContent = now.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
 document.getElementById('mes-ano-label').textContent = now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // INIT VIATURA GRID
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function initGrid() {
-  const icons = { ambulancia_resgate:'🚑', autobomba:'🚒' };
+  const icons = { ambulancia_resgate:'ðŸš‘', autobomba:'ðŸš’' };
   const grid = document.getElementById('viaturas-grid');
   grid.innerHTML = Object.entries(FORMULARIOS).map(([key, v]) => {
-    const icon = icons[v.tipo] || '🚗';
-    const badges = v.formularios.map(f => `<span class="form-badge">${f.titulo.split('—')[0].trim()}</span>`).join('');
+    const icon = icons[v.tipo] || 'ðŸš—';
+    const badges = v.formularios.map(f => `<span class="form-badge">${f.titulo.split('â€”')[0].trim()}</span>`).join('');
     return `<div class="viatura-card" onclick="selectViatura('${key}')">
       ${v.cci ? `<div class="vc-cci">CCI: ${v.cci}</div>` : ''}
       <div class="vc-top">
@@ -402,9 +402,9 @@ function initGrid() {
 }
 initGrid();
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // NAV STEPS
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let currentPage = 1;
 function goPage(n) {
   if (n === 4 && !validatePage3()) return;
@@ -421,19 +421,19 @@ function goPage(n) {
   window.scrollTo(0,0);
 }
 
-// ═══════════════════════════════════════════════════════
-// PAGE 1 → 2: SELECIONAR VIATURA
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PAGE 1 â†’ 2: SELECIONAR VIATURA
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function selectViatura(key) {
   state.viaturaKey = key;
   state.viatura = FORMULARIOS[key];
-  document.getElementById('p2-title').textContent = `Formulários — ${state.viatura.placa}`;
+  document.getElementById('p2-title').textContent = `FormulÃ¡rios â€” ${state.viatura.placa}`;
   document.getElementById('p2-sub').textContent = `${state.viatura.modelo}${state.viatura.cci ? ' | CCI: ' + state.viatura.cci : ''}`;
 
   const sel = document.getElementById('form-selector');
   sel.innerHTML = state.viatura.formularios.map(f => {
     const totalItens = f.secoes.reduce((a,s) => a + s.itens.length, 0);
-    const quem = { motorista:'Motorista', lider_resgate:'Líder de Resgate', nome_guerra_ba2:'Nome de Guerra BA-2' };
+    const quem = { motorista:'Motorista', lider_resgate:'LÃ­der de Resgate', nome_guerra_ba2:'Nome de Guerra BA-2' };
     return `<div class="form-option" onclick="selectFormulario('${f.id}')">
       <div class="fo-title">${f.titulo}</div>
       <div class="fo-sub">Preenchido por: <strong>${quem[f.preenchidoPor]||f.preenchidoPor}</strong></div>
@@ -443,15 +443,15 @@ function selectViatura(key) {
   goPage(2);
 }
 
-// ═══════════════════════════════════════════════════════
-// PAGE 2 → 3: SELECIONAR FORMULÁRIO
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PAGE 2 â†’ 3: SELECIONAR FORMULÃRIO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function selectFormulario(id) {
   state.formularioId = id;
   state.formulario = state.viatura.formularios.find(f => f.id === id);
   state.itens = {};
 
-  // pré-preencher identificação
+  // prÃ©-preencher identificaÃ§Ã£o
   document.getElementById('id-viatura').value = state.viatura.placa;
   document.getElementById('id-modelo').value = state.viatura.modelo;
   document.getElementById('id-mes').value = now.toISOString().slice(0,7);
@@ -460,29 +460,29 @@ function selectFormulario(id) {
     state.formulario.preenchidoPor === 'nome_guerra_ba2' ? 'block' : 'none';
 
   // label assinatura
-  const sig1Labels = { motorista:'ASSINATURA DO MOTORISTA', lider_resgate:'ASSINATURA DO LÍDER DE RESGATE', nome_guerra_ba2:'NOME DE GUERRA "BA-2"' };
+  const sig1Labels = { motorista:'ASSINATURA DO MOTORISTA', lider_resgate:'ASSINATURA DO LÃDER DE RESGATE', nome_guerra_ba2:'NOME DE GUERRA "BA-2"' };
   document.getElementById('sig1-label-top').textContent = sig1Labels[state.formulario.preenchidoPor] || 'ASSINATURA';
 
   goPage(3);
 }
 
-// ═══════════════════════════════════════════════════════
-// PAGE 3: VALIDAR IDENTIFICAÇÃO
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PAGE 3: VALIDAR IDENTIFICAÃ‡ÃƒO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function validatePage3() {
   const nome = document.getElementById('id-nome').value.trim();
   const mes  = document.getElementById('id-mes').value;
   const dia  = document.getElementById('id-dia').value;
   if (!nome) { alert('Informe o nome/nome de guerra.'); return false; }
-  if (!mes)  { alert('Selecione o mês.'); return false; }
-  if (!dia)  { alert('Informe o dia da inspeção.'); return false; }
+  if (!mes)  { alert('Selecione o mÃªs.'); return false; }
+  if (!dia)  { alert('Informe o dia da inspeÃ§Ã£o.'); return false; }
 
   state.nome = nome;
   state.cpf  = document.getElementById('id-cpf').value.trim();
   state.mes  = mes;
   state.dia  = dia;
 
-  // atualizar cabeçalho
+  // atualizar cabeÃ§alho
   const mesStr = new Date(mes+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).toUpperCase();
   document.getElementById('fi-cci').textContent = state.viatura.cci || 'N/A';
   document.getElementById('fi-viatura').textContent = state.viatura.placa;
@@ -490,22 +490,22 @@ function validatePage3() {
   document.getElementById('fi-mes').textContent = mesStr;
   document.getElementById('fi-nome').textContent = state.nome;
   document.getElementById('form-titulo').textContent = state.formulario.titulo;
-  document.getElementById('sig-cpf-label').textContent = 'CPF/Login: ' + (state.cpf || '—');
+  document.getElementById('sig-cpf-label').textContent = 'CPF/Login: ' + (state.cpf || 'â€”');
   document.getElementById('sig-motorista-nome').textContent = state.nome;
 
   return true;
 }
 
-// ═══════════════════════════════════════════════════════
-// PAGE 4: TABELA DE INSPEÇÃO
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PAGE 4: TABELA DE INSPEÃ‡ÃƒO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function buildTable() {
   const tbody = document.getElementById('cl-tbody');
   tbody.innerHTML = '';
   let globalIdx = 0;
 
   state.formulario.secoes.forEach(sec => {
-    // linha de seção
+    // linha de seÃ§Ã£o
     const tr = document.createElement('tr');
     tr.innerHTML = `<td colspan="4" style="background:#E8ECF4;font-size:11px;font-weight:700;color:var(--azul2);padding:6px 10px;text-transform:uppercase;letter-spacing:.4px;">${sec.nome}</td>`;
     tbody.appendChild(tr);
@@ -514,7 +514,7 @@ function buildTable() {
       const key = `item-${globalIdx}`;
       globalIdx++;
       const tr2 = document.createElement('tr');
-      const qntCell = it.qnt ? `<td class="td-qnt">${it.qnt}</td>` : `<td class="td-qnt">—</td>`;
+      const qntCell = it.qnt ? `<td class="td-qnt">${it.qnt}</td>` : `<td class="td-qnt">â€”</td>`;
       tr2.innerHTML = `
         <td class="td-num">${it.num}</td>
         ${qntCell}
@@ -563,15 +563,15 @@ function updateProgress() {
   document.getElementById('progress-bar').style.width = pct + '%';
   document.getElementById('progress-bar').style.background = nc > 0 ? '#C53030' : '#E8520A';
   document.getElementById('progress-left').textContent = `${done} de ${total} itens avaliados`;
-  document.getElementById('progress-right').textContent = nc > 0 ? `⚠ ${nc} NC` : (total-done > 0 ? `${total-done} restantes` : '✓ Completo');
+  document.getElementById('progress-right').textContent = nc > 0 ? `âš  ${nc} NC` : (total-done > 0 ? `${total-done} restantes` : 'âœ“ Completo');
   const badge = document.getElementById('progress-info-text');
   badge.textContent = `${done} / ${total}`;
   badge.className = 'badge ' + (done === total ? (nc > 0 ? 'badge-nc' : 'badge-ok') : 'badge-pendente');
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PAGE 5: ASSINATURAS
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function buildSigPage() {
   state.obs = document.getElementById('cl-obs').value;
   // listar NCs
@@ -597,9 +597,9 @@ function buildSigPage() {
   initCanvas('canvas-chefe');
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CANVAS
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function initCanvas(id) {
   const c = document.getElementById(id);
   if (!c) return;
@@ -618,19 +618,19 @@ function initCanvas(id) {
 }
 function clearCanvas(id) { const c=document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SALVAR
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 async function salvarChecklist() {
   let total = 0;
   state.formulario.secoes.forEach(s => total += s.itens.length);
   const done = Object.keys(state.itens).length;
   if (done < total) {
-    if (!confirm(`${total - done} item(ns) ainda sem avaliação (C/NC/NA). Salvar mesmo assim?`)) return;
+    if (!confirm(`${total - done} item(ns) ainda sem avaliaÃ§Ã£o (C/NC/NA). Salvar mesmo assim?`)) return;
   }
 
   const btn = document.getElementById('btn-salvar');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Salvando…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Salvandoâ€¦';
 
   const nc = Object.values(state.itens).filter(v => v === 'NC').length;
   const mesStr = new Date(state.mes+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).toUpperCase();
@@ -651,7 +651,7 @@ async function salvarChecklist() {
     mes: state.mes,
     dia: state.dia,
     mesAno: mesStr,
-    sci: 'CUIABÁ',
+    sci: 'CUIABÃ',
     cci: state.viatura.cci || '',
     placa: state.viatura.placa,
     modelo: state.viatura.modelo,
@@ -679,13 +679,13 @@ async function salvarChecklist() {
 
     const aviso = document.getElementById('modal-nc-aviso');
     aviso.innerHTML = nc > 0
-      ? `<div class="alert alert-warn" style="margin-bottom:12px;">⚠️ ${nc} item(ns) NC registrado(s). O chefe de equipe foi notificado.</div>`
+      ? `<div class="alert alert-warn" style="margin-bottom:12px;">âš ï¸ ${nc} item(ns) NC registrado(s). O chefe de equipe foi notificado.</div>`
       : `<div class="alert alert-success" style="margin-bottom:12px;">Todos os itens em conformidade.</div>`;
     document.getElementById('modal-ok').classList.add('open');
   } catch(e) {
     alert('Erro ao salvar: ' + e.message);
   } finally {
-    btn.disabled = false; btn.innerHTML = '✅ Salvar e Encaminhar ao Chefe';
+    btn.disabled = false; btn.innerHTML = 'âœ… Salvar e Encaminhar ao Chefe';
   }
 }
 
@@ -704,3 +704,4 @@ document.getElementById('modal-ok').addEventListener('click', e => { if(e.target
 </script>
 </body>
 </html>
+
