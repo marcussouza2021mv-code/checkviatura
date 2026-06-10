@@ -39,7 +39,7 @@ function defaultDB() {
     alertas: []
   };
 }
-if (!fs.existsSync(DB_FILE)) writeDB(defaultDB());
+writeDB(defaultDB());
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
