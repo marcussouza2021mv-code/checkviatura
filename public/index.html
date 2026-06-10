@@ -21,7 +21,7 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:12p
 .logo{display:flex;flex-direction:column;}
 .logo-main{font-size:18px;font-weight:800;letter-spacing:1px;}
 .logo-sub{font-size:11px;opacity:.75;letter-spacing:.5px;}
-.equipes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;}.equipe-card{border:2px solid var(--cinza-borda);border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;text-align:center;background:var(--branco);}.equipe-card:hover{border-color:var(--azul-borda);background:var(--azul-claro);}.equipe-card.selected{border-color:var(--azul);background:var(--azul-claro);}.equipe-nome{font-size:18px;font-weight:800;color:var(--azul);margin-bottom:4px;}.equipe-chefe{font-size:12px;color:var(--texto-sec);}.header-badge{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:4px 12px;font-size:12px;}
+.header-badge{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:4px 12px;font-size:12px;}
 
 /* STEPS */
 .step-bar{background:var(--branco);border-bottom:1px solid var(--cinza-borda);padding:0 20px;display:flex;gap:0;}
@@ -234,10 +234,12 @@ canvas.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-ac
       <div class="form-group"><label>Dia de hoje (inspeção)</label><input type="number" id="id-dia" min="1" max="31" placeholder="Ex: 15"></div>
     </div>
     <div class="form-row">
-      <div class="form-group" style="margin-bottom:12px;"><label>Selecione a Equipe</label><div class="equipes-grid"><div class="equipe-card" onclick="selecionaEquipe('Alfa','Cerqueira',this)"><div class="equipe-nome">Alfa</div><div class="equipe-chefe">Chefe: Cerqueira</div></div><div class="equipe-card" onclick="selecionaEquipe('Bravo','Savio',this)"><div class="equipe-nome">Bravo</div><div class="equipe-chefe">Chefe: Savio</div></div><div class="equipe-card" onclick="selecionaEquipe('Charlie','Cleber',this)"><div class="equipe-nome">Charlie</div><div class="equipe-chefe">Chefe: Cleber</div></div><div class="equipe-card" onclick="selecionaEquipe('Delta','Douglas',this)"><div class="equipe-nome">Delta</div><div class="equipe-chefe">Chefe: Douglas</div></div></div><input type="hidden" id="id-equipe"></div><div class="form-group"><label>Nome de Guerra / Nome Completo</label><input type="text" id="id-nome" placeholder="Ex: Pedro / Pedro Silva"></div>
-      
+      <div class="form-group"><label>Nome de Guerra / Nome Completo</label><input type="text" id="id-nome" placeholder="Ex: Pedro / Pedro Silva"></div>
+      <div class="form-group"><label>Matrícula / CPF / Login Gov.br</label><input type="text" id="id-cpf" placeholder="000.000.000-00"></div>
     </div>
-    
+    <div class="form-row full" id="row-nome-guerra-ba" style="display:none;">
+      <div class="form-group"><label>Nome de Guerra "BA-2" por Extenso</label><input type="text" id="id-nome-ba" placeholder="Nome de guerra BA-2"></div>
+    </div>
     <button class="btn btn-primary" onclick="goPage(4)">Iniciar Inspeção →</button>
   </div>
 </div>
@@ -382,7 +384,7 @@ document.getElementById('mes-ano-label').textContent = now.toLocaleDateString('p
 // ═══════════════════════════════════════════════════════
 // INIT VIATURA GRID
 // ═══════════════════════════════════════════════════════
-function selecionaEquipe(equipe,chefe,el){document.querySelectorAll(".equipe-card").forEach(c=>c.classList.remove("selected"));el.classList.add("selected");document.getElementById("id-equipe").value=equipe;state.equipe=equipe;state.chefe=chefe;document.getElementById("nome-chefe").value=chefe;document.getElementById("sig-chefe-nome").textContent=chefe;}function initGrid() {
+function initGrid() {
   const icons = { ambulancia_resgate:'🚑', autobomba:'🚒' };
   const grid = document.getElementById('viaturas-grid');
   grid.innerHTML = Object.entries(FORMULARIOS).map(([key, v]) => {
@@ -435,7 +437,158 @@ function selectViatura(key) {
     return `<div class="form-option" onclick="selectFormulario('${f.id}')">
       <div class="fo-title">${f.titulo}</div>
       <div class="fo-sub">Preenchido por: <strong>${quem[f.preenchidoPor]||f.preenchidoPor}</strong></div>
-      `
+      <div class="fo-itens">${totalItens} itens para inspecionar</div>
+    </div>`;
+  }).join('');
+  goPage(2);
+}
+
+// ═══════════════════════════════════════════════════════
+// PAGE 2 → 3: SELECIONAR FORMULÁRIO
+// ═══════════════════════════════════════════════════════
+function selectFormulario(id) {
+  state.formularioId = id;
+  state.formulario = state.viatura.formularios.find(f => f.id === id);
+  state.itens = {};
+
+  // pré-preencher identificação
+  document.getElementById('id-viatura').value = state.viatura.placa;
+  document.getElementById('id-modelo').value = state.viatura.modelo;
+  document.getElementById('id-mes').value = now.toISOString().slice(0,7);
+  document.getElementById('id-dia').value = now.getDate();
+  document.getElementById('row-nome-guerra-ba').style.display =
+    state.formulario.preenchidoPor === 'nome_guerra_ba2' ? 'block' : 'none';
+
+  // label assinatura
+  const sig1Labels = { motorista:'ASSINATURA DO MOTORISTA', lider_resgate:'ASSINATURA DO LÍDER DE RESGATE', nome_guerra_ba2:'NOME DE GUERRA "BA-2"' };
+  document.getElementById('sig1-label-top').textContent = sig1Labels[state.formulario.preenchidoPor] || 'ASSINATURA';
+
+  goPage(3);
+}
+
+// ═══════════════════════════════════════════════════════
+// PAGE 3: VALIDAR IDENTIFICAÇÃO
+// ═══════════════════════════════════════════════════════
+function validatePage3() {
+  const nome = document.getElementById('id-nome').value.trim();
+  const mes  = document.getElementById('id-mes').value;
+  const dia  = document.getElementById('id-dia').value;
+  if (!nome) { alert('Informe o nome/nome de guerra.'); return false; }
+  if (!mes)  { alert('Selecione o mês.'); return false; }
+  if (!dia)  { alert('Informe o dia da inspeção.'); return false; }
+
+  state.nome = nome;
+  state.cpf  = document.getElementById('id-cpf').value.trim();
+  state.mes  = mes;
+  state.dia  = dia;
+
+  // atualizar cabeçalho
+  const mesStr = new Date(mes+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).toUpperCase();
+  document.getElementById('fi-cci').textContent = state.viatura.cci || 'N/A';
+  document.getElementById('fi-viatura').textContent = state.viatura.placa;
+  document.getElementById('fi-modelo').textContent = state.viatura.modelo;
+  document.getElementById('fi-mes').textContent = mesStr;
+  document.getElementById('fi-nome').textContent = state.nome;
+  document.getElementById('form-titulo').textContent = state.formulario.titulo;
+  document.getElementById('sig-cpf-label').textContent = 'CPF/Login: ' + (state.cpf || '—');
+  document.getElementById('sig-motorista-nome').textContent = state.nome;
+
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════
+// PAGE 4: TABELA DE INSPEÇÃO
+// ═══════════════════════════════════════════════════════
+function buildTable() {
+  const tbody = document.getElementById('cl-tbody');
+  tbody.innerHTML = '';
+  let globalIdx = 0;
+
+  state.formulario.secoes.forEach(sec => {
+    // linha de seção
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="4" style="background:#E8ECF4;font-size:11px;font-weight:700;color:var(--azul2);padding:6px 10px;text-transform:uppercase;letter-spacing:.4px;">${sec.nome}</td>`;
+    tbody.appendChild(tr);
+
+    sec.itens.forEach(it => {
+      const key = `item-${globalIdx}`;
+      globalIdx++;
+      const tr2 = document.createElement('tr');
+      const qntCell = it.qnt ? `<td class="td-qnt">${it.qnt}</td>` : `<td class="td-qnt">—</td>`;
+      tr2.innerHTML = `
+        <td class="td-num">${it.num}</td>
+        ${qntCell}
+        <td class="td-item">${it.item}</td>
+        <td class="td-status">
+          <div class="status-btn-group">
+            <button class="sbtn sbtn-c" id="btn-c-${key}" onclick="setStatus('${key}','C')">C</button>
+            <button class="sbtn sbtn-nc" id="btn-nc-${key}" onclick="setStatus('${key}','NC')">NC</button>
+            <button class="sbtn sbtn-na" id="btn-na-${key}" onclick="setStatus('${key}','NA')">NA</button>
+          </div>
+        </td>`;
+      tbody.appendChild(tr2);
+      tr2.dataset.itemKey = key;
+      tr2.dataset.itemName = it.item;
+      tr2.dataset.itemNum = it.num;
+      if (state.itens[key]) {
+        setStatus(key, state.itens[key], true);
+      }
+    });
+  });
+  updateProgress();
+}
+
+function setStatus(key, val, silent=false) {
+  state.itens[key] = val;
+  ['C','NC','NA'].forEach(v => {
+    const btn = document.getElementById(`btn-${v.toLowerCase()}-${key}`);
+    if (btn) btn.classList.toggle('active', v === val);
+  });
+  // cor da linha
+  const tr = document.querySelector(`tr[data-item-key="${key}"]`);
+  if (tr) {
+    tr.style.background = val === 'NC' ? '#FFF5F5' : val === 'NA' ? '#FAFAFA' : '';
+  }
+  if (!silent) updateProgress();
+}
+
+function updateProgress() {
+  const keys = Object.keys(state.itens);
+  // contar total de itens da tabela
+  let total = 0;
+  state.formulario.secoes.forEach(s => total += s.itens.length);
+  const done = keys.length;
+  const nc = Object.values(state.itens).filter(v => v === 'NC').length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-bar').style.background = nc > 0 ? '#C53030' : '#E8520A';
+  document.getElementById('progress-left').textContent = `${done} de ${total} itens avaliados`;
+  document.getElementById('progress-right').textContent = nc > 0 ? `⚠ ${nc} NC` : (total-done > 0 ? `${total-done} restantes` : '✓ Completo');
+  const badge = document.getElementById('progress-info-text');
+  badge.textContent = `${done} / ${total}`;
+  badge.className = 'badge ' + (done === total ? (nc > 0 ? 'badge-nc' : 'badge-ok') : 'badge-pendente');
+}
+
+// ═══════════════════════════════════════════════════════
+// PAGE 5: ASSINATURAS
+// ═══════════════════════════════════════════════════════
+function buildSigPage() {
+  state.obs = document.getElementById('cl-obs').value;
+  // listar NCs
+  const ncs = [];
+  document.querySelectorAll('#cl-tbody tr[data-item-key]').forEach(tr => {
+    const key = tr.dataset.itemKey;
+    if (state.itens[key] === 'NC') {
+      ncs.push({ num: tr.dataset.itemNum, nome: tr.dataset.itemName });
+    }
+  });
+  const box = document.getElementById('resumo-nc');
+  if (ncs.length > 0) {
+    box.style.display = 'block';
+    document.getElementById('nc-list').innerHTML = ncs.map(n =>
+      `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:.5px solid #FEE2E2;font-size:13px;color:var(--vermelho);">
+        <span style="font-weight:700;min-width:20px;">${n.num}</span> ${n.nome}
+      </div>`
     ).join('');
   } else {
     box.style.display = 'none';
