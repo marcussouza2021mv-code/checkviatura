@@ -264,6 +264,24 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
   });
 });
 
+// APROVAR CHECKLIST
+app.post('/api/checklists/:id/aprovar',(req,res)=>{
+  const db=readDB();
+  const idx=db.checklists.findIndex(c=>String(c.id)===String(req.params.id));
+  if(idx===-1)return res.status(404).json({error:'Nao encontrado'});
+  db.checklists[idx]={...db.checklists[idx],...req.body};
+  writeDB(db);
+  res.json(db.checklists[idx]);
+});
+// APROVAR CHECKLIST
+app.post('/api/checklists/:id/aprovar',(req,res)=>{
+  const db=readDB();
+  const idx=db.checklists.findIndex(c=>String(c.id)===String(req.params.id));
+  if(idx===-1)return res.status(404).json({error:'Nao encontrado'});
+  db.checklists[idx]={...db.checklists[idx],...req.body};
+  writeDB(db);
+  res.json(db.checklists[idx]);
+});
 // EXPORT CSV
 app.get('/api/export/csv', requireAuth(), (req, res) => {
   const db = readDB();
