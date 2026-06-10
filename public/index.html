@@ -234,7 +234,7 @@ canvas.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-ac
       <div class="form-group"><label>Dia de hoje (inspeção)</label><input type="number" id="id-dia" min="1" max="31" placeholder="Ex: 15"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Nome de Guerra / Nome Completo</label><input type="text" id="id-nome" placeholder="Ex: Pedro / Pedro Silva"></div>
+      <div class="form-group"><label>Equipe</label><select id="id-equipe" onchange="atualizaChefe()"><option value="">Selecione a equedro Silva"></div>
       <div class="form-group"><label>Matrícula / CPF / Login Gov.br</label><input type="text" id="id-cpf" placeholder="000.000.000-00"></div>
     </div>
     <div class="form-row full" id="row-nome-guerra-ba" style="display:none;">
@@ -469,7 +469,7 @@ function selectFormulario(id) {
 // ═══════════════════════════════════════════════════════
 // PAGE 3: VALIDAR IDENTIFICAÇÃO
 // ═══════════════════════════════════════════════════════
-function validatePage3() {
+function atualizaChefe() {
   const nome = document.getElementById('id-nome').value.trim();
   const mes  = document.getElementById('id-mes').value;
   const dia  = document.getElementById('id-dia').value;
