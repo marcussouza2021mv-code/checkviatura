@@ -454,8 +454,7 @@ function selectFormulario(id) {
   document.getElementById('id-modelo').value = state.viatura.modelo;
   document.getElementById('id-mes').value = now.toISOString().slice(0,7);
   document.getElementById('id-dia').value = now.getDate();
-  document.getElementById('row-nome-guerra-ba').style.display =
-    state.formulario.preenchidoPor === 'nome_guerra_ba2' ? 'block' : 'none';
+  let rnb=document.getElementById("row-nome-guerra-ba");if(rnb)rnb.style.display=state.formulario.preenchidoPor==="nome_guerra_ba2"?"block":"none";
 
   // label assinatura
   const sig1Labels = { motorista:'ASSINATURA DO MOTORISTA', lider_resgate:'ASSINATURA DO LÍDER DE RESGATE', nome_guerra_ba2:'NOME DE GUERRA "BA-2"' };
