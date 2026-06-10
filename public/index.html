@@ -382,7 +382,7 @@ document.getElementById('mes-ano-label').textContent = now.toLocaleDateString('p
 // ═══════════════════════════════════════════════════════
 // INIT VIATURA GRID
 // ═══════════════════════════════════════════════════════
-function selecionaEquipe(equipe,chefe,el){document.querySelectorAll(".equipe-card").forEach(c=>c.classList.remove("selected"));el.classList.add("selected");document.getElementById("id-equipe").value=equipe;state.equipe=equipe;state.chefe=chefe;let nc=document.getElementById("nome-chefe");if(nc)nc.value=chefe;document.getElementById("sig-chefe-nome").textContent=chefe;}function initGrid() {
+function selecionaEquipe(equipe,chefe,el){document.querySelectorAll(".equipe-card").forEach(c=>c.classList.remove("selected"));el.classList.add("selected");document.getElementById("id-equipe").value=equipe;state.equipe=equipe;state.chefe=chefe;let nc=document.getElementById("nome-chefe");if(nc)nc.value=chefe;let sc=document.getElementById("sig-chefe-nome");if(sc)sc.textContent=chefe;}function initGrid() {
   const icons = { ambulancia_resgate:'🚑', autobomba:'🚒' };
   const grid = document.getElementById('viaturas-grid');
   grid.innerHTML = Object.entries(FORMULARIOS).map(([key, v]) => {
