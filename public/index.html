@@ -543,7 +543,7 @@ async function salvarChecklist() {
   state.formulario.secoes.forEach(s => total += s.itens.length);
   const done = Object.keys(state.itens).length;
   if (done < total) {
-    if (!confirm(`${total - done} item(ns) ainda sem avaliação. Salvar mesmo assim?`)) return;
+    if (!confirm(`${total - done} item(ns) ainda sem avaliação. Salvar mesmo assim?`)) { alert('⚠️ ' + (total-done) + ' item(ns) sem avaliação!'); return; } return;
   }
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Salvando…';
