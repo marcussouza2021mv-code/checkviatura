@@ -561,7 +561,7 @@ function updateProgress() {
   const nc = Object.values(state.itens).filter(v => v === 'NC').length;
   const pct = total ? Math.round(done/total*100) : 0;
   document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('progress-bar').style.background = nc > 0 ? '#C53030' : '#185FA5';
+  document.getElementById('progress-bar').style.background = nc > 0 ? '#C53030' : '#E8520A';
   document.getElementById('progress-left').textContent = `${done} de ${total} itens avaliados`;
   document.getElementById('progress-right').textContent = nc > 0 ? `⚠ ${nc} NC` : (total-done > 0 ? `${total-done} restantes` : '✓ Completo');
   const badge = document.getElementById('progress-info-text');
@@ -607,7 +607,7 @@ function initCanvas(id) {
   const dpr = window.devicePixelRatio || 1;
   c.width = c.offsetWidth * dpr; c.height = 90 * dpr;
   ctx.scale(dpr, dpr);
-  ctx.strokeStyle = '#185FA5'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#E8520A'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   let drawing = false, lx, ly;
   function pos(e){ const r=c.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return [s.clientX-r.left, s.clientY-r.top]; }
   c.onmousedown = e => { drawing=true; [lx,ly]=pos(e); };
