@@ -1,0 +1,41 @@
+{
+  "equipes": [
+    {
+      "id": 1,
+      "nome": "Equipe Alpha",
+      "chefe": "Carlos Souza"
+    },
+    {
+      "id": 2,
+      "nome": "Equipe Beta",
+      "chefe": "Mariana Lima"
+    }
+  ],
+  "viaturas": [
+    {
+      "id": 1,
+      "placa": "ABC-1234",
+      "modelo": "Ford Ranger",
+      "equipe_id": 1
+    },
+    {
+      "id": 2,
+      "placa": "DEF-5678",
+      "modelo": "Fiat Ducato",
+      "equipe_id": 1
+    },
+    {
+      "id": 3,
+      "placa": "GHI-9012",
+      "modelo": "Chevrolet S10",
+      "equipe_id": 2
+    },
+    {
+      "id": 4,
+      "placa": "JKL-3456",
+      "modelo": "Toyota Hilux",
+      "equipe_id": 2
+    }
+  ],
+  "checklists": []
+}
