@@ -458,7 +458,7 @@ function selectFormulario(id) {
 
   // label assinatura
   const sig1Labels = { motorista:'ASSINATURA DO MOTORISTA', lider_resgate:'ASSINATURA DO LÍDER DE RESGATE', nome_guerra_ba2:'NOME DE GUERRA "BA-2"' };
-  document.getElementById('sig1-label-top').textContent = sig1Labels[state.formulario.preenchidoPor] || 'ASSINATURA';
+  let slt=document.getElementById("sig1-label-top");if(slt)slt.textContent = sig1Labels[state.formulario.preenchidoPor] || 'ASSINATURA';
 
   goPage(3);
 }
