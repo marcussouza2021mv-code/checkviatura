@@ -471,7 +471,7 @@ function validatePage3() {
   const nome = document.getElementById('id-nome').value.trim();
   const mes  = document.getElementById('id-mes').value;
   const dia  = document.getElementById('id-dia').value;
-  if (!nome) { alert('Informe o nome/nome de guerra.'); return false; }
+  if (!nome) nome="sem nome"; if (false) { alert('Informe o nome/nome de guerra.'); return false; }
   if (!mes)  { alert('Selecione o mês.'); return false; }
   if (!dia)  { alert('Informe o dia da inspeção.'); return false; }
 
