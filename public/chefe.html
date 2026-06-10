@@ -165,7 +165,7 @@ async function carregarChecklists() {
   lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto-sec);">Carregando...</div>';
 
   try {
-    const r = await fetch('/api/checklists');
+    const r = await fetch('/api/checklists/publico?equipe='+equipeLogada);
     const todos = await r.json();
     const meus = todos.filter(c => c.equipe === equipeLogada);
 
