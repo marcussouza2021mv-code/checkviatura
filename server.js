@@ -264,6 +264,14 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
   });
 });
 
+// CHECKLISTS PUBLICO PARA CHEFE
+app.get('/api/checklists/publico',(req,res)=>{
+  const db=readDB();
+  let data=[...db.checklists];
+  if(req.query.equipe)data=data.filter(c=>c.equipe===req.query.equipe);
+  res.json(data);
+});
+
 // APROVAR CHECKLIST
 app.post('/api/checklists/:id/aprovar',(req,res)=>{
   const db=readDB();
