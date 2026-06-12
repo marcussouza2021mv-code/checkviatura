@@ -16,8 +16,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;display:flex;flex-direction:column;}
-
-/* LOGIN */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--azul2);}
 .login-box{background:var(--branco);border-radius:16px;padding:36px 32px;width:340px;box-shadow:0 8px 40px rgba(0,0,0,.25);}
 .login-logo{text-align:center;font-size:28px;margin-bottom:6px;}
@@ -28,8 +26,6 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .login-box input{width:100%;padding:10px 13px;border:1px solid var(--cinza-borda);border-radius:8px;font-size:14px;color:var(--texto);}
 .login-box input:focus{outline:none;border-color:var(--azul-borda);}
 .login-err{color:var(--vermelho);font-size:13px;text-align:center;margin-top:10px;display:none;}
-
-/* LAYOUT */
 #app{display:none;flex:1;flex-direction:column;}
 header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:0 20px;display:flex;align-items:center;height:54px;gap:16px;position:sticky;top:0;z-index:50;}
 .header-logo{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap;}
@@ -39,30 +35,21 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:0 2
 .bell-count{position:absolute;top:0;right:0;background:#E24B4A;color:#fff;font-size:10px;font-weight:700;border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center;display:none;}
 .user-info{font-size:13px;opacity:.85;}
 .logout-btn{background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer;padding:6px 13px;border-radius:7px;font-size:13px;}
-
 .layout{display:flex;flex:1;min-height:0;}
-
-/* SIDEBAR */
 aside{width:var(--sidebar);background:var(--branco);border-right:.5px solid var(--cinza-borda);display:flex;flex-direction:column;padding:12px 0;flex-shrink:0;}
 .side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;font-size:14px;color:var(--texto-sec);border-left:3px solid transparent;transition:all .12s;}
 .side-item:hover{background:var(--azul-claro);color:var(--azul);}
 .side-item.active{background:var(--azul-claro);color:var(--azul);font-weight:600;border-left:3px solid var(--azul);}
 .side-item .icon{font-size:18px;width:22px;text-align:center;}
 .side-section{font-size:11px;font-weight:700;color:var(--cinza-borda);text-transform:uppercase;letter-spacing:.6px;padding:14px 18px 4px;}
-
-/* MAIN */
 main{flex:1;overflow-y:auto;padding:22px;}
 .page{display:none;max-width:1060px;margin:0 auto;}
 .page.active{display:block;}
-
-/* CARDS */
 .card{background:var(--branco);border:.5px solid var(--cinza-borda);border-radius:12px;padding:18px 22px;margin-bottom:16px;}
 .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
 .page-title{font-size:20px;font-weight:700;}
 .page-sub{font-size:13px;color:var(--texto-sec);margin-top:2px;}
-
-/* KPI GRID */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px;}
 .kpi{background:var(--branco);border:.5px solid var(--cinza-borda);border-radius:12px;padding:16px 18px;}
 .kpi-label{font-size:12px;color:var(--texto-sec);font-weight:500;margin-bottom:4px;}
@@ -72,8 +59,6 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .kpi.green .kpi-val{color:var(--verde);}
 .kpi.red .kpi-val{color:var(--vermelho);}
 .kpi.amber .kpi-val{color:var(--amarelo);}
-
-/* CHARTS */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
 .chart-box{background:var(--branco);border:.5px solid var(--cinza-borda);border-radius:12px;padding:16px 18px;}
 .chart-title{font-size:13px;font-weight:600;color:var(--texto-sec);margin-bottom:12px;}
@@ -83,26 +68,18 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .bar-track{flex:1;background:var(--cinza-claro);border-radius:20px;height:14px;overflow:hidden;}
 .bar-fill{height:100%;border-radius:20px;transition:width .4s;}
 .bar-val{width:30px;font-weight:600;color:var(--texto);}
-.mini-bar-row{display:flex;flex-direction:column;gap:3px;}
-.mini-bar-label{font-size:11px;color:var(--texto-sec);}
-
-/* TABLES */
 .tbl{width:100%;border-collapse:collapse;font-size:13px;}
 .tbl th{background:var(--cinza-claro);padding:9px 13px;text-align:left;font-size:11px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
 .tbl td{padding:9px 13px;border-bottom:.5px solid var(--cinza-borda);vertical-align:middle;}
 .tbl tr:last-child td{border-bottom:none;}
 .tbl tr:hover td{background:var(--cinza-claro);}
 .tbl-wrap{border:.5px solid var(--cinza-borda);border-radius:12px;overflow:hidden;background:var(--branco);margin-bottom:16px;}
-
-/* BADGE */
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
 .badge-ok{background:var(--verde-claro);color:var(--verde);}
 .badge-nok{background:var(--vermelho-claro);color:var(--vermelho);}
 .badge-pendente{background:var(--amarelo-claro);color:var(--amarelo);}
 .badge-admin{background:var(--azul-claro);color:var(--azul);}
 .badge-chefe{background:#EAF3DE;color:var(--verde);}
-
-/* FORMS */
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
 .form-row.full{grid-template-columns:1fr;}
 .form-row.tri{grid-template-columns:1fr 1fr 1fr;}
@@ -110,8 +87,6 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .form-group label{font-size:12px;font-weight:600;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.3px;}
 .form-group input,.form-group select{padding:9px 12px;border:1px solid var(--cinza-borda);border-radius:8px;font-size:14px;color:var(--texto);background:var(--branco);font-family:inherit;}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--azul-borda);}
-
-/* BUTTONS */
 .btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .12s;}
 .btn-primary{background:var(--azul);color:#fff;}
 .btn-primary:hover{opacity:.88;}
@@ -122,8 +97,6 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .btn-sm{padding:5px 11px;font-size:12px;}
 .btns-row{display:flex;gap:8px;flex-wrap:wrap;}
 .btn:disabled{opacity:.45;cursor:not-allowed;}
-
-/* ALERTAS */
 .alerta-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:.5px solid var(--cinza-borda);}
 .alerta-item:last-child{border-bottom:none;}
 .alerta-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
@@ -131,40 +104,26 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .alerta-data{font-size:11px;color:var(--texto-sec);margin-top:3px;}
 .alerta-btn{background:none;border:none;cursor:pointer;color:var(--texto-sec);font-size:16px;padding:2px 6px;}
 .alerta-btn:hover{color:var(--vermelho);}
-
-/* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--branco);border-radius:14px;padding:26px;max-width:480px;width:95%;max-height:90vh;overflow-y:auto;}
+.modal{background:var(--branco);border-radius:14px;padding:26px;max-width:560px;width:95%;max-height:90vh;overflow-y:auto;}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:16px;}
 .modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
-
-/* FILTER */
 .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;}
 .filter-row .form-group{min-width:140px;}
-
-/* ALERT BOX */
 .alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
 .alert-info{background:var(--azul-claro);color:var(--azul);}
 .alert-warn{background:var(--amarelo-claro);color:var(--amarelo);}
 .alert-danger{background:var(--vermelho-claro);color:var(--vermelho);}
-
-/* CHECKLIST MODAL */
-.cl-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid #eee;font-size:13px;}
+.cl-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-bottom:.5px solid #eee;font-size:13px;border-radius:4px;margin-bottom:2px;}
 .cl-item:last-child{border-bottom:none;}
-
-/* SPINNER */
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ONLINE DOT */
 .dot-green{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:5px;}
-
 @media(max-width:700px){
   aside{display:none;}
   .charts-grid{grid-template-columns:1fr;}
   .form-row{grid-template-columns:1fr;}
-  .form-row.tri{grid-template-columns:1fr 1fr;}
 }
 @media print{
   header,aside,#login-screen,.no-print{display:none!important;}
@@ -173,10 +132,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
 }
 </style>
 </head>
-<body>
-
-<!-- ══════════ LOGIN ══════════ -->
-<div id="login-screen">
+<body><div id="login-screen">
   <div class="login-box">
     <div class="login-logo">🚗</div>
     <div class="login-title">CheckViatura</div>
@@ -188,14 +144,11 @@ main{flex:1;overflow-y:auto;padding:22px;}
   </div>
 </div>
 
-<!-- ══════════ APP ══════════ -->
 <div id="app">
   <header>
     <div class="header-logo">🚗 CheckViatura <span class="header-badge" id="hdr-role">Admin</span></div>
     <div class="header-right">
-      <button class="bell-btn" onclick="showPage('alertas')" title="Alertas">
-        🔔<span class="bell-count" id="bell-count">0</span>
-      </button>
+      <button class="bell-btn" onclick="showPage('alertas')" title="Alertas">🔔<span class="bell-count" id="bell-count">0</span></button>
       <span class="user-info" id="hdr-user">—</span>
       <button class="logout-btn" onclick="doLogout()">Sair</button>
     </div>
@@ -206,11 +159,9 @@ main{flex:1;overflow-y:auto;padding:22px;}
       <div class="side-section">Visão Geral</div>
       <div class="side-item active" onclick="showPage('dashboard',this)"><span class="icon">📊</span> Dashboard</div>
       <div class="side-item" onclick="showPage('alertas',this)"><span class="icon">🔔</span> Alertas</div>
-
       <div class="side-section">Operação</div>
       <div class="side-item" onclick="showPage('checklists',this)"><span class="icon">📋</span> Checklists</div>
       <div class="side-item" onclick="showPage('relatorio',this)"><span class="icon">🖨</span> Relatório</div>
-
       <div class="side-section">Cadastros</div>
       <div class="side-item" id="menu-usuarios" onclick="showPage('usuarios',this)"><span class="icon">👤</span> Usuários</div>
       <div class="side-item" onclick="showPage('equipes',this)"><span class="icon">👥</span> Equipes</div>
@@ -218,7 +169,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
     </aside>
 
     <main>
-      <!-- ── DASHBOARD ── -->
+      <!-- DASHBOARD -->
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div><div class="page-title">Dashboard</div><div class="page-sub"><span class="dot-green"></span>Dados em tempo real</div></div>
@@ -234,28 +185,16 @@ main{flex:1;overflow-y:auto;padding:22px;}
           <div class="kpi amber"><div class="kpi-label">Alertas não lidos</div><div class="kpi-val" id="kpi-alertas">—</div><div class="kpi-sub">requer atenção</div></div>
         </div>
         <div class="charts-grid">
-          <div class="chart-box">
-            <div class="chart-title">Checklists por viatura</div>
-            <div class="bar-chart" id="chart-viaturas"></div>
-          </div>
-          <div class="chart-box">
-            <div class="chart-title">Atividade — últimos 7 dias</div>
-            <div class="bar-chart" id="chart-dias"></div>
-          </div>
+          <div class="chart-box"><div class="chart-title">Checklists por viatura</div><div class="bar-chart" id="chart-viaturas"></div></div>
+          <div class="chart-box"><div class="chart-title">Atividade — últimos 7 dias</div><div class="bar-chart" id="chart-dias"></div></div>
         </div>
         <div class="charts-grid">
-          <div class="chart-box">
-            <div class="chart-title">Desempenho por equipe</div>
-            <div class="bar-chart" id="chart-equipes"></div>
-          </div>
-          <div class="chart-box">
-            <div class="chart-title">Motoristas mais ativos</div>
-            <div class="bar-chart" id="chart-motoristas"></div>
-          </div>
+          <div class="chart-box"><div class="chart-title">Desempenho por equipe</div><div class="bar-chart" id="chart-equipes"></div></div>
+          <div class="chart-box"><div class="chart-title">Motoristas mais ativos</div><div class="bar-chart" id="chart-motoristas"></div></div>
         </div>
       </div>
 
-      <!-- ── ALERTAS ── -->
+      <!-- ALERTAS -->
       <div class="page" id="page-alertas">
         <div class="page-header">
           <div><div class="page-title">🔔 Alertas</div><div class="page-sub">Pendências identificadas nos checklists</div></div>
@@ -266,7 +205,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
         </div>
       </div>
 
-      <!-- ── CHECKLISTS ── -->
+      <!-- CHECKLISTS -->
       <div class="page" id="page-checklists">
         <div class="page-header">
           <div><div class="page-title">Checklists</div></div>
@@ -280,18 +219,18 @@ main{flex:1;overflow-y:auto;padding:22px;}
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Data</th><th>Viatura</th><th>Motorista</th><th>Equipe</th><th>KM</th><th>Status</th><th class="no-print">Ações</th></tr></thead>
+            <thead><tr><th>Data</th><th>Viatura</th><th>Motorista</th><th>Equipe</th><th>Status</th><th class="no-print">Ações</th></tr></thead>
             <tbody id="cl-body"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- ── RELATÓRIO ── -->
+      <!-- RELATÓRIO -->
       <div class="page" id="page-relatorio">
         <div class="page-header">
           <div><div class="page-title">Relatório Mensal</div></div>
           <div class="btns-row no-print">
-            <button class="btn btn-outline" onclick="window.print()">🖨 Imprimir</button>
+            <button class="btn btn-outline" onclick="window.open('/relatorio.html','_blank')">🖨 Abrir Relatório Completo</button>
             <button class="btn btn-outline" onclick="exportCSV()">⬇ CSV</button>
           </div>
         </div>
@@ -303,10 +242,10 @@ main{flex:1;overflow-y:auto;padding:22px;}
         <div id="rel-content"></div>
       </div>
 
-      <!-- ── USUÁRIOS ── -->
+      <!-- USUÁRIOS -->
       <div class="page" id="page-usuarios">
         <div class="page-header">
-          <div><div class="page-title">Usuários</div><div class="page-sub">Gerenciar acessos ao painel admin</div></div>
+          <div><div class="page-title">Usuários</div></div>
           <button class="btn btn-primary" onclick="openModalUsuario()">+ Novo Usuário</button>
         </div>
         <div class="tbl-wrap">
@@ -317,7 +256,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
         </div>
       </div>
 
-      <!-- ── EQUIPES ── -->
+      <!-- EQUIPES -->
       <div class="page" id="page-equipes">
         <div class="page-header">
           <div><div class="page-title">Equipes</div></div>
@@ -331,7 +270,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
         </div>
       </div>
 
-      <!-- ── VIATURAS ── -->
+      <!-- VIATURAS -->
       <div class="page" id="page-viaturas">
         <div class="page-header">
           <div><div class="page-title">Viaturas</div></div>
@@ -344,7 +283,6 @@ main{flex:1;overflow-y:auto;padding:22px;}
           </table>
         </div>
       </div>
-
     </main>
   </div>
 </div>
@@ -353,7 +291,10 @@ main{flex:1;overflow-y:auto;padding:22px;}
 <div class="modal-overlay" id="modal-cl"><div class="modal">
   <div class="modal-title" id="modal-cl-title">Checklist</div>
   <div id="modal-cl-body"></div>
-  <div class="modal-btns"><button class="btn btn-outline" onclick="closeModal('modal-cl')">Fechar</button></div>
+  <div class="modal-btns">
+    <button class="btn btn-outline" onclick="closeModal('modal-cl')">Fechar</button>
+    <button class="btn btn-primary" onclick="imprimirCL()">🖨️ Imprimir</button>
+  </div>
 </div></div>
 
 <!-- MODAL: usuário -->
@@ -408,31 +349,12 @@ main{flex:1;overflow-y:auto;padding:22px;}
     <button class="btn btn-outline" onclick="closeModal('modal-viat')">Cancelar</button>
     <button class="btn btn-primary" onclick="salvarViat()">Salvar</button>
   </div>
-</div></div>
-
-<script>
-// ═══════════════════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════════════════
+</div></div<script>
 const API = '';
 let TOKEN = localStorage.getItem('adm_token') || '';
-let ME    = null;
+let ME = null;
 let _viaturas = [], _equipes = [];
 
-const ITEMS_ALL = [
-  'CRLV em dia','CNH do motorista','Seguro obrigatório (DPVAT)','Licença de operação',
-  'Nível de óleo do motor','Nível do fluido de freio','Nível da água do radiador','Nível do fluido de direção',
-  'Condição dos pneus (calibragem)','Estepe reservado','Condição das correias','Freios funcionando',
-  'Faróis dianteiros','Lanternas traseiras','Luz de freio','Setas / Pisca-alerta',
-  'Luz de ré','Painel de instrumentos','Buzina','Bateria',
-  'Extintor de incêndio','Triângulo de sinalização','Cinto de segurança (todos)',
-  'Macaco e chave de roda','Kit de primeiros socorros','Rádio comunicador',
-  'Limpeza interna da cabine','Limpeza externa da carroceria','Para-brisa limpo e sem trincas','Retrovisores sem danos'
-];
-
-// ═══════════════════════════════════════════════════════
-// API HELPER
-// ═══════════════════════════════════════════════════════
 async function api(path, opts={}) {
   const r = await fetch(API+'/api'+path, {
     headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN },
@@ -444,9 +366,6 @@ async function api(path, opts={}) {
   return r.json();
 }
 
-// ═══════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════
 async function doLogin() {
   const login = document.getElementById('li-login').value.trim();
   const senha = document.getElementById('li-senha').value;
@@ -470,9 +389,7 @@ async function startApp() {
   document.getElementById('app').style.display='flex';
   document.getElementById('hdr-user').textContent = ME.nome;
   document.getElementById('hdr-role').textContent = ME.role==='admin'?'Administrador':'Chefe de Equipe';
-  if (ME.role !== 'admin') {
-    document.getElementById('menu-usuarios').style.display='none';
-  }
+  if (ME.role !== 'admin') document.getElementById('menu-usuarios').style.display='none';
   const now = new Date().toISOString().slice(0,7);
   document.getElementById('dash-mes').value = now;
   document.getElementById('f-mes').value = now;
@@ -489,15 +406,10 @@ function doLogout() {
   document.getElementById('app').style.display='none';
 }
 
-// auto-login se tiver token
 if (TOKEN) startApp();
 
-// ═══════════════════════════════════════════════════════
-// MASTER DATA
-// ═══════════════════════════════════════════════════════
 async function loadMaster() {
   [_viaturas, _equipes] = await Promise.all([api('/viaturas'), api('/equipes')]);
-  // popular selects de filtro
   ['f-viatura','r-viatura'].forEach(id=>{
     const s=document.getElementById(id);
     s.innerHTML='<option value="">Todas</option>'+_viaturas.map(v=>`<option value="${v.id}">${v.placa} — ${v.modelo}</option>`).join('');
@@ -511,30 +423,20 @@ async function loadMaster() {
 function getEquipe(id){ return _equipes.find(e=>e.id==id)||{}; }
 function getViatura(id){ return _viaturas.find(v=>v.id==id)||{}; }
 
-// ═══════════════════════════════════════════════════════
-// NAV
-// ═══════════════════════════════════════════════════════
 const pageLoaders = {
-  dashboard:  loadDashboard,
-  alertas:    loadAlertas,
-  checklists: loadChecklists,
-  relatorio:  loadRelatorio,
-  usuarios:   loadUsuarios,
-  equipes:    loadEquipes,
-  viaturas:   loadViaturas,
+  dashboard: loadDashboard, alertas: loadAlertas,
+  checklists: loadChecklists, relatorio: loadRelatorio,
+  usuarios: loadUsuarios, equipes: loadEquipes, viaturas: loadViaturas,
 };
+
 function showPage(p, el) {
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.side-item').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   if (el) el.classList.add('active');
-  else document.querySelectorAll('.side-item').forEach(x=>{if(x.textContent.toLowerCase().includes(p.slice(0,4)))x.classList.add('active');});
   if (pageLoaders[p]) pageLoaders[p]();
 }
 
-// ═══════════════════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════════════════
 async function loadDashboard() {
   const mes = document.getElementById('dash-mes').value;
   const d   = await api('/dashboard?mes='+mes);
@@ -546,8 +448,6 @@ async function loadDashboard() {
   document.getElementById('kpi-ok-pct').textContent  = d.total ? Math.round(d.ok/d.total*100)+'% do total' : '—';
   document.getElementById('kpi-nok-pct').textContent = d.total ? Math.round(d.nok/d.total*100)+'% do total' : '—';
   updateBell(d.alertas);
-
-  // chart viaturas
   const maxV = Math.max(1,...d.porViatura.map(v=>v.total));
   document.getElementById('chart-viaturas').innerHTML = d.porViatura.map(v=>`
     <div class="bar-row">
@@ -556,8 +456,6 @@ async function loadDashboard() {
       <div class="bar-val">${v.total}</div>
       ${v.nok?`<span class="badge badge-nok">${v.nok}✗</span>`:'<span class="badge badge-ok">OK</span>'}
     </div>`).join('') || '<div style="color:var(--texto-sec);font-size:13px;">Sem dados</div>';
-
-  // chart dias
   const maxD = Math.max(1,...d.porDia.map(x=>x.total));
   document.getElementById('chart-dias').innerHTML = d.porDia.map(x=>`
     <div class="bar-row">
@@ -565,8 +463,6 @@ async function loadDashboard() {
       <div class="bar-track"><div class="bar-fill" style="width:${x.total?Math.round(x.total/maxD*100):0}%;background:${x.nok?'var(--amarelo)':'var(--verde)'};"></div></div>
       <div class="bar-val">${x.total}</div>
     </div>`).join('');
-
-  // chart equipes
   const maxE = Math.max(1,...d.porEquipe.map(e=>e.total));
   document.getElementById('chart-equipes').innerHTML = d.porEquipe.map(e=>`
     <div class="bar-row">
@@ -575,8 +471,6 @@ async function loadDashboard() {
       <div class="bar-val">${e.total}</div>
       ${e.nok?`<span class="badge badge-nok">${e.nok}✗</span>`:''}
     </div>`).join('') || '<div style="color:var(--texto-sec);font-size:13px;">Sem dados</div>';
-
-  // chart motoristas
   const top = d.motoristas.slice(0,6);
   const maxM = Math.max(1,...top.map(m=>m.total));
   document.getElementById('chart-motoristas').innerHTML = top.map(m=>`
@@ -589,9 +483,6 @@ async function loadDashboard() {
 
 function mesLabel(m){ return m ? new Date(m+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'}) : 'mês'; }
 
-// ═══════════════════════════════════════════════════════
-// ALERTAS
-// ═══════════════════════════════════════════════════════
 async function pollAlertas() {
   try { const a=await api('/alertas'); updateBell(a.length); } catch{}
   setTimeout(pollAlertas, 30000);
@@ -609,10 +500,7 @@ async function loadAlertas() {
   list.innerHTML=data.map(a=>`
     <div class="alerta-item" id="alerta-${a.id}">
       <div class="alerta-icon">⚠️</div>
-      <div class="alerta-msg">
-        <strong>${a.msg}</strong>
-        <div class="alerta-data">${a.data?a.data.replace('T',' ').slice(0,16):''}</div>
-      </div>
+      <div class="alerta-msg"><strong>${a.msg}</strong><div class="alerta-data">${a.data?a.data.replace('T',' ').slice(0,16):''}</div></div>
       <button class="alerta-btn" onclick="lerAlerta(${a.id})" title="Marcar como lido">✓</button>
     </div>`).join('');
 }
@@ -627,9 +515,6 @@ async function marcarTodosLidos() {
   loadAlertas(); updateBell(0);
 }
 
-// ═══════════════════════════════════════════════════════
-// CHECKLISTS
-// ═══════════════════════════════════════════════════════
 async function loadChecklists() {
   const q=new URLSearchParams();
   const mes=document.getElementById('f-mes').value; if(mes) q.set('mes',mes);
@@ -637,45 +522,93 @@ async function loadChecklists() {
   const s=document.getElementById('f-status').value; if(s) q.set('status',s);
   const e=document.getElementById('f-equipe').value; if(e) q.set('equipe_id',e);
   const tbody=document.getElementById('cl-body');
-  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Carregando…</td></tr>';
+  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--texto-sec);">Carregando…</td></tr>';
   const data=await api('/checklists?'+q);
-  if(!data.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro</td></tr>';return;}
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro</td></tr>';return;}
   tbody.innerHTML=data.map(c=>{
-    const d=c.data?c.data.replace('T',' ').slice(0,16):'—';
+    const d=c.data?c.data:'—';
     const cls=c.status==='ok'?'badge-ok':'badge-nok';
-    const lbl=c.status==='ok'?'Aprovado':c.nok+' pendência(s)';
+    const lbl=c.status==='ok'?'Aprovado':(c.nc||0)+' NC';
     return `<tr>
-      <td>${d}</td>
-      <td><strong>${c.placa}</strong><br><span style="font-size:11px;color:var(--texto-sec)">${c.modelo}</span></td>
-      <td>${c.nome||c.nome||c.motorista}</td>
-      <td>${c.equipe}</td>
-      <td>${c.km?Number(c.km).toLocaleString('pt-BR')+' km':'—'}</td>
+      <td>${d} dia ${c.dia||'—'}</td>
+      <td><strong>${c.placa}</strong><br><span style="font-size:11px;color:var(--texto-sec)">${c.modelo||''}</span></td>
+      <td>${c.nome||c.motorista||'—'}</td>
+      <td>${c.equipe||'—'}</td>
       <td><span class="badge ${cls}">${lbl}</span></td>
       <td class="no-print" style="display:flex;gap:5px;flex-wrap:wrap;">
-        <button class="btn btn-outline btn-sm" onclick='verCL(${c.id})'>Ver</button>
+        <button class="btn btn-outline btn-sm" onclick='verCL(${c.id})'>👁 Ver</button>
         <button class="btn btn-danger btn-sm" onclick='delCL(${c.id})'>✕</button>
       </td></tr>`;
   }).join('');
 }
 
 async function verCL(id) {
-  const all=await api('/checklists');
-  const c=all.find(x=>x.id==id); if(!c) return;
-  const il=Object.entries(c.itens||{}).map(([k,v],i)=>{
-    const ic=v==='ok'?'✅':v==='nok'?'❌':'⬜';
-    const st=v==='nok'?'color:var(--vermelho)':'';
-    return `<div class="cl-item" style="${st}">${ic} ${ITEMS_ALL[i]||k}</div>`;
+  const all = await api('/checklists');
+  const c = all.find(x => x.id == id);
+  if (!c) { alert('Checklist não encontrado!'); return; }
+
+  const itens = c.itens || {};
+  const il = Object.values(itens).map(v => {
+    const st = v.status === 'NC' ? 'color:var(--vermelho);background:#FEF2F2;' : v.status === 'NA' ? 'color:#888;' : '';
+    const ic = v.status === 'C' ? '✅' : v.status === 'NC' ? '❌' : '➖';
+    return `<div class="cl-item" style="${st}">
+      ${ic} <strong style="min-width:24px;display:inline-block;font-size:11px;">${v.num||''}</strong>
+      <span style="flex:1;font-size:12px;">${v.item||''}</span>
+      <span style="font-size:11px;font-weight:700;">${v.status||''}</span>
+    </div>`;
   }).join('');
-  document.getElementById('modal-cl-title').textContent=`${c.placa} — ${c.data?c.data.slice(0,10):''}`;
-  document.getElementById('modal-cl-body').innerHTML=`
-    <div style="font-size:13px;color:var(--texto-sec);margin-bottom:12px;">
-      <strong>Motorista:</strong> ${c.nome||c.motorista} | <strong>Equipe:</strong> ${c.equipe} | <strong>KM:</strong> ${c.km||'—'}
+
+  const ncs = Object.values(itens).filter(v => v.status === 'NC');
+
+  document.getElementById('modal-cl-title').textContent = `${c.formulario_titulo||'Checklist'} — ${c.placa}`;
+  document.getElementById('modal-cl-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:var(--texto-sec);margin-bottom:14px;padding:10px;background:var(--cinza-claro);border-radius:8px;">
+      <div><strong>Viatura:</strong> ${c.placa} — ${c.modelo||''}</div>
+      <div><strong>Data:</strong> ${c.data||'—'} dia ${c.dia||'—'}</div>
+      <div><strong>Motorista:</strong> ${c.nome||'—'}</div>
+      <div><strong>Equipe:</strong> ${c.equipe||'—'}</div>
     </div>
-    ${il}
-    ${c.obs?`<div class="alert alert-warn" style="margin-top:10px;">📝 ${c.obs}</div>`:''}
-    ${c.sigMotorista?`<div style="margin-top:12px;"><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Assinatura motorista (${c.nome||c.motorista})</div><img src="${c.sigMotorista}" style="height:52px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;"></div>`:''}
-    ${c.sigChefe?`<div style="margin-top:8px;"><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Assinatura chefe (${c.chefe||'—'})</div><img src="${c.sigChefe}" style="height:52px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;"></div>`:''}`;
+    ${ncs.length > 0 ? `<div class="alert alert-danger" style="margin-bottom:12px;">⚠️ ${ncs.length} item(ns) Não Conforme(s)</div>` : '<div class="alert alert-info" style="margin-bottom:12px;">✅ Todos os itens conformes</div>'}
+    <div style="max-height:320px;overflow-y:auto;border:1px solid var(--cinza-borda);border-radius:8px;padding:8px;">
+      ${il || '<div style="color:var(--texto-sec);padding:10px;">Sem itens registrados</div>'}
+    </div>
+    ${c.obs ? `<div class="alert alert-warn" style="margin-top:10px;">📝 <strong>Observações:</strong> ${c.obs}</div>` : ''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--cinza-borda);">
+      <div>
+        <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Assinatura: ${c.nome||'—'}</div>
+        ${c.sigMotorista ? `<img src="${c.sigMotorista}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">` : '<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Visto Chefe: ${c.chefe||'—'}</div>
+        ${c.sigChefe ? `<img src="${c.sigChefe}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">` : '<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
+      </div>
+    </div>`;
+
   openModal('modal-cl');
+}
+
+function imprimirCL() {
+  const titulo = document.getElementById('modal-cl-title').textContent;
+  const corpo  = document.getElementById('modal-cl-body').innerHTML;
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>${titulo}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:20px;font-size:12px;color:#000;}
+      h2{color:#C43D00;margin-bottom:16px;font-size:16px;}
+      .cl-item{display:flex;align-items:center;gap:8px;padding:4px 8px;border-bottom:0.5px solid #eee;border-radius:4px;margin-bottom:2px;}
+      .alert{padding:8px 12px;border-radius:6px;margin-bottom:10px;}
+      .alert-danger{background:#FEF2F2;color:#A32D2D;}
+      .alert-info{background:#FFF0E8;color:#C43D00;}
+      .alert-warn{background:#FAEEDA;color:#BA7517;}
+      img{max-height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;}
+      @media print{body{padding:10px;}}
+    </style></head><body>
+    <h2>med+ Group — ${titulo}</h2>
+    ${corpo}
+    <script>window.onload=()=>window.print();<\/script>
+    </body></html>`);
+  win.document.close();
 }
 
 async function delCL(id) {
@@ -686,13 +619,11 @@ async function delCL(id) {
 
 function exportCSV() {
   const q=new URLSearchParams();
-  const mes=document.getElementById('f-mes')?.value||document.getElementById('r-mes')?.value; if(mes) q.set('mes',mes);
+  const mes=document.getElementById('f-mes')?.value||document.getElementById('r-mes')?.value;
+  if(mes) q.set('mes',mes);
   window.location='/api/export/csv?'+q+'&token='+TOKEN;
 }
 
-// ═══════════════════════════════════════════════════════
-// RELATÓRIO
-// ═══════════════════════════════════════════════════════
 async function loadRelatorio() {
   const q=new URLSearchParams();
   const mes=document.getElementById('r-mes').value; if(mes) q.set('mes',mes);
@@ -714,31 +645,30 @@ async function loadRelatorio() {
       </div>
     </div>
     ${data.map((c,idx)=>{
-      const il=Object.entries(c.itens||{}).map(([k,v],i)=>{
-        const ic=v==='ok'?'✅':v==='nok'?'❌':'⬜';
-        const st=v==='nok'?'color:var(--vermelho)':'';
-        return `<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:.5px solid #eee;font-size:12px;${st}">${ic} ${ITEMS_ALL[i]||k}</div>`;
+      const itens = Object.values(c.itens||{});
+      const il = itens.map(v=>{
+        const st=v.status==='NC'?'color:var(--vermelho)':'';
+        const ic=v.status==='C'?'✅':v.status==='NC'?'❌':'➖';
+        return `<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:.5px solid #eee;font-size:11px;${st}">${ic} <strong>${v.num||''}</strong> ${v.item||''}</div>`;
       }).join('');
-      return `<div class="card" style="break-inside:avoid;page-break-inside:avoid;margin-bottom:16px;">
+      return `<div class="card" style="break-inside:avoid;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-          <div><div style="font-size:15px;font-weight:700;">#${idx+1} — ${c.placa} | ${c.modelo}</div>
-          <div style="font-size:12px;color:var(--texto-sec);">${c.data?c.data.replace('T',' ').slice(0,16):'—'} | ${c.nome||c.motorista} | ${c.equipe}</div></div>
-          <span class="badge ${c.status==='ok'?'badge-ok':'badge-nok'}">${c.status==='ok'?'Aprovado':c.nok+' pendência(s)'}</span>
+          <div>
+            <div style="font-size:15px;font-weight:700;">#${idx+1} — ${c.placa} | ${c.modelo||''}</div>
+            <div style="font-size:12px;color:var(--texto-sec);">${c.data||'—'} dia ${c.dia||'—'} | ${c.nome||c.motorista||'—'} | ${c.equipe||'—'}</div>
+          </div>
+          <span class="badge ${c.status==='ok'?'badge-ok':'badge-nok'}">${c.status==='ok'?'Aprovado':(c.nc||0)+' NC'}</span>
         </div>
         <div style="columns:2;column-gap:16px;">${il}</div>
         ${c.obs?`<div class="alert alert-warn" style="margin-top:8px;font-size:12px;">📝 ${c.obs}</div>`:''}
-        ${c.km?`<div style="font-size:12px;color:var(--texto-sec);margin-top:6px;">KM: ${Number(c.km).toLocaleString('pt-BR')} km</div>`:''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding-top:10px;border-top:.5px solid var(--cinza-borda);">
-          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Motorista: ${c.nome||c.motorista}</div>${c.sigMotorista?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
+          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Motorista: ${c.nome||'—'}</div>${c.sigMotorista?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
           <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Chefe: ${c.chefe||'—'}</div>${c.sigChefe?`<img src="${c.sigChefe}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
         </div>
       </div>`;
     }).join('')}`;
 }
 
-// ═══════════════════════════════════════════════════════
-// USUÁRIOS
-// ═══════════════════════════════════════════════════════
 async function loadUsuarios() {
   const data=await api('/usuarios');
   const tbody=document.getElementById('usr-body');
@@ -798,9 +728,6 @@ async function delUsuario(id){
   await api('/usuarios/'+id,{method:'DELETE'}); loadUsuarios();
 }
 
-// ═══════════════════════════════════════════════════════
-// EQUIPES
-// ═══════════════════════════════════════════════════════
 async function loadEquipes() {
   await loadMaster();
   const tbody=document.getElementById('eq-body');
@@ -837,9 +764,6 @@ async function delEquipe(id){
   await api('/equipes/'+id,{method:'DELETE'}); loadEquipes();
 }
 
-// ═══════════════════════════════════════════════════════
-// VIATURAS
-// ═══════════════════════════════════════════════════════
 async function loadViaturas(){
   await loadMaster();
   const tbody=document.getElementById('viat-body');
@@ -879,9 +803,6 @@ async function delViat(id){
   await api('/viaturas/'+id,{method:'DELETE'}); loadViaturas();
 }
 
-// ═══════════════════════════════════════════════════════
-// MODAL UTILS
-// ═══════════════════════════════════════════════════════
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
