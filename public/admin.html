@@ -349,7 +349,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
     <button class="btn btn-outline" onclick="closeModal('modal-viat')">Cancelar</button>
     <button class="btn btn-primary" onclick="salvarViat()">Salvar</button>
   </div>
-</div></div<script>
+</div></div><script>
 const API = '';
 let TOKEN = localStorage.getItem('adm_token') || '';
 let ME = null;
@@ -526,11 +526,10 @@ async function loadChecklists() {
   const data=await api('/checklists?'+q);
   if(!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro</td></tr>';return;}
   tbody.innerHTML=data.map(c=>{
-    const d=c.data?c.data:'—';
     const cls=c.status==='ok'?'badge-ok':'badge-nok';
     const lbl=c.status==='ok'?'Aprovado':(c.nc||0)+' NC';
     return `<tr>
-      <td>${d} dia ${c.dia||'—'}</td>
+      <td>${c.data||'—'} dia ${c.dia||'—'}</td>
       <td><strong>${c.placa}</strong><br><span style="font-size:11px;color:var(--texto-sec)">${c.modelo||''}</span></td>
       <td>${c.nome||c.motorista||'—'}</td>
       <td>${c.equipe||'—'}</td>
@@ -583,7 +582,6 @@ async function verCL(id) {
         ${c.sigChefe ? `<img src="${c.sigChefe}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">` : '<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
       </div>
     </div>`;
-
   openModal('modal-cl');
 }
 
