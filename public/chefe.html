@@ -2,320 +2,426 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal do Chefe de Equipe — CheckViatura</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Portal do Chefe de Equipe — med+ Group</title>
 <style>
 :root{
-  --azul:#E8520A;--azul2:#C43D00;--azul-claro:#FFF0E8;--azul-borda:#F47B3A;
+  --laranja:#E8520A;--laranja2:#C43D00;--laranja-claro:#FFF0E8;--laranja-borda:#F47B3A;
   --verde:#2D7D32;--verde-claro:#E8F5E9;
   --vermelho:#9B1C1C;--vermelho-claro:#FEE2E2;
   --cinza:#6B7280;--cinza-claro:#F9F5F2;--cinza-borda:#E2D5CC;
   --texto:#1A0A00;--texto-sec:#6B5A52;--branco:#fff;--bg:#FBF5F0;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;}
-header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px;}
-.header-badge{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:4px 12px;font-size:12px;}
-.container{max-width:900px;margin:0 auto;padding:20px;}
-.card{background:var(--branco);border:1px solid var(--cinza-borda);border-radius:12px;padding:24px;margin-bottom:16px;}
-.card-title{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--texto);}
-.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
-.form-group label{font-size:11px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
-.form-group input,.form-group select{padding:10px 12px;border:1px solid var(--cinza-borda);border-radius:8px;font-size:14px;color:var(--texto);background:var(--branco);font-family:inherit;}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--azul-borda);}
-.btn{padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .12s;}
-.btn-primary{background:var(--azul);color:#fff;}
-.btn-primary:hover{background:var(--azul2);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;font-size:16px;}
+
+header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.header-logo img{height:36px;object-fit:contain;}
+.header-info{flex:1;}
+.header-title{font-size:15px;font-weight:800;}
+.header-sub{font-size:10px;opacity:.75;margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.logout-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600;}
+
+.page{padding:16px;max-width:600px;margin:0 auto;}
+
+.card{background:var(--branco);border:1px solid var(--cinza-borda);border-radius:12px;padding:16px;margin-bottom:14px;}
+.card-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.form-group label{font-size:12px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
+.form-group input,.form-group select{padding:12px 14px;border:1.5px solid var(--cinza-borda);border-radius:10px;font-size:16px;color:var(--texto);background:var(--branco);font-family:inherit;-webkit-appearance:none;}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--laranja-borda);}
+
+.btn{padding:14px 22px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .12s;width:100%;display:block;text-align:center;}
+.btn-primary{background:var(--laranja);color:#fff;}
+.btn-primary:active{background:var(--laranja2);}
+.btn-outline{background:transparent;border:1.5px solid var(--cinza-borda);color:var(--texto);margin-bottom:10px;}
 .btn-success{background:var(--verde);color:#fff;}
-.btn-outline{background:transparent;border:1.5px solid var(--cinza-borda);color:var(--texto);}
-.btn-outline:hover{background:var(--cinza-claro);}
-.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
 .badge-ok{background:var(--verde-claro);color:var(--verde);}
-.badge-nc{background:var(--vermelho-claro);color:var(--vermelho);}
+.badge-nok{background:var(--vermelho-claro);color:var(--vermelho);}
 .badge-pendente{background:#FEF3C7;color:#92400E;}
-.badge-assinado{background:#E8F5E9;color:#2D7D32;}
-.checklist-item{background:var(--branco);border:1px solid var(--cinza-borda);border-radius:10px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all .15s;}
-.checklist-item:hover{border-color:var(--azul-borda);box-shadow:0 2px 8px rgba(232,82,10,.1);}
-.checklist-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-.checklist-title{font-size:14px;font-weight:700;}
-.checklist-meta{font-size:12px;color:var(--texto-sec);margin-top:4px;}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--branco);border-radius:14px;padding:26px;max-width:700px;width:95%;max-height:90vh;overflow-y:auto;}
-.modal-title{font-size:17px;font-weight:700;margin-bottom:16px;}
-.sig-canvas-wrap{border:1.5px dashed var(--cinza-borda);border-radius:8px;background:#FAFAF8;}
-canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-action:none;}
-.sig-clear{font-size:11px;color:var(--texto-sec);cursor:pointer;background:none;border:none;padding:4px 0;text-align:right;display:block;}
-.nc-item{padding:6px 10px;background:var(--vermelho-claro);border-radius:6px;font-size:12px;color:var(--vermelho);margin-bottom:4px;}
-.login-box{max-width:400px;margin:80px auto;}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
-.alert-error{background:var(--vermelho-claro);color:var(--vermelho);}
+
+.alert{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;}
+.alert-warn{background:#FEF3C7;color:#92400E;}
+.alert-info{background:var(--laranja-claro);color:var(--laranja2);}
 .alert-success{background:var(--verde-claro);color:var(--verde);}
+.alert-danger{background:var(--vermelho-claro);color:var(--vermelho);}
+
+.cl-item-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:.5px solid #F0EDE8;font-size:12px;}
+.cl-item-row:last-child{border-bottom:none;}
+.ci-num{width:24px;text-align:center;color:var(--cinza);font-weight:700;font-size:11px;flex-shrink:0;}
+.ci-nome{flex:1;line-height:1.3;}
+.ci-status{flex-shrink:0;}
+
+.tab-bar{display:flex;background:var(--branco);border-bottom:1px solid var(--cinza-borda);margin-bottom:16px;overflow-x:auto;}
+.tab-btn{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--cinza);border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;}
+.tab-btn.active{color:var(--laranja);border-bottom-color:var(--laranja);}
+
+.checklist-card{background:var(--branco);border:1.5px solid var(--cinza-borda);border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;transition:all .15s;}
+.checklist-card:active{transform:scale(.98);}
+.checklist-card.nok{border-left:4px solid var(--vermelho);}
+.checklist-card.ok{border-left:4px solid var(--verde);}
+.cc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.cc-titulo{font-size:14px;font-weight:700;}
+.cc-info{font-size:11px;color:var(--texto-sec);margin-top:3px;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--branco);border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-height:92vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:14px;}
+
+.sig-box{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.sig-label-top{font-size:12px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
+.sig-canvas-wrap{border:1.5px dashed var(--cinza-borda);border-radius:8px;background:#FAFAF8;}
+canvas.sig-canvas{display:block;width:100%;height:100px;cursor:crosshair;touch-action:none;}
+.sig-name-label{font-size:12px;color:var(--laranja);text-align:center;padding:3px;border-top:1px solid var(--cinza-borda);font-weight:500;}
+.sig-clear{font-size:11px;color:var(--texto-sec);cursor:pointer;background:none;border:none;padding:0;text-align:right;display:block;margin-top:2px;font-family:inherit;}
+
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--laranja2);padding:20px;}
+.login-box{background:var(--branco);border-radius:16px;padding:32px 24px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.25);}
+.login-logo{text-align:center;margin-bottom:16px;}
+.login-logo img{height:48px;object-fit:contain;}
+.login-title{text-align:center;font-size:18px;font-weight:700;color:var(--laranja);margin-bottom:4px;}
+.login-sub{text-align:center;font-size:13px;color:var(--cinza);margin-bottom:20px;}
+.login-err{color:var(--vermelho);font-size:13px;text-align:center;margin-top:10px;display:none;}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.info-cell{background:var(--cinza-claro);border-radius:8px;padding:8px 10px;}
+.info-cell-label{font-size:10px;color:var(--texto-sec);font-weight:700;text-transform:uppercase;}
+.info-cell-val{font-size:13px;font-weight:700;color:var(--texto);margin-top:2px;}
+
+.nc-list-item{padding:8px 10px;background:var(--vermelho-claro);border-radius:8px;font-size:12px;color:var(--vermelho);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
 </style>
 </head>
-<body>
-
-<header>
-  <div style="display:flex;align-items:center;gap:14px;">
-    <div style="font-size:22px;font-weight:900;color:#fff;">med+</div>
-    <div>
-      <div style="font-size:10px;color:rgba(255,255,255,.75);letter-spacing:1px;margin-bottom:1px;">med+ Group</div>
-      <div style="font-size:16px;font-weight:800;letter-spacing:.5px;">Portal do Chefe de Equipe</div>
-    </div>
-  </div>
-  <div class="header-badge" id="hdr-info" style="display:none;"></div>
-</header>
-
-<!-- TELA DE LOGIN -->
-<div class="container" id="tela-login">
+<body><!-- LOGIN -->
+<div class="login-screen" id="login-screen">
   <div class="login-box">
-    <div class="card">
-      <div class="card-title">🔐 Acesso do Chefe de Equipe</div>
-      <div id="login-error" class="alert alert-error" style="display:none;"></div>
-      <div class="form-group">
-        <label>Equipe</label>
-        <select id="login-equipe">
-          <option value="">Selecione sua equipe...</option>
-          <option value="Alfa">Alfa — Chefe: Cerqueira</option>
-          <option value="Bravo">Bravo — Chefe: Savio</option>
-          <option value="Charlie">Charlie — Chefe: Cleber</option>
-          <option value="Delta">Delta — Chefe: Douglas</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" id="login-senha" placeholder="Digite sua senha">
-      </div>
-      <button class="btn btn-primary" onclick="fazerLogin()" style="width:100%;">Entrar</button>
-      <div style="margin-top:12px;text-align:center;">
-        <a href="/" style="font-size:12px;color:var(--texto-sec);">← Voltar ao CheckViatura</a>
-      </div>
+    <div class="login-logo"><img src="/Med+.png" alt="med+ Group"></div>
+    <div class="login-title">Portal do Chefe</div>
+    <div class="login-sub">med+ Group — SCI Cuiabá</div>
+    <div class="form-group"><label>Equipe</label>
+      <select id="li-equipe">
+        <option value="">Selecione sua equipe...</option>
+        <option value="Alfa">Equipe Alfa — Cerqueira</option>
+        <option value="Bravo">Equipe Bravo — Savio</option>
+        <option value="Charlie">Equipe Charlie — Cleber</option>
+        <option value="Delta">Equipe Delta — Douglas</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Senha</label>
+      <input type="password" id="li-senha" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()" id="btn-login">Entrar</button>
+    <div class="login-err" id="login-err">Equipe ou senha incorretos</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+  <header>
+    <div class="header-logo"><img src="/Med+.png" alt="med+ Group"></div>
+    <div class="header-info">
+      <div class="header-title">Portal do Chefe de Equipe</div>
+      <div class="header-sub" id="hdr-sub">med+ Group</div>
+    </div>
+    <div class="header-right">
+      <button class="logout-btn" onclick="doLogout()">Sair</button>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('pendentes',this)">⏳ Pendentes</button>
+    <button class="tab-btn" onclick="showTab('aprovados',this)">✅ Aprovados</button>
+    <button class="tab-btn" onclick="showTab('todos',this)">📋 Todos</button>
+  </div>
+
+  <div class="page">
+    <div id="lista-checklists">
+      <div style="text-align:center;padding:40px;color:var(--cinza);">Carregando...</div>
     </div>
   </div>
 </div>
 
-<!-- TELA PRINCIPAL -->
-<div class="container" id="tela-principal" style="display:none;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-    <div>
-      <div style="font-size:20px;font-weight:700;" id="titulo-equipe">Equipe —</div>
-      <div style="font-size:13px;color:var(--texto-sec);" id="subtitulo-chefe"></div>
-    </div>
-    <button class="btn btn-outline" onclick="sair()">Sair</button>
-  </div>
-  <div id="lista-checklists"></div>
-</div>
-
-<!-- MODAL CHECKLIST -->
-<div class="modal-overlay" id="modal-checklist">
+<!-- MODAL: ver checklist -->
+<div class="modal-overlay" id="modal-cl">
   <div class="modal">
     <div class="modal-title" id="modal-titulo">Checklist</div>
-    <div id="modal-conteudo"></div>
-    <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
+    <div class="info-grid" id="modal-info"></div>
+    <div id="modal-nc-aviso"></div>
+    <div id="modal-itens" style="max-height:35vh;overflow-y:auto;border:1px solid var(--cinza-borda);border-radius:10px;padding:8px;margin-bottom:14px;"></div>
+    <div id="modal-obs"></div>
+
+    <!-- Assinatura do motorista (só visualização) -->
+    <div id="modal-sig-motorista" style="margin-bottom:14px;">
+      <div class="sig-label-top" id="modal-sig-mot-label">ASSINATURA DO PREENCHEDOR</div>
+      <div style="border:1px solid var(--cinza-borda);border-radius:8px;padding:8px;background:#FAFAF8;min-height:60px;display:flex;align-items:center;justify-content:center;">
+        <img id="modal-sig-mot-img" src="" style="max-height:55px;display:none;">
+        <span id="modal-sig-mot-vazio" style="color:var(--cinza);font-size:12px;">Sem assinatura</span>
+      </div>
+      <div class="sig-name-label" id="modal-sig-mot-nome">—</div>
+    </div>
+
+    <!-- Assinatura do CHEFE (canvas para assinar) -->
+    <div class="sig-box">
+      <div class="sig-label-top">VISTO CHEFE DE EQUIPE</div>
+      <div class="sig-canvas-wrap"><canvas class="sig-canvas" id="canvas-chefe-modal"></canvas></div>
+      <div class="sig-name-label" id="modal-sig-chefe-nome">—</div>
+      <button class="sig-clear" onclick="clearCanvas('canvas-chefe-modal')">Limpar assinatura</button>
+    </div>
+
+    <div id="modal-btns" style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+      <button class="btn btn-success" id="btn-aprovar" onclick="aprovarChecklist()">✅ Aprovar e Assinar</button>
       <button class="btn btn-outline" onclick="fecharModal()">Fechar</button>
-      <button class="btn btn-success" id="btn-assinar" onclick="assinarChecklist()">✍️ Assinar e Aprovar</button>
     </div>
   </div>
-</div>
-
-<script>
+</div><script>
 const SENHAS = { Alfa:'alfa123', Bravo:'bravo123', Charlie:'charlie123', Delta:'delta123' };
 const CHEFES = { Alfa:'Cerqueira', Bravo:'Savio', Charlie:'Cleber', Delta:'Douglas' };
 
-let equipeLogada = null;
-let checklistAtual = null;
+let ME = { equipe:'', chefe:'' };
+let todosChecklists = [];
+let clAtual = null;
+let tabAtual = 'pendentes';
 
-function fazerLogin() {
-  const equipe = document.getElementById('login-equipe').value;
-  const senha  = document.getElementById('login-senha').value;
-  const erro   = document.getElementById('login-error');
+function doLogin() {
+  const equipe = document.getElementById('li-equipe').value;
+  const senha  = document.getElementById('li-senha').value;
+  const err    = document.getElementById('login-err');
+  err.style.display='none';
+  if(!equipe){err.textContent='Selecione a equipe.';err.style.display='block';return;}
+  if(senha !== SENHAS[equipe]){err.textContent='Senha incorreta.';err.style.display='block';return;}
+  ME.equipe = equipe;
+  ME.chefe  = CHEFES[equipe];
+  localStorage.setItem('chefe_equipe', equipe);
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('hdr-sub').textContent = `Equipe ${equipe} — Chefe: ${ME.chefe}`;
+  document.getElementById('modal-sig-chefe-nome').textContent = ME.chefe;
+  carregarChecklists();
+}
 
-  if (!equipe) { erro.textContent='Selecione sua equipe.'; erro.style.display='block'; return; }
-  if (!senha)  { erro.textContent='Digite sua senha.';     erro.style.display='block'; return; }
-  if (SENHAS[equipe] !== senha) { erro.textContent='Senha incorreta.'; erro.style.display='block'; return; }
+function doLogout() {
+  localStorage.removeItem('chefe_equipe');
+  ME={equipe:'',chefe:''};
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
 
-  equipeLogada = equipe;
-  erro.style.display = 'none';
-  document.getElementById('tela-login').style.display = 'none';
-  document.getElementById('tela-principal').style.display = 'block';
-  document.getElementById('titulo-equipe').textContent = `Equipe ${equipe}`;
-  document.getElementById('subtitulo-chefe').textContent = `Chefe: ${CHEFES[equipe]} — Checklists para revisão`;
-  document.getElementById('hdr-info').textContent = `${equipe} — ${CHEFES[equipe]}`;
-  document.getElementById('hdr-info').style.display = 'block';
+// auto login
+const saved = localStorage.getItem('chefe_equipe');
+if(saved && SENHAS[saved]) {
+  document.getElementById('li-equipe').value = saved;
+  ME.equipe = saved; ME.chefe = CHEFES[saved];
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('hdr-sub').textContent = `Equipe ${saved} — Chefe: ${ME.chefe}`;
+  document.getElementById('modal-sig-chefe-nome').textContent = ME.chefe;
   carregarChecklists();
 }
 
 async function carregarChecklists() {
-  const lista = document.getElementById('lista-checklists');
-  lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto-sec);">Carregando...</div>';
+  document.getElementById('lista-checklists').innerHTML =
+    '<div style="text-align:center;padding:40px;color:var(--cinza);">Carregando...</div>';
   try {
-    const r = await fetch('/api/checklists/publico?equipe=' + equipeLogada);
-    const meus = await r.json();
-
-    if (!Array.isArray(meus) || meus.length === 0) {
-      lista.innerHTML = '<div class="card" style="text-align:center;padding:40px;color:var(--texto-sec);">Nenhum checklist encontrado para sua equipe.</div>';
-      return;
-    }
-
-    lista.innerHTML = meus.sort((a,b) => new Date(b.data) - new Date(a.data)).map(c => {
-      const assinado = c.assinatura_chefe_aprovado;
-      const statusBadge = assinado
-        ? '<span class="badge badge-assinado">✅ Aprovado</span>'
-        : c.nc > 0
-          ? `<span class="badge badge-nc">⚠ ${c.nc} NC</span>`
-          : '<span class="badge badge-ok">✓ Conforme</span>';
-
-      return `<div class="checklist-item" onclick="abrirChecklist('${c.id}')">
-        <div class="checklist-header">
-          <div>
-            <div class="checklist-title">${c.formulario_titulo || 'Checklist Inspeção Viaturas'}</div>
-            <div class="checklist-meta">📅 ${c.data} • 🚑 ${c.placa} — ${c.modelo} • 👤 ${c.nome}</div>
-          </div>
-          ${statusBadge}
-        </div>
-      </div>`;
-    }).join('');
+    const r = await fetch('/api/checklists/publico');
+    const todos = await r.json();
+    // Filtra pela equipe do chefe
+    todosChecklists = todos.filter(c =>
+      c.equipe === ME.equipe ||
+      c.equipe === 'Equipe '+ME.equipe ||
+      c.nome_chefe === ME.chefe
+    );
+    renderLista();
   } catch(e) {
-    lista.innerHTML = '<div class="alert alert-error">Erro ao carregar: ' + e.message + '</div>';
+    document.getElementById('lista-checklists').innerHTML =
+      '<div class="alert alert-danger">Erro ao carregar checklists.</div>';
   }
 }
 
-async function abrirChecklist(id) {
-  try {
-    const r = await fetch('/api/checklists/publico/' + id);
-    if (!r.ok) throw new Error('Checklist não encontrado');
-    checklistAtual = await r.json();
-  } catch(e) {
-    alert('Erro ao abrir checklist: ' + e.message);
+function showTab(tab, el) {
+  tabAtual = tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderLista();
+}
+
+function renderLista() {
+  let lista = [...todosChecklists];
+  if(tabAtual==='pendentes') lista = lista.filter(c=>!c.aprovado_chefe);
+  if(tabAtual==='aprovados') lista = lista.filter(c=>c.aprovado_chefe);
+  lista.sort((a,b)=>b.data>a.data?1:-1);
+
+  const el = document.getElementById('lista-checklists');
+  if(!lista.length) {
+    el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--cinza);">
+      ${tabAtual==='pendentes'?'✅ Nenhum checklist pendente!':'Nenhum registro encontrado.'}
+    </div>`;
     return;
   }
 
-  document.getElementById('modal-titulo').textContent = checklistAtual.formulario_titulo || 'Checklist Inspeção Viaturas';
-
-  const itens     = Object.values(checklistAtual.itens || {});
-  const ncs       = itens.filter(i => i.status === 'NC');
-  const total     = itens.length;
-  const conformes = itens.filter(i => i.status === 'C').length;
-
-  let html = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;font-size:13px;">
-      <div><strong>Viatura:</strong> ${checklistAtual.placa} — ${checklistAtual.modelo}</div>
-      <div><strong>Data:</strong> ${checklistAtual.data}</div>
-      <div><strong>Preenchido por:</strong> ${checklistAtual.nome}</div>
-      <div><strong>Equipe:</strong> ${checklistAtual.equipe}</div>
-    </div>
-    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
-      <span class="badge badge-ok">✓ ${conformes} Conformes</span>
-      <span class="badge badge-nc">⚠ ${ncs.length} Não Conformes</span>
-      <span class="badge" style="background:#E8ECF4;color:#374151;">${total} Total</span>
+  el.innerHTML = lista.map(c => {
+    const isPendente = !c.aprovado_chefe;
+    const cls = isPendente ? 'pendente' : c.status==='ok' ? 'ok' : 'nok';
+    const badge = isPendente
+      ? '<span class="badge badge-pendente">⏳ Aguarda aprovação</span>'
+      : c.status==='ok'
+        ? '<span class="badge badge-ok">✅ Aprovado</span>'
+        : `<span class="badge badge-nok">⚠ ${c.nc||0} NC</span>`;
+    const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'BA-2':
+                      c.preenchidoPor==='lider_resgate'?'Líder':'Motorista';
+    return `<div class="checklist-card ${cls}" onclick="abrirChecklist(${c.id})">
+      <div class="cc-header">
+        <div>
+          <div class="cc-titulo">${c.formulario_titulo||'Checklist'}</div>
+          <div class="cc-info">📅 ${c.data||'—'} dia ${c.dia||'—'} • 🚒 ${c.placa} • 👤 ${c.nome||'—'} (${tipoLabel})</div>
+        </div>
+        ${badge}
+      </div>
     </div>`;
+  }).join('');
+}
 
-  if (ncs.length > 0) {
-    html += `<div style="margin-bottom:16px;"><strong style="font-size:13px;">Itens Não Conformes:</strong><div style="margin-top:8px;">`;
-    ncs.forEach(nc => { html += `<div class="nc-item">⚠ ${nc.num} — ${nc.item}</div>`; });
-    html += `</div></div>`;
-  }
+async function abrirChecklist(id) {
+  const c = todosChecklists.find(x=>x.id==id);
+  if(!c) return;
+  clAtual = c;
 
-  if (checklistAtual.obs) {
-    html += `<div style="margin-bottom:16px;"><strong style="font-size:13px;">Observações:</strong>
-      <div style="background:var(--cinza-claro);padding:10px;border-radius:8px;font-size:13px;margin-top:6px;">${checklistAtual.obs}</div></div>`;
-  }
+  // Info
+  document.getElementById('modal-titulo').textContent = c.formulario_titulo||'Checklist';
+  const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'BA-2':
+                    c.preenchidoPor==='lider_resgate'?'Líder de Resgate':'Motorista';
+  document.getElementById('modal-info').innerHTML = `
+    <div class="info-cell"><div class="info-cell-label">Viatura</div><div class="info-cell-val">${c.placa}</div></div>
+    <div class="info-cell"><div class="info-cell-label">Data</div><div class="info-cell-val">${c.data||'—'} dia ${c.dia||'—'}</div></div>
+    <div class="info-cell"><div class="info-cell-label">Preenchido por</div><div class="info-cell-val">${c.nome||'—'} (${tipoLabel})</div></div>
+    <div class="info-cell"><div class="info-cell-label">Equipe</div><div class="info-cell-val">${c.equipe||'—'}</div></div>`;
 
-  if (checklistAtual.assinatura_chefe_aprovado) {
-    html += `<div class="alert alert-success">✅ Este checklist já foi aprovado pelo chefe de equipe.</div>`;
-    document.getElementById('btn-assinar').style.display = 'none';
+  // NC aviso
+  const ncEl = document.getElementById('modal-nc-aviso');
+  ncEl.innerHTML = (c.nc>0)
+    ? `<div class="alert alert-warn">⚠ ${c.nc} item(ns) Não Conforme(s)</div>`
+    : `<div class="alert alert-success">✅ Todos os itens conformes</div>`;
+
+  // Itens
+  const itens = c.itens||{};
+  document.getElementById('modal-itens').innerHTML = Object.values(itens).map(v=>{
+    const ic = v.status==='C'?'✅':v.status==='NC'?'❌':'➖';
+    const st = v.status==='NC'?'color:var(--vermelho);background:#FFF5F5;border-radius:6px;':
+               v.status==='NA'?'color:var(--cinza);':'';
+    return `<div class="cl-item-row" style="${st}">
+      <span class="ci-num">${v.num||''}</span>
+      <span class="ci-nome">${ic} ${v.item||''}</span>
+      <span class="ci-status"><strong>${v.status||'—'}</strong></span>
+    </div>`;
+  }).join('') || '<div style="color:var(--cinza);font-size:13px;padding:10px;">Sem itens</div>';
+
+  // Observações
+  const obsEl = document.getElementById('modal-obs');
+  obsEl.innerHTML = c.obs
+    ? `<div class="alert alert-warn" style="margin-bottom:14px;">📝 <strong>Obs:</strong> ${c.obs}</div>`
+    : '';
+
+  // Assinatura do preenchedor (visualização)
+  const motLabel = c.preenchidoPor==='nome_guerra_ba2'?'ASSINATURA BA-2':
+                   c.preenchidoPor==='lider_resgate'?'ASSINATURA LÍDER':'ASSINATURA MOTORISTA';
+  document.getElementById('modal-sig-mot-label').textContent = motLabel;
+  const sigImg = document.getElementById('modal-sig-mot-img');
+  const sigVazio = document.getElementById('modal-sig-mot-vazio');
+  if(c.sigMotorista) {
+    sigImg.src = c.sigMotorista; sigImg.style.display='block';
+    sigVazio.style.display='none';
   } else {
-    html += `
-      <div style="margin-top:16px;">
-        <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Assinatura do Chefe de Equipe</div>
-        <div class="sig-canvas-wrap"><canvas class="sig-canvas" id="canvas-chefe-aprovacao"></canvas></div>
-        <button class="sig-clear" onclick="clearCanvas()">Limpar assinatura</button>
-      </div>`;
-    document.getElementById('btn-assinar').style.display = 'block';
+    sigImg.style.display='none'; sigVazio.style.display='block';
+  }
+  document.getElementById('modal-sig-mot-nome').textContent = c.nome||'—';
+
+  // Botão aprovar
+  const btnAprovar = document.getElementById('btn-aprovar');
+  if(c.aprovado_chefe) {
+    btnAprovar.style.display='none';
+    document.getElementById('canvas-chefe-modal').style.display='none';
+    document.querySelector('.sig-canvas-wrap').style.display='none';
+    document.querySelector('.sig-clear').style.display='none';
+  } else {
+    btnAprovar.style.display='block';
+    document.querySelector('.sig-canvas-wrap').style.display='block';
+    document.querySelector('.sig-clear').style.display='block';
+    initCanvas('canvas-chefe-modal');
   }
 
-  document.getElementById('modal-conteudo').innerHTML = html;
-  document.getElementById('modal-checklist').classList.add('open');
-
-  if (!checklistAtual.assinatura_chefe_aprovado) {
-    setTimeout(() => initCanvas(), 100);
-  }
-}
-
-function initCanvas() {
-  const c = document.getElementById('canvas-chefe-aprovacao');
-  if (!c) return;
-  const ctx = c.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  c.width = c.offsetWidth * dpr; c.height = 120 * dpr;
-  ctx.scale(dpr, dpr);
-  ctx.strokeStyle = '#E8520A'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  let drawing = false, lx, ly;
-  function pos(e){ const r=c.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return [s.clientX-r.left, s.clientY-r.top]; }
-  c.onmousedown = e => { drawing=true; [lx,ly]=pos(e); };
-  c.ontouchstart = e => { e.preventDefault(); drawing=true; [lx,ly]=pos(e); };
-  c.onmousemove = e => { if(!drawing)return; const[x,y]=pos(e); ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(x,y); ctx.stroke(); [lx,ly]=[x,y]; };
-  c.ontouchmove = e => { e.preventDefault(); if(!drawing)return; const[x,y]=pos(e); ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(x,y); ctx.stroke(); [lx,ly]=[x,y]; };
-  ['mouseup','mouseleave','touchend'].forEach(ev => c.addEventListener(ev, ()=>drawing=false));
-}
-
-function clearCanvas() {
-  const c = document.getElementById('canvas-chefe-aprovacao');
-  if (c) c.getContext('2d').clearRect(0,0,c.width,c.height);
-}
-
-async function assinarChecklist() {
-  const btn = document.getElementById('btn-assinar');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Salvando...';
-
-  const c = document.getElementById('canvas-chefe-aprovacao');
-  const sig = c ? c.toDataURL() : '';
-
-  try {
-    const r = await fetch(`/api/checklists/${checklistAtual.id}/aprovar`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chefe: CHEFES[equipeLogada],
-        equipe: equipeLogada,
-        assinatura_chefe_aprovado: sig,
-        aprovado_em: new Date().toISOString()
-      })
-    });
-    if (!r.ok) throw new Error(await r.text());
-    fecharModal();
-    carregarChecklists();
-    alert('✅ Checklist aprovado com sucesso!');
-  } catch(e) {
-    alert('Erro ao aprovar: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '✍️ Assinar e Aprovar';
-  }
+  document.getElementById('modal-cl').classList.add('open');
 }
 
 function fecharModal() {
-  document.getElementById('modal-checklist').classList.remove('open');
-  checklistAtual = null;
+  document.getElementById('modal-cl').classList.remove('open');
+  clAtual = null;
 }
 
-function sair() {
-  equipeLogada = null;
-  document.getElementById('tela-login').style.display = 'block';
-  document.getElementById('tela-principal').style.display = 'none';
-  document.getElementById('hdr-info').style.display = 'none';
-  document.getElementById('login-equipe').value = '';
-  document.getElementById('login-senha').value = '';
+async function aprovarChecklist() {
+  if(!clAtual) return;
+  const btn = document.getElementById('btn-aprovar');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Aprovando...';
+  const sigChefe = document.getElementById('canvas-chefe-modal').toDataURL();
+  try {
+    const r = await fetch(`/api/checklists/${clAtual.id}/aprovar`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        aprovado_chefe: true,
+        chefe: ME.chefe,
+        equipe_chefe: ME.equipe,
+        sigChefe: sigChefe,
+        data_aprovacao: new Date().toISOString()
+      })
+    });
+    if(!r.ok) throw new Error('Erro ao aprovar');
+    // Atualiza local
+    const idx = todosChecklists.findIndex(c=>c.id==clAtual.id);
+    if(idx>=0) {
+      todosChecklists[idx].aprovado_chefe=true;
+      todosChecklists[idx].sigChefe=sigChefe;
+      todosChecklists[idx].chefe=ME.chefe;
+    }
+    fecharModal();
+    renderLista();
+  } catch(e) {
+    alert('Erro: '+e.message);
+  } finally {
+    btn.disabled=false; btn.innerHTML='✅ Aprovar e Assinar';
+  }
 }
 
-document.getElementById('modal-checklist').addEventListener('click', e => {
-  if (e.target === e.currentTarget) fecharModal();
-});
-document.getElementById('login-senha').addEventListener('keypress', e => {
-  if (e.key === 'Enter') fazerLogin();
+function initCanvas(id) {
+  const c = document.getElementById(id);
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  c.width = c.offsetWidth*dpr; c.height = 100*dpr;
+  ctx.scale(dpr,dpr);
+  ctx.strokeStyle='#E8520A'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.lineJoin='round';
+  let drawing=false, lx, ly;
+  function pos(e){const r=c.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return[s.clientX-r.left,s.clientY-r.top];}
+  c.onmousedown=e=>{drawing=true;[lx,ly]=pos(e);};
+  c.ontouchstart=e=>{e.preventDefault();drawing=true;[lx,ly]=pos(e);};
+  c.onmousemove=e=>{if(!drawing)return;const[x,y]=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(x,y);ctx.stroke();[lx,ly]=[x,y];};
+  c.ontouchmove=e=>{e.preventDefault();if(!drawing)return;const[x,y]=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(x,y);ctx.stroke();[lx,ly]=[x,y];};
+  ['mouseup','mouseleave','touchend'].forEach(ev=>c.addEventListener(ev,()=>drawing=false));
+}
+
+function clearCanvas(id){
+  const c=document.getElementById(id);
+  if(c) c.getContext('2d').clearRect(0,0,c.width,c.height);
+}
+
+document.getElementById('modal-cl').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modal-cl')) fecharModal();
 });
 </script>
 </body>
