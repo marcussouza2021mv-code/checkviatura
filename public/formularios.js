@@ -154,7 +154,7 @@ const FORMULARIOS = {
               { num: 38, item: "NÍVEL DO TANQUE DE LGE" },
               { num: 39, item: "TRIÂNGULO DE SINALIZAÇÃO" },
               { num: 40, item: "EXTINTOR ABC 2KG" },
-              { num: 41, item: "EXTINTOR ABC 2KG" },
+              { num: 41, item: "CHAVE DE ABERTURA DAS VÁLVULAS DE PQ COMPARTIMENTO TRASEIRO" },
               { num: 42, item: "ALAVANCA DE ELEVAÇÃO DA CABINE" }
             ]
           }
@@ -199,8 +199,8 @@ const FORMULARIOS = {
               { num: 28, item: "01 CHAVE DE ABERTURA MANUAL DO CANHÃO DE TETO, COMPARTIMENTO \"SUPERIOR\"" },
               { num: 29, item: "01 RALO DE SUCÇÃO, COMPARTIMENTO SUPERIOR" },
               { num: 30, item: "01 DERIVANTE (DIVISOR) DE 2 ½\" PARA 2 SAÍDAS DE 1 ½\", CABINE" },
-              { num: 31, item: "31 PRESILHA DA TAMPA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
-              { num: 32, item: "31 PRESILHA DA TAMPA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" },
+              { num: 31, item: "PRESILHA DA TAMPA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
+              { num: 32, item: "PRESILHA DA TAMPA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" },
               { num: 33, item: "01 TELA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
               { num: 34, item: "01 TELA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" }
             ]
@@ -294,7 +294,7 @@ const FORMULARIOS = {
               { num: 12, item: "01 ESCADA ESTENSORA, COMPARTIMENTO SUPERIOR" },
               { num: 13, item: "02 MANGOTES DE 4\" (SUCÇÃO), COMPARTIMENTO SUPERIOR" },
               { num: 14, item: "01 RALO DE SUCÇÃO, COMPARTIMENTO SUPERIOR" },
-              { num: 15, item: "31 PRESILHA DA TAMPA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
+              { num: 15, item: "PRESILHA DA TAMPA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
               { num: 16, item: "01 TELA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" },
               { num: 17, item: "01 TELA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
               { num: 18, item: "01 TELA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" }
@@ -408,8 +408,8 @@ const FORMULARIOS = {
               { num: 28, item: "01 CHAVE DE ABERTURA MANUAL DO CANHÃO DE TETO, COMPARTIMENTO \"SUPERIOR\"" },
               { num: 29, item: "01 RALO DE SUCÇÃO, COMPARTIMENTO SUPERIOR" },
               { num: 30, item: "01 DERIVANTE (DIVISOR) DE 2 ½\" PARA 2 SAÍDAS DE 1 ½\", CABINE" },
-              { num: 31, item: "31 PRESILHA DA TAMPA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
-              { num: 32, item: "31 PRESILHA DA TAMPA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" },
+              { num: 31, item: "PRESILHA DA TAMPA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
+              { num: 32, item: "PRESILHA DA TAMPA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" },
               { num: 33, item: "01 TELA DO TANQUE DE \"LGE\", COMPARTIMENTO SUPERIOR" },
               { num: 34, item: "01 TELA DO TANQUE DE ÁGUA, COMPARTIMENTO SUPERIOR" }
             ]
