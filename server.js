@@ -9,7 +9,8 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const DB_FILE = path.join(__dirname, 'data.json');
+// ✅ Salva fora da pasta do projeto — nunca perde com deploy!
+const DB_FILE = fs.existsSync('/data') ? '/data/data.json' : path.join(__dirname, 'data.json');
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
@@ -43,12 +44,13 @@ function readDB() {
       fs.writeFileSync(DB_FILE, JSON.stringify(d, null, 2));
       return d;
     }
-    const d = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-    if (!d || !d.usuarios) {
-      const def = defaultDB();
-      fs.writeFileSync(DB_FILE, JSON.stringify(def, null, 2));
-      return def;
-    }
+    const raw = fs.readFileSync(DB_FILE, 'utf8');
+    const d = JSON.parse(raw);
+    if (!d.usuarios)   d.usuarios   = defaultDB().usuarios;
+    if (!d.equipes)    d.equipes    = defaultDB().equipes;
+    if (!d.viaturas)   d.viaturas   = defaultDB().viaturas;
+    if (!d.checklists) d.checklists = [];
+    if (!d.alertas)    d.alertas    = [];
     return d;
   } catch(e) {
     const def = defaultDB();
@@ -86,7 +88,6 @@ function requireAuth(roles=[]) {
   };
 }
 
-// HELPERS
 function getEquipeNome(db, id) {
   const e = db.equipes.find(e => e.id == id);
   return e ? e.nome.replace('Equipe ', '') : '';
@@ -186,7 +187,7 @@ app.delete('/api/viaturas/:id', requireAuth(['admin']), (req, res) => {
   writeDB(db); res.json({ ok: true });
 });
 
-// CHECKLISTS PÚBLICO PARA CHEFE (lista por equipe)
+// CHECKLISTS PÚBLICO (chefe)
 app.get('/api/checklists/publico', (req, res) => {
   const db = readDB();
   let data = [...db.checklists];
@@ -194,7 +195,6 @@ app.get('/api/checklists/publico', (req, res) => {
   res.json(data.reverse());
 });
 
-// CHECKLISTS PÚBLICO PARA CHEFE (busca por ID)
 app.get('/api/checklists/publico/:id', (req, res) => {
   const db = readDB();
   const c = db.checklists.find(c => String(c.id) === String(req.params.id));
@@ -202,24 +202,20 @@ app.get('/api/checklists/publico/:id', (req, res) => {
   res.json(c);
 });
 
-// CHECKLISTS (autenticado) — com filtro por nome de equipe e placa
+// CHECKLISTS (autenticado)
 app.get('/api/checklists', requireAuth(), (req, res) => {
   const db = readDB();
   let data = [...db.checklists];
-
   if (req.query.mes) {
     data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
   }
-
   if (req.query.viatura_id) {
     const placa = getViaturaPlacar(db, req.query.viatura_id);
     data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
   }
-
   if (req.query.status) {
     data = data.filter(c => c.status === req.query.status);
   }
-
   if (req.query.equipe_id) {
     const nomeEquipe = getEquipeNome(db, req.query.equipe_id);
     data = data.filter(c =>
@@ -228,7 +224,6 @@ app.get('/api/checklists', requireAuth(), (req, res) => {
       c.equipe === 'Equipe ' + nomeEquipe
     );
   }
-
   res.json(data.reverse());
 });
 
@@ -253,7 +248,6 @@ app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), (req, res) => 
   writeDB(db); res.json({ ok: true });
 });
 
-// APROVAR CHECKLIST
 app.post('/api/checklists/:id/aprovar', (req, res) => {
   const db = readDB();
   const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
@@ -293,7 +287,11 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
   });
   const porEquipe = db.equipes.map(e => {
     const nomeSimples = e.nome.replace('Equipe ','');
-    const myCls = cls.filter(c => c.equipe_id==e.id || c.equipe===nomeSimples || c.equipe===e.nome);
+    const myCls = cls.filter(c =>
+      c.equipe_id == e.id ||
+      c.equipe === nomeSimples ||
+      c.equipe === e.nome
+    );
     const nok = myCls.filter(c=>c.status==='nok').length;
     return { ...e, total: myCls.length, ok: myCls.length-nok, nok };
   });
