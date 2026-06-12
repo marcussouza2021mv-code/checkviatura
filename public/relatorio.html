@@ -16,11 +16,7 @@ body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
 .btn-voltar{background:transparent;border:1px solid #ccc;color:#333;}
 .folha{width:297mm;min-height:210mm;background:#fff;margin:0 auto 20px;padding:6mm;font-size:7.5pt;box-shadow:0 2px 12px rgba(0,0,0,.15);}
 .cab-wrap{display:flex;border:1px solid #000;margin-bottom:0;}
-.cab-logo{width:35mm;border-right:1px solid #000;display:flex;align-items:center;justify-content:center;padding:4px;}
-.cab-logo-inner{text-align:center;}
-.cab-logo-inner .med{font-size:18pt;font-weight:900;line-height:1;}
-.cab-logo-inner .plus{color:#E8520A;font-size:18pt;font-weight:900;}
-.cab-logo-inner .group{font-size:7pt;letter-spacing:1px;margin-top:2px;}
+.cab-logo{width:35mm;border-right:1px solid #000;display:flex;align-items:center;justify-content:center;padding:6px;}
 .cab-titulo{flex:1;display:flex;align-items:center;justify-content:center;border-right:1px solid #000;padding:4px;}
 .cab-titulo-text{font-size:11pt;font-weight:700;text-align:center;}
 .cab-codigo{width:45mm;font-size:7pt;}
@@ -49,12 +45,12 @@ table.cl{width:100%;border-collapse:collapse;table-layout:fixed;}
 .cl tr.tr-assin td{height:14mm;vertical-align:bottom;padding:1px;}
 .cl tr.tr-assin td.td-item{font-size:6pt;color:#555;font-style:italic;vertical-align:middle;}
 .cl tr.tr-nome td{font-size:5.5pt;color:#444;border-top:0.5px solid #aaa;padding:1px;}
-.cl tr.tr-nome td.td-item{font-style:italic;color:#555;}
-.cl tr.tr-chefe td{font-size:5.5pt;color:#444;border-top:0.5px solid #aaa;padding:1px;background:#f9f9f9;}
-.cl tr.tr-chefe td.td-item{font-style:italic;color:#555;}
+.cl tr.tr-nome td.td-item{font-style:italic;color:#555;font-size:5.5pt;}
+.cl tr.tr-chefe td{font-size:5.5pt;color:#444;border-top:0.5px solid #ccc;padding:1px;background:#f9f9f9;}
+.cl tr.tr-chefe td.td-item{font-style:italic;color:#555;font-size:5.5pt;}
 .sig-img{max-width:100%;max-height:12mm;object-fit:contain;display:block;margin:0 auto;}
-.rodape{border:1px solid #000;border-top:none;display:flex;}
-.rod-obs{flex:1;padding:4px 6px;}
+.rodape{border:1px solid #000;border-top:none;}
+.rod-obs{padding:4px 6px;}
 .rod-obs-title{font-size:6.5pt;font-weight:700;margin-bottom:2px;}
 .rod-obs-text{font-size:6.5pt;min-height:14mm;}
 .cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:2px 6px;font-size:6pt;color:#555;}
@@ -160,7 +156,7 @@ async function gerar(){
   const mesLabel = MESES[mesNum-1].toUpperCase()+' / '+ano;
   const obs = filtrados.map(c=>c.obs).filter(Boolean).join(' | ') || '';
 
-  // ✅ Linha de assinatura do motorista (imagem)
+  // Linha de assinatura do motorista (imagem)
   let tdAssin = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
@@ -170,7 +166,7 @@ async function gerar(){
     return `<td style="padding:1px;">${sig?`<img class="sig-img" src="${sig}">`:'<div style="height:12mm;"></div>'}</td>`;
   }).join('');
 
-  // ✅ Linha com nome do motorista
+  // Linha com nome do motorista
   let tdNome = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
@@ -179,7 +175,7 @@ async function gerar(){
     return `<td style="font-size:5pt;overflow:hidden;">${(c.nome||'').substring(0,8)}</td>`;
   }).join('');
 
-  // ✅ Linha com nome do chefe de equipe
+  // Linha com nome do chefe de equipe
   let tdChefe = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
@@ -207,10 +203,7 @@ async function gerar(){
   <div class="folha">
     <div class="cab-wrap">
       <div class="cab-logo">
-        <div class="cab-logo-inner">
-          <div><span class="med">med</span><span class="plus">+</span></div>
-          <div class="group">Group</div>
-        </div>
+        <img src="/Med+.png" style="max-width:28mm;max-height:18mm;object-fit:contain;">
       </div>
       <div class="cab-titulo">
         <div>
