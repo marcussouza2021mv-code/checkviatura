@@ -57,10 +57,8 @@ function readDB() {
 
 function writeDB(db) { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); }
 
-// init
 readDB();
 
-// SESSOES
 const sessions = {};
 function newSession(user) {
   const token = crypto.randomBytes(32).toString('hex');
@@ -176,7 +174,23 @@ app.delete('/api/viaturas/:id', requireAuth(['admin']), (req, res) => {
   writeDB(db); res.json({ ok: true });
 });
 
-// CHECKLISTS
+// CHECKLISTS PÚBLICO PARA CHEFE (lista por equipe)
+app.get('/api/checklists/publico', (req, res) => {
+  const db = readDB();
+  let data = [...db.checklists];
+  if (req.query.equipe) data = data.filter(c => c.equipe === req.query.equipe);
+  res.json(data.reverse());
+});
+
+// CHECKLISTS PÚBLICO PARA CHEFE (busca por ID)
+app.get('/api/checklists/publico/:id', (req, res) => {
+  const db = readDB();
+  const c = db.checklists.find(c => String(c.id) === String(req.params.id));
+  if (!c) return res.status(404).json({ erro: 'Não encontrado' });
+  res.json(c);
+});
+
+// CHECKLISTS (autenticado)
 app.get('/api/checklists', requireAuth(), (req, res) => {
   const db = readDB();
   let data = [...db.checklists];
@@ -186,6 +200,7 @@ app.get('/api/checklists', requireAuth(), (req, res) => {
   if (req.query.equipe_id)  data = data.filter(c => c.equipe_id == req.query.equipe_id);
   res.json(data.reverse());
 });
+
 app.post('/api/checklists', (req, res) => {
   const db = readDB();
   const r = { id: Date.now(), ...req.body };
@@ -200,10 +215,21 @@ app.post('/api/checklists', (req, res) => {
   }
   writeDB(db); res.json(r);
 });
+
 app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), (req, res) => {
   const db = readDB();
   db.checklists = db.checklists.filter(c => c.id != req.params.id);
   writeDB(db); res.json({ ok: true });
+});
+
+// APROVAR CHECKLIST
+app.post('/api/checklists/:id/aprovar', (req, res) => {
+  const db = readDB();
+  const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
+  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
+  db.checklists[idx] = { ...db.checklists[idx], ...req.body };
+  writeDB(db);
+  res.json(db.checklists[idx]);
 });
 
 // ALERTAS
@@ -264,32 +290,6 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
   });
 });
 
-// CHECKLISTS PUBLICO PARA CHEFE
-app.get('/api/checklists/publico',(req,res)=>{
-  const db=readDB();
-  let data=[...db.checklists];
-  if(req.query.equipe)data=data.filter(c=>c.equipe===req.query.equipe);
-  res.json(data);
-});
-
-// APROVAR CHECKLIST
-app.post('/api/checklists/:id/aprovar',(req,res)=>{
-  const db=readDB();
-  const idx=db.checklists.findIndex(c=>String(c.id)===String(req.params.id));
-  if(idx===-1)return res.status(404).json({error:'Nao encontrado'});
-  db.checklists[idx]={...db.checklists[idx],...req.body};
-  writeDB(db);
-  res.json(db.checklists[idx]);
-});
-// APROVAR CHECKLIST
-app.post('/api/checklists/:id/aprovar',(req,res)=>{
-  const db=readDB();
-  const idx=db.checklists.findIndex(c=>String(c.id)===String(req.params.id));
-  if(idx===-1)return res.status(404).json({error:'Nao encontrado'});
-  db.checklists[idx]={...db.checklists[idx],...req.body};
-  writeDB(db);
-  res.json(db.checklists[idx]);
-});
 // EXPORT CSV
 app.get('/api/export/csv', requireAuth(), (req, res) => {
   const db = readDB();
