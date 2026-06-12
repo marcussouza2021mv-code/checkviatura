@@ -20,14 +20,16 @@ function defaultDB() {
       { id: 2, nome: 'Chefe Alpha', login: 'chefe1', senha: hash('chefe123'), role: 'chefe', equipe_id: 1 }
     ],
     equipes: [
-      { id: 1, nome: 'Equipe Alpha', chefe: 'Carlos Souza' },
-      { id: 2, nome: 'Equipe Beta',  chefe: 'Mariana Lima'  }
+      { id: 1, nome: 'Equipe Alfa', chefe: 'Cerqueira' },
+      { id: 2, nome: 'Equipe Bravo', chefe: 'Savio' },
+      { id: 3, nome: 'Equipe Charlie', chefe: 'Cleber' },
+      { id: 4, nome: 'Equipe Delta', chefe: 'Douglas' }
     ],
     viaturas: [
       { id: 1, placa: 'CRS',      modelo: 'IVECO DAILY',      equipe_id: 1 },
-      { id: 2, placa: 'DOSA 318', modelo: 'IVECO MAGIRUS X6', equipe_id: 1 },
-      { id: 3, placa: 'AP-2',     modelo: 'FENIX',            equipe_id: 2 },
-      { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', equipe_id: 2 }
+      { id: 2, placa: 'DOSA 318', modelo: 'IVECO MAGIRUS X6', cci: '02', equipe_id: 2 },
+      { id: 3, placa: 'AP-2',     modelo: 'FÊNIX',            cci: '03', equipe_id: 3 },
+      { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', cci: '01', equipe_id: 4 }
     ],
     checklists: [],
     alertas: []
@@ -82,6 +84,16 @@ function requireAuth(roles=[]) {
     req.user = s;
     next();
   };
+}
+
+// HELPERS
+function getEquipeNome(db, id) {
+  const e = db.equipes.find(e => e.id == id);
+  return e ? e.nome.replace('Equipe ', '') : '';
+}
+function getViaturaPlacar(db, id) {
+  const v = db.viaturas.find(v => v.id == id);
+  return v ? v.placa : '';
 }
 
 // AUTH
@@ -190,14 +202,33 @@ app.get('/api/checklists/publico/:id', (req, res) => {
   res.json(c);
 });
 
-// CHECKLISTS (autenticado)
+// CHECKLISTS (autenticado) — com filtro por nome de equipe e placa
 app.get('/api/checklists', requireAuth(), (req, res) => {
   const db = readDB();
   let data = [...db.checklists];
-  if (req.query.mes)        data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
-  if (req.query.viatura_id) data = data.filter(c => c.viatura_id == req.query.viatura_id);
-  if (req.query.status)     data = data.filter(c => c.status === req.query.status);
-  if (req.query.equipe_id)  data = data.filter(c => c.equipe_id == req.query.equipe_id);
+
+  if (req.query.mes) {
+    data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
+  }
+
+  if (req.query.viatura_id) {
+    const placa = getViaturaPlacar(db, req.query.viatura_id);
+    data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
+  }
+
+  if (req.query.status) {
+    data = data.filter(c => c.status === req.query.status);
+  }
+
+  if (req.query.equipe_id) {
+    const nomeEquipe = getEquipeNome(db, req.query.equipe_id);
+    data = data.filter(c =>
+      c.equipe_id == req.query.equipe_id ||
+      c.equipe === nomeEquipe ||
+      c.equipe === 'Equipe ' + nomeEquipe
+    );
+  }
+
   res.json(data.reverse());
 });
 
@@ -261,7 +292,8 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
     return { ...v, equipe: eq.nome||'—', total: myCls.length, ok: myCls.length-nok, nok };
   });
   const porEquipe = db.equipes.map(e => {
-    const myCls = cls.filter(c=>c.equipe_id==e.id);
+    const nomeSimples = e.nome.replace('Equipe ','');
+    const myCls = cls.filter(c => c.equipe_id==e.id || c.equipe===nomeSimples || c.equipe===e.nome);
     const nok = myCls.filter(c=>c.status==='nok').length;
     return { ...e, total: myCls.length, ok: myCls.length-nok, nok };
   });
@@ -295,7 +327,7 @@ app.get('/api/export/csv', requireAuth(), (req, res) => {
   const db = readDB();
   let data = [...db.checklists];
   if (req.query.mes) data = data.filter(c=>c.data&&c.data.startsWith(req.query.mes));
-  if (req.query.viatura_id) data = data.filter(c=>c.viatura_id==req.query.viatura_id);
+  if (req.query.viatura_id) data = data.filter(c=>c.viatura_id==req.query.viatura_id||c.placa==getViaturaPlacar(db,req.query.viatura_id));
   data.sort((a,b)=>a.data>b.data?1:-1);
   const header=['ID','Data','Placa','Modelo','Equipe','Nome','CPF','KM','Status','Pendencias','Observacao'];
   const rows=data.map(c=>[c.id,c.data,c.placa,c.modelo,c.equipe,c.nome||c.motorista||'',c.cpf||'',c.km||'',c.status,c.nc||c.nok||0,(c.obs||'').replace(/,/g,';')]);
