@@ -14,7 +14,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;font-size:16px;}
-
 header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
 .header-logo img{height:36px;object-fit:contain;}
 .header-info{flex:1;}
@@ -22,65 +21,54 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10p
 .header-sub{font-size:10px;opacity:.75;margin-top:1px;}
 .header-right{display:flex;align-items:center;gap:8px;}
 .logout-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600;}
-
 .page{padding:16px;max-width:600px;margin:0 auto;}
-
 .card{background:var(--branco);border:1px solid var(--cinza-borda);border-radius:12px;padding:16px;margin-bottom:14px;}
 .card-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-
 .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .form-group label{font-size:12px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
 .form-group input,.form-group select{padding:12px 14px;border:1.5px solid var(--cinza-borda);border-radius:10px;font-size:16px;color:var(--texto);background:var(--branco);font-family:inherit;-webkit-appearance:none;}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--laranja-borda);}
-
 .btn{padding:14px 22px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .12s;width:100%;display:block;text-align:center;}
 .btn-primary{background:var(--laranja);color:#fff;}
 .btn-primary:active{background:var(--laranja2);}
 .btn-outline{background:transparent;border:1.5px solid var(--cinza-borda);color:var(--texto);margin-bottom:10px;}
 .btn-success{background:var(--verde);color:#fff;}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
-
 .badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
 .badge-ok{background:var(--verde-claro);color:var(--verde);}
 .badge-nok{background:var(--vermelho-claro);color:var(--vermelho);}
 .badge-pendente{background:#FEF3C7;color:#92400E;}
-
 .alert{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;}
 .alert-warn{background:#FEF3C7;color:#92400E;}
 .alert-info{background:var(--laranja-claro);color:var(--laranja2);}
 .alert-success{background:var(--verde-claro);color:var(--verde);}
 .alert-danger{background:var(--vermelho-claro);color:var(--vermelho);}
-
 .cl-item-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:.5px solid #F0EDE8;font-size:12px;}
 .cl-item-row:last-child{border-bottom:none;}
 .ci-num{width:24px;text-align:center;color:var(--cinza);font-weight:700;font-size:11px;flex-shrink:0;}
 .ci-nome{flex:1;line-height:1.3;}
 .ci-status{flex-shrink:0;}
-
 .tab-bar{display:flex;background:var(--branco);border-bottom:1px solid var(--cinza-borda);margin-bottom:16px;overflow-x:auto;}
 .tab-btn{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--cinza);border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;}
 .tab-btn.active{color:var(--laranja);border-bottom-color:var(--laranja);}
-
 .checklist-card{background:var(--branco);border:1.5px solid var(--cinza-borda);border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;transition:all .15s;}
 .checklist-card:active{transform:scale(.98);}
 .checklist-card.nok{border-left:4px solid var(--vermelho);}
 .checklist-card.ok{border-left:4px solid var(--verde);}
+.checklist-card.pendente{border-left:4px solid var(--laranja);}
 .cc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
 .cc-titulo{font-size:14px;font-weight:700;}
 .cc-info{font-size:11px;color:var(--texto-sec);margin-top:3px;}
-
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--branco);border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-height:92vh;overflow-y:auto;}
 .modal-title{font-size:17px;font-weight:700;margin-bottom:14px;}
-
 .sig-box{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .sig-label-top{font-size:12px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
 .sig-canvas-wrap{border:1.5px dashed var(--cinza-borda);border-radius:8px;background:#FAFAF8;}
-canvas.sig-canvas{display:block;width:100%;height:100px;cursor:crosshair;touch-action:none;}
+canvas.sig-canvas{display:block;width:100%;height:110px;cursor:crosshair;touch-action:none;}
 .sig-name-label{font-size:12px;color:var(--laranja);text-align:center;padding:3px;border-top:1px solid var(--cinza-borda);font-weight:500;}
 .sig-clear{font-size:11px;color:var(--texto-sec);cursor:pointer;background:none;border:none;padding:0;text-align:right;display:block;margin-top:2px;font-family:inherit;}
-
 .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--laranja2);padding:20px;}
 .login-box{background:var(--branco);border-radius:16px;padding:32px 24px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.25);}
 .login-logo{text-align:center;margin-bottom:16px;}
@@ -88,19 +76,17 @@ canvas.sig-canvas{display:block;width:100%;height:100px;cursor:crosshair;touch-a
 .login-title{text-align:center;font-size:18px;font-weight:700;color:var(--laranja);margin-bottom:4px;}
 .login-sub{text-align:center;font-size:13px;color:var(--cinza);margin-bottom:20px;}
 .login-err{color:var(--vermelho);font-size:13px;text-align:center;margin-top:10px;display:none;}
-
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .info-cell{background:var(--cinza-claro);border-radius:8px;padding:8px 10px;}
 .info-cell-label{font-size:10px;color:var(--texto-sec);font-weight:700;text-transform:uppercase;}
 .info-cell-val{font-size:13px;font-weight:700;color:var(--texto);margin-top:2px;}
-
-.nc-list-item{padding:8px 10px;background:var(--vermelho-claro);border-radius:8px;font-size:12px;color:var(--vermelho);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
 </style>
 </head>
-<body><!-- LOGIN -->
+<body>
+
+<!-- LOGIN -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
     <div class="login-logo"><img src="/Med+.png" alt="med+ Group"></div>
@@ -155,11 +141,11 @@ canvas.sig-canvas{display:block;width:100%;height:100px;cursor:crosshair;touch-a
     <div class="modal-title" id="modal-titulo">Checklist</div>
     <div class="info-grid" id="modal-info"></div>
     <div id="modal-nc-aviso"></div>
-    <div id="modal-itens" style="max-height:35vh;overflow-y:auto;border:1px solid var(--cinza-borda);border-radius:10px;padding:8px;margin-bottom:14px;"></div>
+    <div id="modal-itens" style="max-height:30vh;overflow-y:auto;border:1px solid var(--cinza-borda);border-radius:10px;padding:8px;margin-bottom:14px;"></div>
     <div id="modal-obs"></div>
 
-    <!-- Assinatura do motorista (só visualização) -->
-    <div id="modal-sig-motorista" style="margin-bottom:14px;">
+    <!-- Assinatura do motorista/BA (só visualização) -->
+    <div style="margin-bottom:14px;">
       <div class="sig-label-top" id="modal-sig-mot-label">ASSINATURA DO PREENCHEDOR</div>
       <div style="border:1px solid var(--cinza-borda);border-radius:8px;padding:8px;background:#FAFAF8;min-height:60px;display:flex;align-items:center;justify-content:center;">
         <img id="modal-sig-mot-img" src="" style="max-height:55px;display:none;">
@@ -168,20 +154,24 @@ canvas.sig-canvas{display:block;width:100%;height:100px;cursor:crosshair;touch-a
       <div class="sig-name-label" id="modal-sig-mot-nome">—</div>
     </div>
 
-    <!-- Assinatura do CHEFE (canvas para assinar) -->
-    <div class="sig-box">
-      <div class="sig-label-top">VISTO CHEFE DE EQUIPE</div>
-      <div class="sig-canvas-wrap"><canvas class="sig-canvas" id="canvas-chefe-modal"></canvas></div>
+    <!-- Assinatura do CHEFE -->
+    <div class="sig-box" id="sig-chefe-box">
+      <div class="sig-label-top">✍️ VISTO CHEFE DE EQUIPE</div>
+      <div class="sig-canvas-wrap" id="sig-canvas-wrap">
+        <canvas class="sig-canvas" id="canvas-chefe-modal"></canvas>
+      </div>
       <div class="sig-name-label" id="modal-sig-chefe-nome">—</div>
       <button class="sig-clear" onclick="clearCanvas('canvas-chefe-modal')">Limpar assinatura</button>
     </div>
 
-    <div id="modal-btns" style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
       <button class="btn btn-success" id="btn-aprovar" onclick="aprovarChecklist()">✅ Aprovar e Assinar</button>
       <button class="btn btn-outline" onclick="fecharModal()">Fechar</button>
     </div>
   </div>
-</div><script>
+</div>
+
+<script>
 const SENHAS = { Alfa:'alfa123', Bravo:'bravo123', Charlie:'charlie123', Delta:'delta123' };
 const CHEFES = { Alfa:'Cerqueira', Bravo:'Savio', Charlie:'Cleber', Delta:'Douglas' };
 
@@ -189,6 +179,7 @@ let ME = { equipe:'', chefe:'' };
 let todosChecklists = [];
 let clAtual = null;
 let tabAtual = 'pendentes';
+let canvasIniciado = false;
 
 function doLogin() {
   const equipe = document.getElementById('li-equipe').value;
@@ -200,9 +191,13 @@ function doLogin() {
   ME.equipe = equipe;
   ME.chefe  = CHEFES[equipe];
   localStorage.setItem('chefe_equipe', equipe);
+  iniciarApp();
+}
+
+function iniciarApp() {
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('hdr-sub').textContent = `Equipe ${equipe} — Chefe: ${ME.chefe}`;
+  document.getElementById('hdr-sub').textContent = `Equipe ${ME.equipe} — Chefe: ${ME.chefe}`;
   document.getElementById('modal-sig-chefe-nome').textContent = ME.chefe;
   carregarChecklists();
 }
@@ -217,13 +212,9 @@ function doLogout() {
 // auto login
 const saved = localStorage.getItem('chefe_equipe');
 if(saved && SENHAS[saved]) {
-  document.getElementById('li-equipe').value = saved;
-  ME.equipe = saved; ME.chefe = CHEFES[saved];
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('hdr-sub').textContent = `Equipe ${saved} — Chefe: ${ME.chefe}`;
-  document.getElementById('modal-sig-chefe-nome').textContent = ME.chefe;
-  carregarChecklists();
+  ME.equipe = saved;
+  ME.chefe  = CHEFES[saved];
+  iniciarApp();
 }
 
 async function carregarChecklists() {
@@ -232,16 +223,19 @@ async function carregarChecklists() {
   try {
     const r = await fetch('/api/checklists/publico');
     const todos = await r.json();
-    // Filtra pela equipe do chefe
-    todosChecklists = todos.filter(c =>
-      c.equipe === ME.equipe ||
-      c.equipe === 'Equipe '+ME.equipe ||
-      c.nome_chefe === ME.chefe
-    );
+
+    // ✅ Filtro corrigido — pega motorista E BA pela equipe OU nome do chefe
+    todosChecklists = todos.filter(c => {
+      const equipeOk = c.equipe === ME.equipe ||
+                       c.equipe === 'Equipe ' + ME.equipe;
+      const chefeOk  = c.nome_chefe === ME.chefe;
+      return equipeOk || chefeOk;
+    });
+
     renderLista();
   } catch(e) {
     document.getElementById('lista-checklists').innerHTML =
-      '<div class="alert alert-danger">Erro ao carregar checklists.</div>';
+      '<div class="alert alert-danger">Erro ao carregar. Tente novamente.</div>';
   }
 }
 
@@ -256,7 +250,7 @@ function renderLista() {
   let lista = [...todosChecklists];
   if(tabAtual==='pendentes') lista = lista.filter(c=>!c.aprovado_chefe);
   if(tabAtual==='aprovados') lista = lista.filter(c=>c.aprovado_chefe);
-  lista.sort((a,b)=>b.data>a.data?1:-1);
+  lista.sort((a,b)=>(b.data||'')>(a.data||'')?1:-1);
 
   const el = document.getElementById('lista-checklists');
   if(!lista.length) {
@@ -271,16 +265,15 @@ function renderLista() {
     const cls = isPendente ? 'pendente' : c.status==='ok' ? 'ok' : 'nok';
     const badge = isPendente
       ? '<span class="badge badge-pendente">⏳ Aguarda aprovação</span>'
-      : c.status==='ok'
-        ? '<span class="badge badge-ok">✅ Aprovado</span>'
-        : `<span class="badge badge-nok">⚠ ${c.nc||0} NC</span>`;
-    const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'BA-2':
-                      c.preenchidoPor==='lider_resgate'?'Líder':'Motorista';
+      : '<span class="badge badge-ok">✅ Aprovado</span>';
+    const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'🔧 BA-2':
+                      c.preenchidoPor==='lider_resgate'?'👑 Líder':'🚗 Motorista';
     return `<div class="checklist-card ${cls}" onclick="abrirChecklist(${c.id})">
       <div class="cc-header">
         <div>
           <div class="cc-titulo">${c.formulario_titulo||'Checklist'}</div>
-          <div class="cc-info">📅 ${c.data||'—'} dia ${c.dia||'—'} • 🚒 ${c.placa} • 👤 ${c.nome||'—'} (${tipoLabel})</div>
+          <div class="cc-info">📅 ${c.data||'—'} • 🚒 ${c.placa} • 👤 ${c.nome||'—'} ${tipoLabel}</div>
+          <div class="cc-info">👥 Equipe ${c.equipe||'—'}</div>
         </div>
         ${badge}
       </div>
@@ -292,24 +285,23 @@ async function abrirChecklist(id) {
   const c = todosChecklists.find(x=>x.id==id);
   if(!c) return;
   clAtual = c;
+  canvasIniciado = false;
 
-  // Info
-  document.getElementById('modal-titulo').textContent = c.formulario_titulo||'Checklist';
   const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'BA-2':
                     c.preenchidoPor==='lider_resgate'?'Líder de Resgate':'Motorista';
+
+  document.getElementById('modal-titulo').textContent = c.formulario_titulo||'Checklist';
   document.getElementById('modal-info').innerHTML = `
     <div class="info-cell"><div class="info-cell-label">Viatura</div><div class="info-cell-val">${c.placa}</div></div>
-    <div class="info-cell"><div class="info-cell-label">Data</div><div class="info-cell-val">${c.data||'—'} dia ${c.dia||'—'}</div></div>
-    <div class="info-cell"><div class="info-cell-label">Preenchido por</div><div class="info-cell-val">${c.nome||'—'} (${tipoLabel})</div></div>
+    <div class="info-cell"><div class="info-cell-label">Data</div><div class="info-cell-val">${c.data||'—'}</div></div>
+    <div class="info-cell"><div class="info-cell-label">${tipoLabel}</div><div class="info-cell-val">${c.nome||'—'}</div></div>
     <div class="info-cell"><div class="info-cell-label">Equipe</div><div class="info-cell-val">${c.equipe||'—'}</div></div>`;
 
-  // NC aviso
   const ncEl = document.getElementById('modal-nc-aviso');
   ncEl.innerHTML = (c.nc>0)
     ? `<div class="alert alert-warn">⚠ ${c.nc} item(ns) Não Conforme(s)</div>`
     : `<div class="alert alert-success">✅ Todos os itens conformes</div>`;
 
-  // Itens
   const itens = c.itens||{};
   document.getElementById('modal-itens').innerHTML = Object.values(itens).map(v=>{
     const ic = v.status==='C'?'✅':v.status==='NC'?'❌':'➖';
@@ -322,19 +314,17 @@ async function abrirChecklist(id) {
     </div>`;
   }).join('') || '<div style="color:var(--cinza);font-size:13px;padding:10px;">Sem itens</div>';
 
-  // Observações
   const obsEl = document.getElementById('modal-obs');
   obsEl.innerHTML = c.obs
-    ? `<div class="alert alert-warn" style="margin-bottom:14px;">📝 <strong>Obs:</strong> ${c.obs}</div>`
-    : '';
+    ? `<div class="alert alert-warn" style="margin-bottom:14px;">📝 ${c.obs}</div>` : '';
 
-  // Assinatura do preenchedor (visualização)
+  // Assinatura do preenchedor
   const motLabel = c.preenchidoPor==='nome_guerra_ba2'?'ASSINATURA BA-2':
                    c.preenchidoPor==='lider_resgate'?'ASSINATURA LÍDER':'ASSINATURA MOTORISTA';
   document.getElementById('modal-sig-mot-label').textContent = motLabel;
-  const sigImg = document.getElementById('modal-sig-mot-img');
+  const sigImg   = document.getElementById('modal-sig-mot-img');
   const sigVazio = document.getElementById('modal-sig-mot-vazio');
-  if(c.sigMotorista) {
+  if(c.sigMotorista && c.sigMotorista.length > 100) {
     sigImg.src = c.sigMotorista; sigImg.style.display='block';
     sigVazio.style.display='none';
   } else {
@@ -342,33 +332,43 @@ async function abrirChecklist(id) {
   }
   document.getElementById('modal-sig-mot-nome').textContent = c.nome||'—';
 
-  // Botão aprovar
-  const btnAprovar = document.getElementById('btn-aprovar');
+  // Botão aprovar e canvas
+  const btnAprovar  = document.getElementById('btn-aprovar');
+  const sigBox      = document.getElementById('sig-chefe-box');
   if(c.aprovado_chefe) {
     btnAprovar.style.display='none';
-    document.getElementById('canvas-chefe-modal').style.display='none';
-    document.querySelector('.sig-canvas-wrap').style.display='none';
-    document.querySelector('.sig-clear').style.display='none';
+    sigBox.style.display='none';
   } else {
     btnAprovar.style.display='block';
-    document.querySelector('.sig-canvas-wrap').style.display='block';
-    document.querySelector('.sig-clear').style.display='block';
-    initCanvas('canvas-chefe-modal');
+    sigBox.style.display='block';
   }
 
+  // Abre modal PRIMEIRO, depois inicia canvas com delay
   document.getElementById('modal-cl').classList.add('open');
+
+  if(!c.aprovado_chefe) {
+    setTimeout(() => {
+      initCanvas('canvas-chefe-modal');
+      canvasIniciado = true;
+    }, 400);
+  }
 }
 
 function fecharModal() {
   document.getElementById('modal-cl').classList.remove('open');
   clAtual = null;
+  canvasIniciado = false;
 }
 
 async function aprovarChecklist() {
   if(!clAtual) return;
   const btn = document.getElementById('btn-aprovar');
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Aprovando...';
-  const sigChefe = document.getElementById('canvas-chefe-modal').toDataURL();
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Aprovando...';
+
+  const canvas = document.getElementById('canvas-chefe-modal');
+  const sigChefe = canvas.toDataURL();
+
   try {
     const r = await fetch(`/api/checklists/${clAtual.id}/aprovar`, {
       method:'POST',
@@ -382,46 +382,71 @@ async function aprovarChecklist() {
       })
     });
     if(!r.ok) throw new Error('Erro ao aprovar');
-    // Atualiza local
     const idx = todosChecklists.findIndex(c=>c.id==clAtual.id);
     if(idx>=0) {
-      todosChecklists[idx].aprovado_chefe=true;
-      todosChecklists[idx].sigChefe=sigChefe;
-      todosChecklists[idx].chefe=ME.chefe;
+      todosChecklists[idx].aprovado_chefe = true;
+      todosChecklists[idx].sigChefe = sigChefe;
+      todosChecklists[idx].chefe = ME.chefe;
     }
     fecharModal();
     renderLista();
   } catch(e) {
     alert('Erro: '+e.message);
   } finally {
-    btn.disabled=false; btn.innerHTML='✅ Aprovar e Assinar';
+    btn.disabled=false;
+    btn.innerHTML='✅ Aprovar e Assinar';
   }
 }
 
 function initCanvas(id) {
   const c = document.getElementById(id);
   if(!c) return;
+  // Limpa canvas anterior
   const ctx = c.getContext('2d');
   const dpr = window.devicePixelRatio||1;
-  c.width = c.offsetWidth*dpr; c.height = 100*dpr;
-  ctx.scale(dpr,dpr);
-  ctx.strokeStyle='#E8520A'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.lineJoin='round';
-  let drawing=false, lx, ly;
-  function pos(e){const r=c.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return[s.clientX-r.left,s.clientY-r.top];}
-  c.onmousedown=e=>{drawing=true;[lx,ly]=pos(e);};
-  c.ontouchstart=e=>{e.preventDefault();drawing=true;[lx,ly]=pos(e);};
-  c.onmousemove=e=>{if(!drawing)return;const[x,y]=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(x,y);ctx.stroke();[lx,ly]=[x,y];};
-  c.ontouchmove=e=>{e.preventDefault();if(!drawing)return;const[x,y]=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(x,y);ctx.stroke();[lx,ly]=[x,y];};
-  ['mouseup','mouseleave','touchend'].forEach(ev=>c.addEventListener(ev,()=>drawing=false));
+  const w = c.offsetWidth;
+  const h = 110;
+  c.width  = w * dpr;
+  c.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#E8520A';
+  ctx.lineWidth   = 2.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  // Remove eventos antigos clonando
+  const novo = c.cloneNode(true);
+  c.parentNode.replaceChild(novo, c);
+  const nc = document.getElementById(id);
+  const nctx = nc.getContext('2d');
+  nctx.scale(dpr, dpr);
+  nctx.strokeStyle = '#E8520A';
+  nctx.lineWidth   = 2.5;
+  nctx.lineCap     = 'round';
+  nctx.lineJoin    = 'round';
+  let drawing = false, lx, ly;
+  function pos(e) {
+    const r = nc.getBoundingClientRect();
+    const s = e.touches ? e.touches[0] : e;
+    return [s.clientX - r.left, s.clientY - r.top];
+  }
+  nc.addEventListener('mousedown',  e=>{drawing=true;[lx,ly]=pos(e);});
+  nc.addEventListener('touchstart', e=>{e.preventDefault();drawing=true;[lx,ly]=pos(e);},{passive:false});
+  nc.addEventListener('mousemove',  e=>{if(!drawing)return;const[x,y]=pos(e);nctx.beginPath();nctx.moveTo(lx,ly);nctx.lineTo(x,y);nctx.stroke();[lx,ly]=[x,y];});
+  nc.addEventListener('touchmove',  e=>{e.preventDefault();if(!drawing)return;const[x,y]=pos(e);nctx.beginPath();nctx.moveTo(lx,ly);nctx.lineTo(x,y);nctx.stroke();[lx,ly]=[x,y];},{passive:false});
+  ['mouseup','mouseleave','touchend'].forEach(ev=>nc.addEventListener(ev,()=>drawing=false));
 }
 
-function clearCanvas(id){
-  const c=document.getElementById(id);
-  if(c) c.getContext('2d').clearRect(0,0,c.width,c.height);
+function clearCanvas(id) {
+  const c = document.getElementById(id);
+  if(!c) return;
+  const dpr = window.devicePixelRatio||1;
+  c.getContext('2d').clearRect(0,0,c.width/dpr*dpr,c.height/dpr*dpr);
+  // Reinicia canvas
+  initCanvas(id);
 }
 
-document.getElementById('modal-cl').addEventListener('click',e=>{
-  if(e.target===document.getElementById('modal-cl')) fecharModal();
+document.getElementById('modal-cl').addEventListener('click', e=>{
+  if(e.target === document.getElementById('modal-cl')) fecharModal();
 });
 </script>
 </body>
