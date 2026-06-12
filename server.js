@@ -66,6 +66,29 @@ async function writeDB(db) {
   }
 }
 
+function defaultDB() {
+  return {
+    usuarios: [
+      { id: 1, nome: 'Gerente', login: 'admin', senha: hash('admin123'), role: 'admin' },
+      { id: 2, nome: 'Chefe Alpha', login: 'chefe1', senha: hash('chefe123'), role: 'chefe', equipe_id: 1 }
+    ],
+    equipes: [
+      { id: 1, nome: 'Equipe Alfa',    chefe: 'Cerqueira' },
+      { id: 2, nome: 'Equipe Bravo',   chefe: 'Savio' },
+      { id: 3, nome: 'Equipe Charlie', chefe: 'Cleber' },
+      { id: 4, nome: 'Equipe Delta',   chefe: 'Douglas' }
+    ],
+    viaturas: [
+      { id: 1, placa: 'CRS',      modelo: 'IVECO DAILY',      equipe_id: 1 },
+      { id: 2, placa: 'DOSA 318', modelo: 'IVECO MAGIRUS X6', cci: '02', equipe_id: 2 },
+      { id: 3, placa: 'AP-2',     modelo: 'FÊNIX',            cci: '03', equipe_id: 3 },
+      { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', cci: '01', equipe_id: 4 }
+    ],
+    checklists: [],
+    alertas: []
+  };
+}
+
 const sessions = {};
 function newSession(user) {
   const token = crypto.randomBytes(32).toString('hex');
@@ -98,6 +121,18 @@ function getEquipeNome(db, id) {
 function getViaturaPlacar(db, id) {
   const v = db.viaturas.find(v => v.id == id);
   return v ? v.placa : '';
+}
+
+// ✅ Verifica se checklist pertence à equipe (motorista OU BA)
+function checklistDaEquipe(c, equipe) {
+  const nomeSimples = equipe;
+  const nomeCompleto = 'Equipe ' + equipe;
+  return (
+    c.equipe === nomeSimples ||
+    c.equipe === nomeCompleto ||
+    c.nome_chefe === equipe ||
+    c.equipe_chefe === equipe
+  );
 }
 
 // AUTH
@@ -190,148 +225,205 @@ app.delete('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
   await writeDB(db); res.json({ ok: true });
 });
 
-// CHECKLISTS PÚBLICO (chefe)
+// ✅ CHECKLISTS PÚBLICO — retorna TODOS sem filtro para o chefe filtrar no frontend
 app.get('/api/checklists/publico', async (req, res) => {
-  const db = await readDB();
-  let data = [...db.checklists];
-  if (req.query.equipe) data = data.filter(c => c.equipe === req.query.equipe);
-  res.json(data.reverse());
+  try {
+    const db = await readDB();
+    let data = [...db.checklists];
+    // Sem filtro — o chefe.html filtra no frontend por equipe e nome_chefe
+    res.json(data.reverse());
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
 });
 
 app.get('/api/checklists/publico/:id', async (req, res) => {
-  const db = await readDB();
-  const c = db.checklists.find(c => String(c.id) === String(req.params.id));
-  if (!c) return res.status(404).json({ erro: 'Não encontrado' });
-  res.json(c);
+  try {
+    const db = await readDB();
+    const c = db.checklists.find(c => String(c.id) === String(req.params.id));
+    if (!c) return res.status(404).json({ erro: 'Não encontrado' });
+    res.json(c);
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
 });
 
-// CHECKLISTS (autenticado)
+// ✅ CHECKLISTS AUTENTICADO — admin vê todos, filtra por equipe corretamente
 app.get('/api/checklists', requireAuth(), async (req, res) => {
-  const db = await readDB();
-  let data = [...db.checklists];
-  if (req.query.mes) data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
-  if (req.query.viatura_id) {
-    const placa = getViaturaPlacar(db, req.query.viatura_id);
-    data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
+  try {
+    const db = await readDB();
+    let data = [...db.checklists];
+
+    if (req.query.mes) {
+      data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
+    }
+
+    if (req.query.viatura_id) {
+      const placa = getViaturaPlacar(db, req.query.viatura_id);
+      data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
+    }
+
+    if (req.query.status) {
+      data = data.filter(c => c.status === req.query.status);
+    }
+
+    if (req.query.equipe_id) {
+      const eq = db.equipes.find(e => e.id == req.query.equipe_id);
+      if (eq) {
+        const nomeSimples  = eq.nome.replace('Equipe ', '');
+        const nomeCompleto = eq.nome;
+        data = data.filter(c =>
+          c.equipe === nomeSimples ||
+          c.equipe === nomeCompleto ||
+          c.nome_chefe === eq.chefe ||
+          c.equipe_id == req.query.equipe_id
+        );
+      }
+    }
+
+    res.json(data.reverse());
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
   }
-  if (req.query.status) data = data.filter(c => c.status === req.query.status);
-  if (req.query.equipe_id) {
-    const nomeEquipe = getEquipeNome(db, req.query.equipe_id);
-    data = data.filter(c =>
-      c.equipe_id == req.query.equipe_id ||
-      c.equipe === nomeEquipe ||
-      c.equipe === 'Equipe ' + nomeEquipe
-    );
-  }
-  res.json(data.reverse());
 });
 
 app.post('/api/checklists', async (req, res) => {
-  const db = await readDB();
-  const r = { id: Date.now(), ...req.body };
-  db.checklists.push(r);
-  if (r.nc > 0) {
-    db.alertas = db.alertas || [];
-    db.alertas.push({
-      id: Date.now()+1, tipo: 'nok',
-      msg: `${r.nc} pendência(s) na viatura ${r.placa} — ${r.nome||r.motorista}`,
-      checklist_id: r.id, data: r.data, lido: false
-    });
+  try {
+    const db = await readDB();
+    const r = { id: Date.now(), ...req.body };
+    db.checklists.push(r);
+    if (r.nc > 0) {
+      db.alertas = db.alertas || [];
+      db.alertas.push({
+        id: Date.now()+1, tipo: 'nok',
+        msg: `${r.nc} NC na viatura ${r.placa} — ${r.nome||r.motorista} (${r.preenchidoPor==='nome_guerra_ba2'?'BA-2':'Motorista'})`,
+        checklist_id: r.id, data: r.data, lido: false
+      });
+    }
+    await writeDB(db);
+    res.json(r);
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
   }
-  await writeDB(db); res.json(r);
 });
 
 app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), async (req, res) => {
-  const db = await readDB();
-  db.checklists = db.checklists.filter(c => c.id != req.params.id);
-  await writeDB(db); res.json({ ok: true });
+  try {
+    const db = await readDB();
+    db.checklists = db.checklists.filter(c => c.id != req.params.id);
+    await writeDB(db);
+    res.json({ ok: true });
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
 });
 
 app.post('/api/checklists/:id/aprovar', async (req, res) => {
-  const db = await readDB();
-  const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
-  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
-  db.checklists[idx] = { ...db.checklists[idx], ...req.body };
-  await writeDB(db);
-  res.json(db.checklists[idx]);
+  try {
+    const db = await readDB();
+    const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
+    if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
+    db.checklists[idx] = { ...db.checklists[idx], ...req.body };
+    await writeDB(db);
+    res.json(db.checklists[idx]);
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
 });
 
 // ALERTAS
 app.get('/api/alertas', requireAuth(['admin','chefe']), async (req, res) => {
-  const db = await readDB();
-  res.json((db.alertas||[]).filter(a=>!a.lido).reverse().slice(0,50));
+  try {
+    const db = await readDB();
+    res.json((db.alertas||[]).filter(a=>!a.lido).reverse().slice(0,50));
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 app.put('/api/alertas/:id/lido', requireAuth(['admin','chefe']), async (req, res) => {
-  const db = await readDB();
-  const a = (db.alertas||[]).find(x=>x.id==req.params.id);
-  if (a) { a.lido=true; await writeDB(db); }
-  res.json({ ok: true });
+  try {
+    const db = await readDB();
+    const a = (db.alertas||[]).find(x=>x.id==req.params.id);
+    if (a) { a.lido=true; await writeDB(db); }
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 app.put('/api/alertas/lidos/todos', requireAuth(['admin','chefe']), async (req, res) => {
-  const db = await readDB();
-  (db.alertas||[]).forEach(a=>a.lido=true);
-  await writeDB(db); res.json({ ok: true });
+  try {
+    const db = await readDB();
+    (db.alertas||[]).forEach(a=>a.lido=true);
+    await writeDB(db);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
 // DASHBOARD
 app.get('/api/dashboard', requireAuth(['admin','chefe']), async (req, res) => {
-  const db = await readDB();
-  const mes = req.query.mes || new Date().toISOString().slice(0,7);
-  const cls = db.checklists.filter(c => c.data && c.data.startsWith(mes));
-  const porViatura = db.viaturas.map(v => {
-    const myCls = cls.filter(c => c.viatura_id == v.id || c.placa == v.placa);
-    const nok = myCls.filter(c=>c.status==='nok').length;
-    const eq = db.equipes.find(e=>e.id==v.equipe_id)||{};
-    return { ...v, equipe: eq.nome||'—', total: myCls.length, ok: myCls.length-nok, nok };
-  });
-  const porEquipe = db.equipes.map(e => {
-    const nomeSimples = e.nome.replace('Equipe ','');
-    const myCls = cls.filter(c =>
-      c.equipe_id == e.id ||
-      c.equipe === nomeSimples ||
-      c.equipe === e.nome
-    );
-    const nok = myCls.filter(c=>c.status==='nok').length;
-    return { ...e, total: myCls.length, ok: myCls.length-nok, nok };
-  });
-  const hoje = new Date();
-  const porDia = [];
-  for (let i=6;i>=0;i--) {
-    const d=new Date(hoje); d.setDate(d.getDate()-i);
-    const key=d.toISOString().slice(0,10);
-    const dc=cls.filter(c=>c.data&&c.data.startsWith(key));
-    porDia.push({dia:key.slice(5),total:dc.length,nok:dc.filter(c=>c.status==='nok').length});
-  }
-  const motMap={};
-  cls.forEach(c=>{
-    const n=c.nome||c.motorista||'—';
-    if(!motMap[n]) motMap[n]={nome:n,total:0,nok:0};
-    motMap[n].total++;
-    if(c.status==='nok') motMap[n].nok++;
-  });
-  res.json({
-    mes, total:cls.length,
-    ok:cls.filter(c=>c.status==='ok').length,
-    nok:cls.filter(c=>c.status==='nok').length,
-    alertas:(db.alertas||[]).filter(a=>!a.lido).length,
-    porViatura, porEquipe, porDia,
-    motoristas:Object.values(motMap).sort((a,b)=>b.total-a.total)
-  });
+  try {
+    const db = await readDB();
+    const mes = req.query.mes || new Date().toISOString().slice(0,7);
+    const cls = db.checklists.filter(c => c.data && c.data.startsWith(mes));
+    const porViatura = db.viaturas.map(v => {
+      const myCls = cls.filter(c => c.viatura_id == v.id || c.placa == v.placa);
+      const nok = myCls.filter(c=>c.status==='nok').length;
+      const eq = db.equipes.find(e=>e.id==v.equipe_id)||{};
+      return { ...v, equipe: eq.nome||'—', total: myCls.length, ok: myCls.length-nok, nok };
+    });
+    const porEquipe = db.equipes.map(e => {
+      const nomeSimples = e.nome.replace('Equipe ','');
+      const myCls = cls.filter(c =>
+        c.equipe_id == e.id ||
+        c.equipe === nomeSimples ||
+        c.equipe === e.nome ||
+        c.nome_chefe === e.chefe
+      );
+      const nok = myCls.filter(c=>c.status==='nok').length;
+      return { ...e, total: myCls.length, ok: myCls.length-nok, nok };
+    });
+    const hoje = new Date();
+    const porDia = [];
+    for (let i=6;i>=0;i--) {
+      const d=new Date(hoje); d.setDate(d.getDate()-i);
+      const key=d.toISOString().slice(0,10);
+      const dc=cls.filter(c=>c.data&&c.data.startsWith(key));
+      porDia.push({dia:key.slice(5),total:dc.length,nok:dc.filter(c=>c.status==='nok').length});
+    }
+    const motMap={};
+    cls.forEach(c=>{
+      const n=c.nome||c.motorista||'—';
+      if(!motMap[n]) motMap[n]={nome:n,total:0,nok:0};
+      motMap[n].total++;
+      if(c.status==='nok') motMap[n].nok++;
+    });
+    res.json({
+      mes, total:cls.length,
+      ok:cls.filter(c=>c.status==='ok').length,
+      nok:cls.filter(c=>c.status==='nok').length,
+      alertas:(db.alertas||[]).filter(a=>!a.lido).length,
+      porViatura, porEquipe, porDia,
+      motoristas:Object.values(motMap).sort((a,b)=>b.total-a.total)
+    });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
 // EXPORT CSV
 app.get('/api/export/csv', requireAuth(), async (req, res) => {
-  const db = await readDB();
-  let data = [...db.checklists];
-  if (req.query.mes) data = data.filter(c=>c.data&&c.data.startsWith(req.query.mes));
-  if (req.query.viatura_id) data = data.filter(c=>c.viatura_id==req.query.viatura_id||c.placa==getViaturaPlacar(db,req.query.viatura_id));
-  data.sort((a,b)=>a.data>b.data?1:-1);
-  const header=['ID','Data','Placa','Modelo','Equipe','Nome','CPF','KM','Status','Pendencias','Observacao'];
-  const rows=data.map(c=>[c.id,c.data,c.placa,c.modelo,c.equipe,c.nome||c.motorista||'',c.cpf||'',c.km||'',c.status,c.nc||c.nok||0,(c.obs||'').replace(/,/g,';')]);
-  const csv='\uFEFF'+[header,...rows].map(r=>r.join(',')).join('\n');
-  res.setHeader('Content-Type','text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition','attachment; filename="checklists.csv"');
-  res.send(csv);
+  try {
+    const db = await readDB();
+    let data = [...db.checklists];
+    if (req.query.mes) data = data.filter(c=>c.data&&c.data.startsWith(req.query.mes));
+    if (req.query.viatura_id) data = data.filter(c=>c.viatura_id==req.query.viatura_id||c.placa==getViaturaPlacar(db,req.query.viatura_id));
+    data.sort((a,b)=>a.data>b.data?1:-1);
+    const header=['ID','Data','Placa','Modelo','Tipo','Equipe','Nome','Status','NC','Observacao'];
+    const rows=data.map(c=>[
+      c.id, c.data, c.placa, c.modelo||'',
+      c.preenchidoPor==='nome_guerra_ba2'?'BA-2':c.preenchidoPor==='lider_resgate'?'Líder':'Motorista',
+      c.equipe, c.nome||c.motorista||'',
+      c.status, c.nc||0, (c.obs||'').replace(/,/g,';')
+    ]);
+    const csv='\uFEFF'+[header,...rows].map(r=>r.join(',')).join('\n');
+    res.setHeader('Content-Type','text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition','attachment; filename="checklists.csv"');
+    res.send(csv);
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
 const PORT = process.env.PORT || 8080;
