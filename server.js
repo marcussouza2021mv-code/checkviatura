@@ -1,67 +1,70 @@
 const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
-const fs      = require('fs');
 const crypto  = require('crypto');
+const https   = require('https');
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ Salva fora da pasta do projeto — nunca perde com deploy!
-const DB_FILE = fs.existsSync('/data') ? '/data/data.json' : path.join(__dirname, 'data.json');
+const BIN_ID  = '6a2c1f77da38895dfeb57148';
+const API_KEY = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
-function defaultDB() {
-  return {
-    usuarios: [
-      { id: 1, nome: 'Gerente', login: 'admin', senha: hash('admin123'), role: 'admin' },
-      { id: 2, nome: 'Chefe Alpha', login: 'chefe1', senha: hash('chefe123'), role: 'chefe', equipe_id: 1 }
-    ],
-    equipes: [
-      { id: 1, nome: 'Equipe Alfa', chefe: 'Cerqueira' },
-      { id: 2, nome: 'Equipe Bravo', chefe: 'Savio' },
-      { id: 3, nome: 'Equipe Charlie', chefe: 'Cleber' },
-      { id: 4, nome: 'Equipe Delta', chefe: 'Douglas' }
-    ],
-    viaturas: [
-      { id: 1, placa: 'CRS',      modelo: 'IVECO DAILY',      equipe_id: 1 },
-      { id: 2, placa: 'DOSA 318', modelo: 'IVECO MAGIRUS X6', cci: '02', equipe_id: 2 },
-      { id: 3, placa: 'AP-2',     modelo: 'FÊNIX',            cci: '03', equipe_id: 3 },
-      { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', cci: '01', equipe_id: 4 }
-    ],
-    checklists: [],
-    alertas: []
-  };
+function jsonbinRequest(method, data=null) {
+  return new Promise((resolve, reject) => {
+    const body = data ? JSON.stringify(data) : null;
+    const options = {
+      hostname: 'api.jsonbin.io',
+      path: `/v3/b/${BIN_ID}`,
+      method,
+      headers: {
+        'X-Master-Key': API_KEY,
+        'Content-Type': 'application/json',
+        ...(body ? { 'Content-Length': Buffer.byteLength(body) } : {})
+      }
+    };
+    const req = https.request(options, res => {
+      let raw = '';
+      res.on('data', d => raw += d);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(raw);
+          resolve(method === 'GET' ? parsed.record : parsed);
+        } catch(e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    if (body) req.write(body);
+    req.end();
+  });
 }
 
-function readDB() {
+async function readDB() {
   try {
-    if (!fs.existsSync(DB_FILE)) {
-      const d = defaultDB();
-      fs.writeFileSync(DB_FILE, JSON.stringify(d, null, 2));
-      return d;
-    }
-    const raw = fs.readFileSync(DB_FILE, 'utf8');
-    const d = JSON.parse(raw);
-    if (!d.usuarios)   d.usuarios   = defaultDB().usuarios;
-    if (!d.equipes)    d.equipes    = defaultDB().equipes;
-    if (!d.viaturas)   d.viaturas   = defaultDB().viaturas;
+    const d = await jsonbinRequest('GET');
+    if (!d.usuarios)   d.usuarios   = [];
+    if (!d.equipes)    d.equipes    = [];
+    if (!d.viaturas)   d.viaturas   = [];
     if (!d.checklists) d.checklists = [];
     if (!d.alertas)    d.alertas    = [];
     return d;
   } catch(e) {
-    const def = defaultDB();
-    fs.writeFileSync(DB_FILE, JSON.stringify(def, null, 2));
-    return def;
+    console.error('readDB error:', e.message);
+    return { usuarios:[], equipes:[], viaturas:[], checklists:[], alertas:[] };
   }
 }
 
-function writeDB(db) { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); }
-
-readDB();
+async function writeDB(db) {
+  try {
+    await jsonbinRequest('PUT', db);
+  } catch(e) {
+    console.error('writeDB error:', e.message);
+  }
+}
 
 const sessions = {};
 function newSession(user) {
@@ -98,10 +101,10 @@ function getViaturaPlacar(db, id) {
 }
 
 // AUTH
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   try {
     const { login, senha } = req.body;
-    const db = readDB();
+    const db = await readDB();
     const u = db.usuarios.find(x => x.login === login && x.senha === hash(senha));
     if (!u) return res.status(401).json({ erro: 'Login ou senha incorretos' });
     const token = newSession(u);
@@ -120,102 +123,98 @@ app.get('/api/auth/me', requireAuth(), (req, res) => {
 });
 
 // USUARIOS
-app.get('/api/usuarios', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.get('/api/usuarios', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   res.json(db.usuarios.map(u => ({ ...u, senha: undefined })));
 });
-app.post('/api/usuarios', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.post('/api/usuarios', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   if (db.usuarios.find(u => u.login === req.body.login))
     return res.status(400).json({ erro: 'Login já existe' });
   const u = { id: Date.now(), ...req.body, senha: hash(req.body.senha) };
-  db.usuarios.push(u); writeDB(db);
+  db.usuarios.push(u); await writeDB(db);
   res.json({ ...u, senha: undefined });
 });
-app.put('/api/usuarios/:id', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.put('/api/usuarios/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   const idx = db.usuarios.findIndex(u => u.id == req.params.id);
   if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
   const upd = { ...db.usuarios[idx], ...req.body };
   if (req.body.senha) upd.senha = hash(req.body.senha);
-  db.usuarios[idx] = upd; writeDB(db);
+  db.usuarios[idx] = upd; await writeDB(db);
   res.json({ ...upd, senha: undefined });
 });
-app.delete('/api/usuarios/:id', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.delete('/api/usuarios/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   db.usuarios = db.usuarios.filter(u => u.id != req.params.id);
-  writeDB(db); res.json({ ok: true });
+  await writeDB(db); res.json({ ok: true });
 });
 
 // EQUIPES
-app.get('/api/equipes', (req, res) => res.json(readDB().equipes));
-app.post('/api/equipes', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.get('/api/equipes', async (req, res) => res.json((await readDB()).equipes));
+app.post('/api/equipes', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   const e = { id: Date.now(), ...req.body };
-  db.equipes.push(e); writeDB(db); res.json(e);
+  db.equipes.push(e); await writeDB(db); res.json(e);
 });
-app.put('/api/equipes/:id', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.put('/api/equipes/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   const idx = db.equipes.findIndex(e => e.id == req.params.id);
   if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
   db.equipes[idx] = { ...db.equipes[idx], ...req.body };
-  writeDB(db); res.json(db.equipes[idx]);
+  await writeDB(db); res.json(db.equipes[idx]);
 });
-app.delete('/api/equipes/:id', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.delete('/api/equipes/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   db.equipes = db.equipes.filter(e => e.id != req.params.id);
-  writeDB(db); res.json({ ok: true });
+  await writeDB(db); res.json({ ok: true });
 });
 
 // VIATURAS
-app.get('/api/viaturas', (req, res) => res.json(readDB().viaturas));
-app.post('/api/viaturas', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.get('/api/viaturas', async (req, res) => res.json((await readDB()).viaturas));
+app.post('/api/viaturas', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   const v = { id: Date.now(), ...req.body };
-  db.viaturas.push(v); writeDB(db); res.json(v);
+  db.viaturas.push(v); await writeDB(db); res.json(v);
 });
-app.put('/api/viaturas/:id', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.put('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   const idx = db.viaturas.findIndex(v => v.id == req.params.id);
   if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
   db.viaturas[idx] = { ...db.viaturas[idx], ...req.body };
-  writeDB(db); res.json(db.viaturas[idx]);
+  await writeDB(db); res.json(db.viaturas[idx]);
 });
-app.delete('/api/viaturas/:id', requireAuth(['admin']), (req, res) => {
-  const db = readDB();
+app.delete('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
   db.viaturas = db.viaturas.filter(v => v.id != req.params.id);
-  writeDB(db); res.json({ ok: true });
+  await writeDB(db); res.json({ ok: true });
 });
 
 // CHECKLISTS PÚBLICO (chefe)
-app.get('/api/checklists/publico', (req, res) => {
-  const db = readDB();
+app.get('/api/checklists/publico', async (req, res) => {
+  const db = await readDB();
   let data = [...db.checklists];
   if (req.query.equipe) data = data.filter(c => c.equipe === req.query.equipe);
   res.json(data.reverse());
 });
 
-app.get('/api/checklists/publico/:id', (req, res) => {
-  const db = readDB();
+app.get('/api/checklists/publico/:id', async (req, res) => {
+  const db = await readDB();
   const c = db.checklists.find(c => String(c.id) === String(req.params.id));
   if (!c) return res.status(404).json({ erro: 'Não encontrado' });
   res.json(c);
 });
 
 // CHECKLISTS (autenticado)
-app.get('/api/checklists', requireAuth(), (req, res) => {
-  const db = readDB();
+app.get('/api/checklists', requireAuth(), async (req, res) => {
+  const db = await readDB();
   let data = [...db.checklists];
-  if (req.query.mes) {
-    data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
-  }
+  if (req.query.mes) data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
   if (req.query.viatura_id) {
     const placa = getViaturaPlacar(db, req.query.viatura_id);
     data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
   }
-  if (req.query.status) {
-    data = data.filter(c => c.status === req.query.status);
-  }
+  if (req.query.status) data = data.filter(c => c.status === req.query.status);
   if (req.query.equipe_id) {
     const nomeEquipe = getEquipeNome(db, req.query.equipe_id);
     data = data.filter(c =>
@@ -227,8 +226,8 @@ app.get('/api/checklists', requireAuth(), (req, res) => {
   res.json(data.reverse());
 });
 
-app.post('/api/checklists', (req, res) => {
-  const db = readDB();
+app.post('/api/checklists', async (req, res) => {
+  const db = await readDB();
   const r = { id: Date.now(), ...req.body };
   db.checklists.push(r);
   if (r.nc > 0) {
@@ -239,44 +238,44 @@ app.post('/api/checklists', (req, res) => {
       checklist_id: r.id, data: r.data, lido: false
     });
   }
-  writeDB(db); res.json(r);
+  await writeDB(db); res.json(r);
 });
 
-app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), (req, res) => {
-  const db = readDB();
+app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), async (req, res) => {
+  const db = await readDB();
   db.checklists = db.checklists.filter(c => c.id != req.params.id);
-  writeDB(db); res.json({ ok: true });
+  await writeDB(db); res.json({ ok: true });
 });
 
-app.post('/api/checklists/:id/aprovar', (req, res) => {
-  const db = readDB();
+app.post('/api/checklists/:id/aprovar', async (req, res) => {
+  const db = await readDB();
   const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
   if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
   db.checklists[idx] = { ...db.checklists[idx], ...req.body };
-  writeDB(db);
+  await writeDB(db);
   res.json(db.checklists[idx]);
 });
 
 // ALERTAS
-app.get('/api/alertas', requireAuth(['admin','chefe']), (req, res) => {
-  const db = readDB();
+app.get('/api/alertas', requireAuth(['admin','chefe']), async (req, res) => {
+  const db = await readDB();
   res.json((db.alertas||[]).filter(a=>!a.lido).reverse().slice(0,50));
 });
-app.put('/api/alertas/:id/lido', requireAuth(['admin','chefe']), (req, res) => {
-  const db = readDB();
+app.put('/api/alertas/:id/lido', requireAuth(['admin','chefe']), async (req, res) => {
+  const db = await readDB();
   const a = (db.alertas||[]).find(x=>x.id==req.params.id);
-  if (a) { a.lido=true; writeDB(db); }
+  if (a) { a.lido=true; await writeDB(db); }
   res.json({ ok: true });
 });
-app.put('/api/alertas/lidos/todos', requireAuth(['admin','chefe']), (req, res) => {
-  const db = readDB();
+app.put('/api/alertas/lidos/todos', requireAuth(['admin','chefe']), async (req, res) => {
+  const db = await readDB();
   (db.alertas||[]).forEach(a=>a.lido=true);
-  writeDB(db); res.json({ ok: true });
+  await writeDB(db); res.json({ ok: true });
 });
 
 // DASHBOARD
-app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
-  const db = readDB();
+app.get('/api/dashboard', requireAuth(['admin','chefe']), async (req, res) => {
+  const db = await readDB();
   const mes = req.query.mes || new Date().toISOString().slice(0,7);
   const cls = db.checklists.filter(c => c.data && c.data.startsWith(mes));
   const porViatura = db.viaturas.map(v => {
@@ -321,8 +320,8 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
 });
 
 // EXPORT CSV
-app.get('/api/export/csv', requireAuth(), (req, res) => {
-  const db = readDB();
+app.get('/api/export/csv', requireAuth(), async (req, res) => {
+  const db = await readDB();
   let data = [...db.checklists];
   if (req.query.mes) data = data.filter(c=>c.data&&c.data.startsWith(req.query.mes));
   if (req.query.viatura_id) data = data.filter(c=>c.viatura_id==req.query.viatura_id||c.placa==getViaturaPlacar(db,req.query.viatura_id));
