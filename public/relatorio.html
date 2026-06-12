@@ -17,72 +17,65 @@ body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
 .btn-baixar{background:#1a7f37;color:#fff;}
 .btn-voltar{background:transparent;border:1px solid #ccc;color:#333;cursor:pointer;}
 
-/* FOLHA A4 LANDSCAPE — ajustada para caber tudo */
 .folha{
   width:277mm;
+  height:190mm;
   background:#fff;
   margin:0 auto 20px;
-  padding:4mm 5mm;
-  font-size:7pt;
+  padding:3mm 4mm;
+  font-size:6pt;
   box-shadow:0 2px 12px rgba(0,0,0,.15);
   display:flex;
   flex-direction:column;
+  overflow:hidden;
 }
 
-/* CABEÇALHO */
-.cab-wrap{display:flex;border:1.5px solid #000;}
-.cab-logo{width:28mm;border-right:1.5px solid #000;display:flex;align-items:center;justify-content:center;padding:3px;}
-.cab-logo img{max-width:24mm;max-height:15mm;object-fit:contain;}
-.cab-titulo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1.5px solid #000;padding:3px;}
-.cab-titulo-top{font-size:7pt;font-weight:700;margin-bottom:1px;}
-.cab-titulo-text{font-size:12pt;font-weight:900;text-align:center;}
-.cab-codigo{width:44mm;font-size:7pt;}
-.cab-codigo-row{padding:2px 5px;border-bottom:1px solid #000;display:flex;justify-content:space-between;align-items:center;}
+.cab-wrap{display:flex;border:1px solid #000;}
+.cab-logo{width:26mm;border-right:1px solid #000;display:flex;align-items:center;justify-content:center;padding:2px;}
+.cab-logo img{max-width:22mm;max-height:13mm;object-fit:contain;}
+.cab-titulo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #000;padding:2px;}
+.cab-titulo-top{font-size:6pt;font-weight:700;margin-bottom:1px;}
+.cab-titulo-text{font-size:11pt;font-weight:900;text-align:center;}
+.cab-codigo{width:42mm;font-size:6.5pt;}
+.cab-codigo-row{padding:2px 4px;border-bottom:1px solid #000;display:flex;justify-content:space-between;align-items:center;}
 .cab-codigo-row:last-child{border-bottom:none;}
 .cab-codigo-row span{font-weight:700;}
 
-/* INSTRUÇÃO */
-.instrucao{border:1.5px solid #000;border-top:none;padding:2px 5px;font-size:5.5pt;line-height:1.3;}
-
-/* REFERÊNCIA */
-.referencia{border:1.5px solid #000;border-top:none;display:flex;align-items:center;padding:2px 6px;gap:14px;font-size:7pt;font-weight:700;}
-
-/* INFO BAR */
-.info-bar{border:1.5px solid #000;border-top:none;display:flex;font-size:7pt;}
-.info-cell{padding:2px 6px;border-right:1px solid #000;display:flex;gap:3px;align-items:center;}
+.instrucao{border:1px solid #000;border-top:none;padding:1px 4px;font-size:4.8pt;line-height:1.2;}
+.referencia{border:1px solid #000;border-top:none;display:flex;align-items:center;padding:1px 6px;gap:10px;font-size:6pt;font-weight:700;}
+.info-bar{border:1px solid #000;border-top:none;display:flex;font-size:6pt;}
+.info-cell{padding:1px 5px;border-right:1px solid #000;display:flex;gap:3px;align-items:center;}
 .info-cell:last-child{border-right:none;flex:1;}
 .info-cell b{font-weight:700;}
 
-/* TABELA */
-.tab-wrap{border:1.5px solid #000;border-top:none;flex:1;}
+.tab-wrap{border:1px solid #000;border-top:none;flex:1;overflow:hidden;}
 table.cl{width:100%;border-collapse:collapse;table-layout:fixed;}
-.cl th,.cl td{border:0.5px solid #888;text-align:center;padding:0px 1px;font-size:6pt;overflow:hidden;}
-.cl th.th-num{width:6mm;background:#dce3f0;font-weight:700;font-size:6pt;}
-.cl th.th-item{text-align:left;padding:1px 3px;background:#dce3f0;font-weight:700;width:50mm;font-size:6pt;}
-.cl th.th-dia{background:#dce3f0;font-weight:700;font-size:5.5pt;}
-.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:6pt;}
-.cl td.td-item{text-align:left;padding:1px 3px;font-size:5.8pt;white-space:normal;line-height:1.2;font-weight:600;}
-.cl td.td-c{color:#1a6b1a;font-weight:900;font-size:7pt;}
-.cl td.td-nc{color:#9B1C1C;font-weight:900;background:#FEE2E2;font-size:7pt;}
-.cl td.td-na{color:#6B7280;font-size:6.5pt;}
+.cl th,.cl td{border:0.3px solid #999;text-align:center;padding:0px 1px;font-size:5.5pt;overflow:hidden;}
+.cl th.th-num{width:5.5mm;background:#dce3f0;font-weight:700;font-size:5.5pt;}
+.cl th.th-item{text-align:left;padding:1px 2px;background:#dce3f0;font-weight:700;width:46mm;font-size:5.5pt;}
+.cl th.th-dia{background:#dce3f0;font-weight:700;font-size:5pt;}
+.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:5.5pt;}
+.cl td.td-item{text-align:left;padding:0px 2px;font-size:5.2pt;white-space:normal;line-height:1.15;font-weight:600;}
+.cl td.td-c{color:#1a6b1a;font-weight:900;font-size:6pt;}
+.cl td.td-nc{color:#9B1C1C;font-weight:900;background:#FEE2E2;font-size:6pt;}
+.cl td.td-na{color:#6B7280;font-size:5.5pt;}
 .cl td.td-vazio{color:#eee;}
 .cl td.td-futuro{color:#e0e0e0;background:#fafafa;}
-.cl tr.tr-assin td{height:13mm;vertical-align:bottom;padding:1px;}
-.cl tr.tr-assin td.td-item{font-size:6pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
-.cl tr.tr-chefe-sig td{height:13mm;vertical-align:bottom;padding:1px;background:#f9f9f9;}
-.cl tr.tr-chefe-sig td.td-item{font-size:6pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
-.sig-img{max-width:100%;max-height:11mm;object-fit:contain;display:block;margin:0 auto;}
+.cl tr.tr-assin td{height:9mm;vertical-align:bottom;padding:0px;}
+.cl tr.tr-assin td.td-item{font-size:5.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
+.cl tr.tr-chefe-sig td{height:9mm;vertical-align:bottom;padding:0px;background:#f9f9f9;}
+.cl tr.tr-chefe-sig td.td-item{font-size:5.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
+.sig-img{max-width:100%;max-height:8mm;object-fit:contain;display:block;margin:0 auto;}
 
-/* RODAPÉ */
-.rodape{border:1.5px solid #000;border-top:none;padding:2px 5px;}
-.rod-obs-title{font-size:6.5pt;font-weight:700;margin-bottom:1px;}
-.rod-obs-text{font-size:6pt;min-height:8mm;}
-.cod-rodape{border:1.5px solid #000;border-top:none;display:flex;justify-content:space-between;padding:1px 5px;font-size:5.5pt;color:#444;}
+.rodape{border:1px solid #000;border-top:none;padding:1px 4px;}
+.rod-obs-title{font-size:5.5pt;font-weight:700;margin-bottom:0px;}
+.rod-obs-text{font-size:5pt;min-height:4mm;max-height:6mm;overflow:hidden;}
+.cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:1px 4px;font-size:5pt;color:#444;}
 
 @media print{
   body{background:#fff;}
   .no-print{display:none!important;}
-  .folha{box-shadow:none;margin:0;padding:4mm 5mm;width:100%;}
+  .folha{box-shadow:none;margin:0;padding:3mm 4mm;width:100%;height:100%;}
   @page{size:A4 landscape;margin:0;}
 }
 </style>
@@ -182,16 +175,13 @@ async function gerar(){
   const mesLabel = MESES[mesNum-1].toUpperCase()+' / '+ano;
   const obs = filtrados.map(c=>c.obs).filter(Boolean).join(' | ') || '';
 
-  // Calcula largura das colunas de dia dinamicamente
-  const larguraDia = Math.max(5, Math.floor((277 - 6 - 50) / totalDias));
-
   let tdAssin = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
     if(fut) return `<td class="td-futuro"></td>`;
     if(!c)  return `<td></td>`;
     const sig = c.sigMotorista||'';
-    return `<td style="padding:1px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:11mm;"></div>'}</td>`;
+    return `<td style="padding:0px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:8mm;"></div>'}</td>`;
   }).join('');
 
   let tdChefeAssin = dias.map(d=>{
@@ -200,7 +190,7 @@ async function gerar(){
     if(fut) return `<td class="td-futuro"></td>`;
     if(!c)  return `<td></td>`;
     const sig = c.sigChefe||'';
-    return `<td style="padding:1px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:11mm;"></div>'}</td>`;
+    return `<td style="padding:0px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:8mm;"></div>'}</td>`;
   }).join('');
 
   let linhas = itens.map((item,idx)=>{
@@ -231,9 +221,7 @@ async function gerar(){
         <div class="cab-codigo-row"><span>VERSÃO:</span> C0 &nbsp; <span>DATA:</span> 06/2025</div>
       </div>
     </div>
-    <div class="instrucao">
-      Para correto preenchimento assinalar "C" (conforme), "NC" (não conforme) ou "NA" (não aplicável). Para todos os itens NC o chefe de equipe deverá ser comunicado e o campo de observações preenchido com a descrição da avaria.
-    </div>
+    <div class="instrucao">Para correto preenchimento assinalar "C" (conforme), "NC" (não conforme) ou "NA" (não aplicável). Para todos os itens NC o chefe de equipe deverá ser comunicado e o campo de observações preenchido com a descrição da avaria.</div>
     <div class="referencia">
       <span>REFERÊNCIA:</span>
       <span>C- CONFORME</span>
@@ -250,15 +238,15 @@ async function gerar(){
     <div class="tab-wrap">
       <table class="cl">
         <colgroup>
-          <col style="width:6mm">
-          <col style="width:50mm">
-          ${dias.map(()=>`<col style="width:${larguraDia}mm">`).join('')}
+          <col style="width:5.5mm">
+          <col style="width:46mm">
+          ${dias.map(()=>`<col>`).join('')}
         </colgroup>
         <thead>
           <tr>
             <th class="th-num">#</th>
             <th class="th-item">ITEM A INSPECIONAR</th>
-            <th colspan="${totalDias}" style="background:#dce3f0;font-size:7pt;font-weight:700;padding:1px;">COMPONENTES — DIAS DO MÊS</th>
+            <th colspan="${totalDias}" style="background:#dce3f0;font-size:6pt;font-weight:700;padding:1px;">COMPONENTES — DIAS DO MÊS</th>
           </tr>
           <tr>
             <th class="th-num"></th>
@@ -303,7 +291,7 @@ async function baixarPDF() {
     margin: 0,
     filename: nomeArquivo,
     image: { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, logging:false },
+    html2canvas: { scale:2, useCORS:true, logging:false, width:1047 },
     jsPDF: { unit:'mm', format:'a4', orientation:'landscape' }
   };
   const btn = document.querySelector('.btn-baixar');
