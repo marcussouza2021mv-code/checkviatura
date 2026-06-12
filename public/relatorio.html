@@ -13,51 +13,71 @@ body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
 .btn{padding:9px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;}
 .btn-gerar{background:#E8520A;color:#fff;}
 .btn-pdf{background:#111;color:#fff;}
-.btn-voltar{background:transparent;border:1px solid #ccc;color:#333;}
-.folha{width:297mm;min-height:210mm;background:#fff;margin:0 auto 20px;padding:6mm;font-size:7.5pt;box-shadow:0 2px 12px rgba(0,0,0,.15);}
-.cab-wrap{display:flex;border:1px solid #000;margin-bottom:0;}
-.cab-logo{width:35mm;border-right:1px solid #000;display:flex;align-items:center;justify-content:center;padding:6px;}
-.cab-titulo{flex:1;display:flex;align-items:center;justify-content:center;border-right:1px solid #000;padding:4px;}
-.cab-titulo-text{font-size:11pt;font-weight:700;text-align:center;}
-.cab-codigo{width:45mm;font-size:7pt;}
-.cab-codigo-row{padding:3px 6px;border-bottom:1px solid #000;display:flex;justify-content:space-between;}
+.btn-voltar{background:transparent;border:1px solid #ccc;color:#333;cursor:pointer;}
+
+/* FOLHA A4 LANDSCAPE */
+.folha{width:277mm;min-height:190mm;background:#fff;margin:0 auto 20px;padding:5mm;font-size:8.5pt;box-shadow:0 2px 12px rgba(0,0,0,.15);}
+
+/* CABEÇALHO */
+.cab-wrap{display:flex;border:1.5px solid #000;margin-bottom:0;}
+.cab-logo{width:32mm;border-right:1.5px solid #000;display:flex;align-items:center;justify-content:center;padding:4px;}
+.cab-logo img{max-width:28mm;max-height:18mm;object-fit:contain;}
+.cab-titulo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1.5px solid #000;padding:4px;}
+.cab-titulo-top{font-size:8pt;font-weight:700;margin-bottom:2px;}
+.cab-titulo-text{font-size:13pt;font-weight:900;text-align:center;}
+.cab-codigo{width:48mm;font-size:8pt;}
+.cab-codigo-row{padding:3px 6px;border-bottom:1px solid #000;display:flex;justify-content:space-between;align-items:center;}
 .cab-codigo-row:last-child{border-bottom:none;}
 .cab-codigo-row span{font-weight:700;}
-.instrucao{border:1px solid #000;border-top:none;padding:4px 6px;font-size:6.5pt;line-height:1.4;}
-.referencia{border:1px solid #000;border-top:none;display:flex;align-items:center;padding:3px 8px;gap:20px;font-size:7.5pt;font-weight:700;}
-.info-bar{border:1px solid #000;border-top:none;display:flex;font-size:7.5pt;}
-.info-cell{padding:3px 6px;border-right:1px solid #000;display:flex;gap:4px;align-items:center;}
-.info-cell:last-child{border-right:none;}
+
+/* INSTRUÇÃO */
+.instrucao{border:1.5px solid #000;border-top:none;padding:4px 6px;font-size:7pt;line-height:1.4;}
+
+/* REFERÊNCIA */
+.referencia{border:1.5px solid #000;border-top:none;display:flex;align-items:center;padding:4px 8px;gap:20px;font-size:8.5pt;font-weight:700;}
+
+/* INFO BAR */
+.info-bar{border:1.5px solid #000;border-top:none;display:flex;font-size:8.5pt;}
+.info-cell{padding:3px 8px;border-right:1px solid #000;display:flex;gap:4px;align-items:center;}
+.info-cell:last-child{border-right:none;flex:1;}
 .info-cell b{font-weight:700;}
-.tab-wrap{border:1px solid #000;border-top:none;overflow:hidden;}
+
+/* TABELA */
+.tab-wrap{border:1.5px solid #000;border-top:none;overflow:hidden;}
 table.cl{width:100%;border-collapse:collapse;table-layout:fixed;}
-.cl th,.cl td{border:0.5px solid #999;text-align:center;padding:1px;font-size:6.5pt;overflow:hidden;}
-.cl th.th-num{width:6mm;background:#dce3f0;font-weight:700;}
-.cl th.th-item{text-align:left;padding:2px 4px;background:#dce3f0;font-weight:700;width:52mm;}
-.cl th.th-dia{width:6.5mm;background:#dce3f0;font-weight:700;font-size:6pt;}
-.cl td.td-num{background:#f5f5f5;font-weight:700;color:#555;}
-.cl td.td-item{text-align:left;padding:2px 4px;font-size:6pt;white-space:normal;line-height:1.2;}
-.cl td.td-c{color:#1a6b1a;font-weight:700;}
-.cl td.td-nc{color:#9B1C1C;font-weight:700;background:#FEE2E2;}
-.cl td.td-na{color:#6B7280;}
+.cl th,.cl td{border:0.5px solid #888;text-align:center;padding:1px 2px;font-size:7.5pt;overflow:hidden;}
+.cl th.th-num{width:7mm;background:#dce3f0;font-weight:700;}
+.cl th.th-item{text-align:left;padding:2px 4px;background:#dce3f0;font-weight:700;width:58mm;}
+.cl th.th-dia{width:7mm;background:#dce3f0;font-weight:700;font-size:7pt;}
+.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:7.5pt;}
+.cl td.td-item{text-align:left;padding:2px 4px;font-size:7pt;white-space:normal;line-height:1.3;font-weight:500;}
+.cl td.td-c{color:#1a6b1a;font-weight:800;font-size:8pt;}
+.cl td.td-nc{color:#9B1C1C;font-weight:800;background:#FEE2E2;font-size:8pt;}
+.cl td.td-na{color:#6B7280;font-size:8pt;}
 .cl td.td-vazio{color:#ddd;}
 .cl td.td-futuro{color:#e0e0e0;background:#fafafa;}
-.cl tr.tr-assin td{height:14mm;vertical-align:bottom;padding:1px;}
-.cl tr.tr-assin td.td-item{font-size:6pt;color:#555;font-style:italic;vertical-align:middle;}
-.cl tr.tr-nome td{font-size:5.5pt;color:#444;border-top:0.5px solid #aaa;padding:1px;}
-.cl tr.tr-nome td.td-item{font-style:italic;color:#555;font-size:5.5pt;}
-.cl tr.tr-chefe td{font-size:5.5pt;color:#444;border-top:0.5px solid #ccc;padding:1px;background:#f9f9f9;}
-.cl tr.tr-chefe td.td-item{font-style:italic;color:#555;font-size:5.5pt;}
-.sig-img{max-width:100%;max-height:12mm;object-fit:contain;display:block;margin:0 auto;}
-.rodape{border:1px solid #000;border-top:none;}
-.rod-obs{padding:4px 6px;}
-.rod-obs-title{font-size:6.5pt;font-weight:700;margin-bottom:2px;}
-.rod-obs-text{font-size:6.5pt;min-height:14mm;}
-.cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:2px 6px;font-size:6pt;color:#555;}
+.cl tr.tr-assin td{height:16mm;vertical-align:bottom;padding:1px;}
+.cl tr.tr-assin td.td-item{font-size:7pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
+
+/* ASSINATURA IMG */
+.sig-img{max-width:100%;max-height:14mm;object-fit:contain;display:block;margin:0 auto;}
+
+/* ASSINATURA DO CHEFE */
+.cl tr.tr-chefe-sig td{height:16mm;vertical-align:bottom;padding:1px;border-top:1px solid #aaa;}
+.cl tr.tr-chefe-sig td.td-item{font-size:7pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
+
+/* RODAPÉ */
+.rodape{border:1.5px solid #000;border-top:none;padding:4px 6px;}
+.rod-obs-title{font-size:8pt;font-weight:700;margin-bottom:2px;}
+.rod-obs-text{font-size:7.5pt;min-height:12mm;}
+
+/* CÓDIGO RODAPÉ */
+.cod-rodape{border:1.5px solid #000;border-top:none;display:flex;justify-content:space-between;padding:2px 6px;font-size:7pt;color:#444;}
+
 @media print{
   body{background:#fff;}
   .no-print{display:none!important;}
-  .folha{box-shadow:none;margin:0;padding:6mm;width:100%;}
+  .folha{box-shadow:none;margin:0;padding:5mm;width:100%;}
   @page{size:A4 landscape;margin:0;}
 }
 </style>
@@ -89,6 +109,7 @@ table.cl{width:100%;border-collapse:collapse;table-layout:fixed;}
   </div>
   <button class="btn btn-gerar" onclick="gerar()">🔍 Gerar</button>
   <button class="btn btn-pdf" onclick="window.print()">🖨️ Imprimir / PDF</button>
+  <button class="btn btn-pdf" style="background:#1a7f37;" onclick="baixarPDF()">⬇ Baixar PDF</button>
   <a href="/admin.html"><button class="btn btn-voltar">← Admin</button></a>
 </div>
 
@@ -104,20 +125,20 @@ const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Ag
 
 const ITENS = {
   'CRS':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO FLUÍDO DA DIREÇÃO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIA','NÍVEL DE COMBUSTÍVEL','NÍVEL DO FLUÍDO DE FREIO','LIMPADOR DE PÁRA-BRISAS','FARÓIS','SETAS DIRECIONAIS','LUZ DE RÉ','LUZ CIDADE','LUZ DE FREIO','PISCA ALERTA','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR','ILUMINAÇÃO EXTERNA','ILUMINAÇÃO INTERNA DO BAÚ','GIROFLEX','MEGAFONE','SIRENE','MAPA DE GRADE','BUZINA','CALIBRAGEM DOS PNEUS','DIREÇÃO','FREIOS','SUSPENSÃO','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR','CHAVE DE RODA','TRIÂNGULO DE SINALIZAÇÃO','MACACO','GUINCHO COMPLETO COM CONTROLE','TACÓGRAFO','TOMADA EXTERNA'],
+    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO FLUÍDO DA DIREÇÃO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIA','NÍVEL DE COMBUSTÍVEL','NÍVEL DO FLUÍDO DE FREIO','LIMPADOR DE PÁRA-BRISAS','FARÓIS','SETAS DIRECIONAIS','LUZ DE RÉ','COLETE E IMOBILIZAÇÃO','LUZ DE FREIO','PISCA ALERTA','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR','ILUMINAÇÃO EXTERNA','ILUMINAÇÃO INTERNA DO BAÚ','GIROFLEX','MEGAFONE','SIRENE','MAPA DE GRADE','BUZINA','CALIBRAGEM DOS PNEUS','DIREÇÃO','FREIOS','SUSPENSÃO','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR','CHAVE DE RODA','TRIÂNGULO DE SINALIZAÇÃO','MACACO','GUINCHO COMPLETO COM CONTROLE','TACÓGRAFO','TOMADA EXTERNA'],
     lider_resgate:['DESENCARCERADOR HIDRÁULICO','SERRA CIRCULAR PARA CORTE PESADO DE METAL','SERRA SABRE','MACHADO DE RESGATE SEM CUNHA','PÉ-DE-CABRA - 95 CM','PÉ-DE-CABRA - 165 CM','ESCADA EXTENSORA','GANCHO OU GARRA DE SALVAMENTO','FERRAMENTA DE CORTE DE CINTOS DE SEGURANÇA','MANTA RESISTENTE AO FOGO','TORRE DE ILUMINAÇÃO','LANTERNAS PORTÁTEIS','MACA RÍGIDA','COLAR CERVICAL RETRÁTIL','COLETE DE MOBILIZAÇÃO DORSO-LOMBAR MD KED','KIT MÉDICO PRIMEIROS SOCORROS','INALADOR DE OXIGÊNIO COM CILINDRO','CONJUNTO DE TALAS PARA IMOBILIZAÇÃO DE MEMBROS']
   },
   'DOSA 318':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR E MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO INTERNA COMPARTIMENTOS','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACION. E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','PAINÉIS DE OPERAÇÃO / TFT','NÍVEL DO TANQUE DE ÁGUA','PARTIDA DO MOTOR ESTACIONÁRIO','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK OPERADOR E SALVAMENTO','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','EXTINTOR ABC 2KG','EXTINTOR ABC 2KG','ALAVANCA DE ELEVAÇÃO DA CABINE'],
-    nome_guerra_ba2:['01 MANGUEIRA 1½" (30M) COMP. "R1"','01 MANGUEIRA 2½" (30M) COMP. "R1"','01 CHAVE STORZ 1½" COMP. "R1"','01 REDUÇÃO 2½" PARA 1½" COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 MANGUEIRA 1½" (30M) COMP. "R2"','01 CHAVE STORZ 1½" COMP. "R2"','02 CALÇOS COMP. "R2"','TAMPA CILINDRO "N2" COMP. "R2"','01 CHAVE STORZ 1½" COMP. "L3"','01 MANIVELA CARRETEL PQ COMP. "L3"','01 MANGOTE PQ 1" (30M) COMP. "L3"','01 "PISTOLA" DE PQ COMP. "L3"','01 STECKLEITER COMP. "L3"','01 MANGUEIRA 1½" (30M) COMP. "L2"','01 MANGUEIRA 2½" (30M) COMP. "L2"','02 CHAVE STORZ 1½" COMP. "L2"','01 REDUÇÃO 2½" PARA 1½" COMP. "L2"','01 ESGUICHO "VR" COMP. "L2"','02 CHAVES MANGOTE SUCÇÃO COMP. "L1"','02 CHAVES VÁLVULAS CORPO BOMBA COMP. "L1"','01 CHAVE ANGULAR VÁLVULAS COMP. SUPERIOR','01 ESCADA EXTENSORA (4 PARTES) COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 CHAVE CANHÃO TETO COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 DERIVANTE 2½" PARA 2x1½" CABINE','PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
+    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (PAINEL DE DIREÇÃO ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR E MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO INTERNA COMPARTIMENTOS','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACIONÁRIO E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','PAINÉIS DE OPERAÇÃO / TFT','NÍVEL DO TANQUE DE ÁGUA','PARTIDA DO MOTOR ESTACIONÁRIO','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK OPERADOR E SALVAMENTO','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','EXTINTOR ABC 2KG','CHAVE DE ABERTURA DAS VÁLVULAS DE PQ COMPARTIMENTO TRASEIRO','ALAVANCA DE ELEVAÇÃO DA CABINE'],
+    nome_guerra_ba2:['01 MANGUEIRA DE 1½" (30M) COMP. "R1"','01 MANGUEIRA DE 2½" (30M) COMP. "R1"','01 CHAVE STORZ DE 1½" COMP. "R1"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 MANGUEIRA DE 1½" (30M) COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "R2"','02 CALÇOS COMP. "R2"','TAMPA CILINDRO "N2" COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "L3"','01 MANIVELA CARRETEL PQ COMP. "L3"','01 MANGOTE PQ 1" (30M) COMP. "L3"','01 "PISTOLA" DE PQ COMP. "L3"','01 STECKLEITER COMP. "L3"','01 MANGUEIRA DE 1½" (30M) COMP. "L2"','01 MANGUEIRA DE 2½" (30M) COMP. "L2"','02 CHAVE STORZ DE 1½" COMP. "L2"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "L2"','01 ESGUICHO "VR" COMP. "L2"','02 CHAVES MANGOTE SUCÇÃO COMP. "L1"','02 CHAVES VÁLVULAS CORPO BOMBA COMP. "L1"','01 CHAVE ANGULAR VÁLVULAS COMP. SUPERIOR','01 ESCADA EXTENSORA (4 PARTES) COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 CHAVE CANHÃO TETO COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 DERIVANTE 2½" PARA 2x1½" CABINE','01 PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
   },
   'AP-2':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR E MEGAFONE','MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACION. E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','NÍVEL DO TANQUE DE ÁGUA','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','EXTINTOR ABC 2KG','ALAVANCA DE ELEVAÇÃO DA CABINE'],
-    nome_guerra_ba2:['01 MANGUEIRA 1½" (30M) COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','02 CHAVES STORZ COMP. "R1"','01 MANGUEIRA 1½" (30M) COMP. "R2"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 CHAVE CANHÃO SUPERIOR COMP. TRASEIRO','01 MANGUEIRA 1½" (30M) COMP. "L1"','01 ESGUICHO "VR" COMP. "L1"','02 CHAVES STORZ COMP. "L1"','01 ESCADA EXTENSORA COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
+    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (PAINEL DE DIREÇÃO ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR','MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACIONÁRIO E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','NÍVEL DO TANQUE DE ÁGUA','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','EXTINTOR ABC 2KG','ALAVANCA DE ELEVAÇÃO DA CABINE'],
+    nome_guerra_ba2:['01 MANGUEIRA DE 1½" (30M) COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','02 CHAVES STORZ COMP. "R1"','01 MANGUEIRA DE 1½" (30M) COMP. "R2"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 CHAVE CANHÃO SUPERIOR COMP. TRASEIRO','01 MANGUEIRA DE 1½" (30M) COMP. "L1"','01 ESGUICHO "VR" COMP. "L1"','02 CHAVES STORZ COMP. "L1"','01 ESCADA EXTENSORA COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
   },
   'DOSA 371':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR E MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO INTERNA COMPARTIMENTOS','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACION. E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','PAINÉIS DE OPERAÇÃO / TFT','NÍVEL DO TANQUE DE ÁGUA','PARTIDA DO MOTOR ESTACIONÁRIO','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK OPERADOR E SALVAMENTO','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','01 CHAVE VÁLVULAS COMP. TRASEIRO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','EXTINTOR ABC 2KG','ALAVANCA DE ELEVAÇÃO DA CABINE'],
-    nome_guerra_ba2:['01 MANGUEIRA 1½" (30M) COMP. "R1"','01 MANGUEIRA 2½" (30M) COMP. "R1"','01 CHAVE STORZ 1½" COMP. "R1"','01 REDUÇÃO 2½" PARA 1½" COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 MANGUEIRA 1½" (30M) COMP. "R2"','01 CHAVE STORZ 1½" COMP. "R2"','02 CALÇOS COMP. "R2"','TAMPA CILINDRO "N2" COMP. "R2"','01 CHAVE STORZ 1½" COMP. "L3"','01 MANIVELA CARRETEL PQ COMP. "L3"','01 MANGOTE PQ 1" (30M) COMP. "L3"','01 "PISTOLA" DE PQ COMP. "L3"','01 STECKLEITER COMP. "L3"','01 MANGUEIRA 1½" (30M) COMP. "L2"','01 MANGUEIRA 2½" (30M) COMP. "L2"','02 CHAVE STORZ 1½" COMP. "L2"','01 REDUÇÃO 2½" PARA 1½" COMP. "L2"','01 ESGUICHO "VR" COMP. "L2"','02 CHAVES MANGOTE SUCÇÃO COMP. "L1"','02 CHAVES VÁLVULAS CORPO BOMBA COMP. "L1"','01 CHAVE ANGULAR VÁLVULAS COMP. SUPERIOR','01 ESCADA EXTENSORA (4 PARTES) COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 CHAVE CANHÃO TETO COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 DERIVANTE 2½" PARA 2x1½" CABINE','PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
+    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (PAINEL DE DIREÇÃO ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR E MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO INTERNA COMPARTIMENTOS','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACIONÁRIO E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','PAINÉIS DE OPERAÇÃO / TFT','NÍVEL DO TANQUE DE ÁGUA','PARTIDA DO MOTOR ESTACIONÁRIO','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK OPERADOR E SALVAMENTO','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','01 CHAVE DE ABERTURA MANUAL DAS VÁLVULAS DE PQ, COMPARTIMENTO TRASEIRO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','01 CHAVE DE ABERTURA MANUAL DAS VÁLVULAS DE PC, COMPARTIMENTO TRASEIRO','ALAVANCA DE ELEVAÇÃO DA CABINE'],
+    nome_guerra_ba2:['01 MANGUEIRA DE 1½" (30M) COMP. "R1"','01 MANGUEIRA DE 2½" (30M) COMP. "R1"','01 CHAVE STORZ DE 1½" COMP. "R1"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 MANGUEIRA DE 1½" (30M) COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "R2"','02 CALÇOS COMP. "R2"','TAMPA CILINDRO "N2" COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "L3"','01 MANIVELA CARRETEL PQ COMP. "L3"','01 MANGOTE PQ 1" (30M) COMP. "L3"','01 "PISTOLA" DE PQ COMP. "L3"','01 STECKLEITER COMP. "L3"','01 MANGUEIRA DE 1½" (30M) COMP. "L2"','01 MANGUEIRA DE 2½" (30M) COMP. "L2"','02 CHAVE STORZ DE 1½" COMP. "L2"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "L2"','01 ESGUICHO "VR" COMP. "L2"','02 CHAVES MANGOTE SUCÇÃO COMP. "L1"','02 CHAVES VÁLVULAS CORPO BOMBA COMP. "L1"','01 CHAVE ANGULAR VÁLVULAS COMP. SUPERIOR','01 ESCADA EXTENSORA (4 PARTES) COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 CHAVE CANHÃO TETO COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 DERIVANTE 2½" PARA 2x1½" CABINE','01 PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
   }
 };
 
@@ -136,7 +157,7 @@ async function gerar(){
 
   const filtrados = todos.filter(c =>
     c.placa === viatura &&
-    c.formulario_id && c.formulario_id.includes(
+    c.formulario_id && c.formulario_id.toLowerCase().includes(
       tipo==='nome_guerra_ba2'?'ba':tipo==='lider_resgate'?'equipamentos':'motorista'
     ) && c.mes === mes
   );
@@ -156,32 +177,24 @@ async function gerar(){
   const mesLabel = MESES[mesNum-1].toUpperCase()+' / '+ano;
   const obs = filtrados.map(c=>c.obs).filter(Boolean).join(' | ') || '';
 
-  // Linha de assinatura do motorista (imagem)
+  // Assinatura do motorista/BA
   let tdAssin = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
     if(fut) return `<td class="td-futuro"></td>`;
     if(!c)  return `<td></td>`;
     const sig = c.sigMotorista||'';
-    return `<td style="padding:1px;">${sig?`<img class="sig-img" src="${sig}">`:'<div style="height:12mm;"></div>'}</td>`;
+    return `<td style="padding:1px;">${sig?`<img class="sig-img" src="${sig}">`:'<div style="height:14mm;"></div>'}</td>`;
   }).join('');
 
-  // Linha com nome do motorista
-  let tdNome = dias.map(d=>{
+  // Assinatura do chefe
+  let tdChefeAssin = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
     if(fut) return `<td class="td-futuro"></td>`;
     if(!c)  return `<td></td>`;
-    return `<td style="font-size:5pt;overflow:hidden;">${(c.nome||'').substring(0,8)}</td>`;
-  }).join('');
-
-  // Linha com nome do chefe de equipe
-  let tdChefe = dias.map(d=>{
-    const c = porDia[d];
-    const fut = parseInt(d)>diaHoje;
-    if(fut) return `<td class="td-futuro"></td>`;
-    if(!c)  return `<td></td>`;
-    return `<td style="font-size:5pt;overflow:hidden;">${(c.nome_chefe||c.chefe||'').substring(0,8)}</td>`;
+    const sig = c.sigChefe||'';
+    return `<td style="padding:1px;">${sig?`<img class="sig-img" src="${sig}">`:'<div style="height:14mm;"></div>'}</td>`;
   }).join('');
 
   let linhas = itens.map((item,idx)=>{
@@ -202,18 +215,14 @@ async function gerar(){
   saida.innerHTML = `
   <div class="folha">
     <div class="cab-wrap">
-      <div class="cab-logo">
-        <img src="/Med+.png" style="max-width:28mm;max-height:18mm;object-fit:contain;">
-      </div>
+      <div class="cab-logo"><img src="/Med+.png" alt="med+ Group"></div>
       <div class="cab-titulo">
-        <div>
-          <div style="font-size:7pt;text-align:center;margin-bottom:2px;">FORMULÁRIO</div>
-          <div class="cab-titulo-text">Checklist Inspeção Viaturas</div>
-        </div>
+        <div class="cab-titulo-top">FORMULÁRIO</div>
+        <div class="cab-titulo-text">Checklist Inspeção Viaturas</div>
       </div>
       <div class="cab-codigo">
         <div class="cab-codigo-row"><span>CÓDIGO:</span> MMS.BR.BA.FOR.007</div>
-        <div class="cab-codigo-row"><span>VERSÃO:</span> C0 &nbsp;&nbsp; <span>DATA CRIAÇÃO:</span> 06//2025</div>
+        <div class="cab-codigo-row"><span>VERSÃO:</span> C0 &nbsp; <span>DATA CRIAÇÃO:</span> 06/2025</div>
       </div>
     </div>
 
@@ -224,7 +233,7 @@ async function gerar(){
     <div class="referencia">
       <span>REFERÊNCIA PARA PREENCHIMENTO:</span>
       <span>C- CONFORME</span>
-      <span>NC-NÃO CONFORME</span>
+      <span>NC- NÃO CONFORME</span>
       <span>NA- NÃO APLICÁVEL/NÃO EXISTENTE</span>
     </div>
 
@@ -233,7 +242,7 @@ async function gerar(){
       <div class="info-cell"><b>CCI:</b> ${CCI[viatura]||'—'}</div>
       <div class="info-cell"><b>VIATURA:</b> ${viatura}</div>
       <div class="info-cell"><b>MODELO:</b> ${MODELO[viatura]||'—'}</div>
-      <div class="info-cell" style="flex:1;"><b>MÊS E ANO:</b> ${mesLabel}</div>
+      <div class="info-cell"><b>MÊS E ANO:</b> ${mesLabel}</div>
     </div>
 
     <div class="tab-wrap">
@@ -242,7 +251,7 @@ async function gerar(){
           <tr>
             <th class="th-num">#</th>
             <th class="th-item">ITEM A INSPECIONAR</th>
-            <th colspan="${totalDias}" style="background:#dce3f0;font-size:7pt;font-weight:700;padding:2px;">COMPONENTES</th>
+            <th colspan="${totalDias}" style="background:#dce3f0;font-size:8pt;font-weight:700;padding:2px;">COMPONENTES</th>
           </tr>
           <tr>
             <th class="th-num"></th>
@@ -254,28 +263,21 @@ async function gerar(){
           ${linhas}
           <tr class="tr-assin">
             <td class="td-num"></td>
-            <td class="td-item" style="font-size:6pt;color:#555;font-style:italic;">${TIPO_LABEL[tipo]}<br>Assinatura</td>
+            <td class="td-item">${TIPO_LABEL[tipo]}<br>Assinatura</td>
             ${tdAssin}
           </tr>
-          <tr class="tr-nome">
+          <tr class="tr-chefe-sig">
             <td class="td-num"></td>
-            <td class="td-item">Nome do Motorista</td>
-            ${tdNome}
-          </tr>
-          <tr class="tr-chefe">
-            <td class="td-num"></td>
-            <td class="td-item">Nome do Chefe de Equipe</td>
-            ${tdChefe}
+            <td class="td-item">Chefe de Equipe<br>Assinatura</td>
+            ${tdChefeAssin}
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="rodape">
-      <div class="rod-obs">
-        <div class="rod-obs-title">ALTERAÇÕES E OBSERVAÇÕES (QUALQUER ALTERAÇÃO DISCRIMINAR ABAIXO):</div>
-        <div class="rod-obs-text">${obs}</div>
-      </div>
+      <div class="rod-obs-title">ALTERAÇÕES E OBSERVAÇÕES (QUALQUER ALTERAÇÃO DISCRIMINAR ABAIXO):</div>
+      <div class="rod-obs-text">${obs}</div>
     </div>
 
     <div class="cod-rodape">
@@ -283,6 +285,10 @@ async function gerar(){
       <span>Impresso em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>
     </div>
   </div>`;
+}
+
+function baixarPDF() {
+  window.print();
 }
 </script>
 </body>
