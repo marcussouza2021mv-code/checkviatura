@@ -18,7 +18,8 @@
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;display:flex;flex-direction:column;}
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--azul2);}
 .login-box{background:var(--branco);border-radius:16px;padding:36px 32px;width:340px;box-shadow:0 8px 40px rgba(0,0,0,.25);}
-.login-logo{text-align:center;font-size:28px;margin-bottom:6px;}
+.login-logo{text-align:center;margin-bottom:10px;}
+.login-logo img{height:48px;object-fit:contain;}
 .login-title{text-align:center;font-size:20px;font-weight:700;color:var(--azul);margin-bottom:4px;}
 .login-sub{text-align:center;font-size:13px;color:var(--texto-sec);margin-bottom:24px;}
 .login-box .form-group{margin-bottom:14px;}
@@ -28,7 +29,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .login-err{color:var(--vermelho);font-size:13px;text-align:center;margin-top:10px;display:none;}
 #app{display:none;flex:1;flex-direction:column;}
 header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:0 20px;display:flex;align-items:center;height:54px;gap:16px;position:sticky;top:0;z-index:50;}
-.header-logo{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.header-logo img{height:32px;object-fit:contain;}
 .header-badge{background:rgba(255,255,255,.15);padding:3px 10px;border-radius:20px;font-size:12px;}
 .header-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
 .bell-btn{background:none;border:none;color:#fff;cursor:pointer;font-size:20px;position:relative;padding:4px;}
@@ -43,7 +44,7 @@ aside{width:var(--sidebar);background:var(--branco);border-right:.5px solid var(
 .side-item .icon{font-size:18px;width:22px;text-align:center;}
 .side-section{font-size:11px;font-weight:700;color:var(--cinza-borda);text-transform:uppercase;letter-spacing:.6px;padding:14px 18px 4px;}
 main{flex:1;overflow-y:auto;padding:22px;}
-.page{display:none;max-width:1060px;margin:0 auto;}
+.page{display:none;max-width:1100px;margin:0 auto;}
 .page.active{display:block;}
 .card{background:var(--branco);border:.5px solid var(--cinza-borda);border-radius:12px;padding:18px 22px;margin-bottom:16px;}
 .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
@@ -82,7 +83,6 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .badge-chefe{background:#EAF3DE;color:var(--verde);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
 .form-row.full{grid-template-columns:1fr;}
-.form-row.tri{grid-template-columns:1fr 1fr 1fr;}
 .form-group{display:flex;flex-direction:column;gap:4px;}
 .form-group label{font-size:12px;font-weight:600;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.3px;}
 .form-group input,.form-group select{padding:9px 12px;border:1px solid var(--cinza-borda);border-radius:8px;font-size:14px;color:var(--texto);background:var(--branco);font-family:inherit;}
@@ -134,7 +134,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
 </head>
 <body><div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">🚗</div>
+    <div class="login-logo"><img src="/Med+.png" alt="med+ Group"></div>
     <div class="login-title">CheckViatura</div>
     <div class="login-sub">Painel Administrativo</div>
     <div class="form-group"><label>Login</label><input type="text" id="li-login" placeholder="admin" autocomplete="username"></div>
@@ -146,7 +146,8 @@ main{flex:1;overflow-y:auto;padding:22px;}
 
 <div id="app">
   <header>
-    <div class="header-logo">🚗 CheckViatura <span class="header-badge" id="hdr-role">Admin</span></div>
+    <div class="header-logo"><img src="/Med+.png" alt="med+ Group"></div>
+    <span class="header-badge" id="hdr-role">Admin</span>
     <div class="header-right">
       <button class="bell-btn" onclick="showPage('alertas')" title="Alertas">🔔<span class="bell-count" id="bell-count">0</span></button>
       <span class="user-info" id="hdr-user">—</span>
@@ -213,13 +214,29 @@ main{flex:1;overflow-y:auto;padding:22px;}
         </div>
         <div class="filter-row no-print">
           <div class="form-group"><label>Viatura</label><select id="f-viatura" onchange="loadChecklists()"><option value="">Todas</option></select></div>
+          <div class="form-group"><label>Tipo</label>
+            <select id="f-tipo" onchange="loadChecklists()">
+              <option value="">Todos</option>
+              <option value="motorista">Motorista</option>
+              <option value="ba">BA-2</option>
+              <option value="equipamentos">Líder Resgate</option>
+            </select>
+          </div>
           <div class="form-group"><label>Equipe</label><select id="f-equipe" onchange="loadChecklists()"><option value="">Todas</option></select></div>
           <div class="form-group"><label>Mês</label><input type="month" id="f-mes" onchange="loadChecklists()"></div>
           <div class="form-group"><label>Status</label><select id="f-status" onchange="loadChecklists()"><option value="">Todos</option><option value="ok">Aprovado</option><option value="nok">Com pendência</option></select></div>
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Data</th><th>Viatura</th><th>Motorista</th><th>Equipe</th><th>Status</th><th class="no-print">Ações</th></tr></thead>
+            <thead><tr>
+              <th>Data</th>
+              <th>Viatura</th>
+              <th>Tipo</th>
+              <th>Motorista / BA-2</th>
+              <th>Equipe</th>
+              <th>Status</th>
+              <th class="no-print">Ações</th>
+            </tr></thead>
             <tbody id="cl-body"></tbody>
           </table>
         </div>
@@ -421,7 +438,6 @@ async function loadMaster() {
 }
 
 function getEquipe(id){ return _equipes.find(e=>e.id==id)||{}; }
-function getViatura(id){ return _viaturas.find(v=>v.id==id)||{}; }
 
 const pageLoaders = {
   dashboard: loadDashboard, alertas: loadAlertas,
@@ -522,15 +538,25 @@ async function loadChecklists() {
   const s=document.getElementById('f-status').value; if(s) q.set('status',s);
   const e=document.getElementById('f-equipe').value; if(e) q.set('equipe_id',e);
   const tbody=document.getElementById('cl-body');
-  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--texto-sec);">Carregando…</td></tr>';
+  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Carregando…</td></tr>';
   const data=await api('/checklists?'+q);
-  if(!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro</td></tr>';return;}
-  tbody.innerHTML=data.map(c=>{
-    const cls=c.status==='ok'?'badge-ok':'badge-nok';
-    const lbl=c.status==='ok'?'Aprovado':(c.nc||0)+' NC';
+
+  // Filtro por tipo
+  const tipo = document.getElementById('f-tipo').value;
+  const filtrado = tipo ? data.filter(c => c.formulario_id && c.formulario_id.includes(tipo)) : data;
+
+  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro</td></tr>';return;}
+
+  tbody.innerHTML=filtrado.map(c=>{
+    const cls=c.status==='ok'?'badge-ok': c.aprovado_chefe?'badge-ok':'badge-nok';
+    const lbl=c.aprovado_chefe?'Aprovado':c.status==='ok'?'OK':(c.nc||0)+' NC';
+    const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'<span class="badge" style="background:#E0F2FE;color:#0369A1;">BA-2</span>':
+                      c.preenchidoPor==='lider_resgate'?'<span class="badge" style="background:#FEF9C3;color:#854D0E;">Líder</span>':
+                      '<span class="badge" style="background:#F0FDF4;color:#166534;">Motorista</span>';
     return `<tr>
       <td>${c.data||'—'} dia ${c.dia||'—'}</td>
       <td><strong>${c.placa}</strong><br><span style="font-size:11px;color:var(--texto-sec)">${c.modelo||''}</span></td>
+      <td>${tipoLabel}</td>
       <td>${c.nome||c.motorista||'—'}</td>
       <td>${c.equipe||'—'}</td>
       <td><span class="badge ${cls}">${lbl}</span></td>
@@ -545,41 +571,39 @@ async function verCL(id) {
   const all = await api('/checklists');
   const c = all.find(x => x.id == id);
   if (!c) { alert('Checklist não encontrado!'); return; }
-
   const itens = c.itens || {};
   const il = Object.values(itens).map(v => {
-    const st = v.status === 'NC' ? 'color:var(--vermelho);background:#FEF2F2;' : v.status === 'NA' ? 'color:#888;' : '';
-    const ic = v.status === 'C' ? '✅' : v.status === 'NC' ? '❌' : '➖';
+    const st = v.status==='NC'?'color:var(--vermelho);background:#FEF2F2;':v.status==='NA'?'color:#888;':'';
+    const ic = v.status==='C'?'✅':v.status==='NC'?'❌':'➖';
     return `<div class="cl-item" style="${st}">
       ${ic} <strong style="min-width:24px;display:inline-block;font-size:11px;">${v.num||''}</strong>
       <span style="flex:1;font-size:12px;">${v.item||''}</span>
       <span style="font-size:11px;font-weight:700;">${v.status||''}</span>
     </div>`;
   }).join('');
-
-  const ncs = Object.values(itens).filter(v => v.status === 'NC');
-
+  const ncs = Object.values(itens).filter(v=>v.status==='NC');
+  const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'BA-2':c.preenchidoPor==='lider_resgate'?'Líder de Resgate':'Motorista';
   document.getElementById('modal-cl-title').textContent = `${c.formulario_titulo||'Checklist'} — ${c.placa}`;
   document.getElementById('modal-cl-body').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:var(--texto-sec);margin-bottom:14px;padding:10px;background:var(--cinza-claro);border-radius:8px;">
       <div><strong>Viatura:</strong> ${c.placa} — ${c.modelo||''}</div>
       <div><strong>Data:</strong> ${c.data||'—'} dia ${c.dia||'—'}</div>
-      <div><strong>Motorista:</strong> ${c.nome||'—'}</div>
+      <div><strong>${tipoLabel}:</strong> ${c.nome||'—'}</div>
       <div><strong>Equipe:</strong> ${c.equipe||'—'}</div>
     </div>
-    ${ncs.length > 0 ? `<div class="alert alert-danger" style="margin-bottom:12px;">⚠️ ${ncs.length} item(ns) Não Conforme(s)</div>` : '<div class="alert alert-info" style="margin-bottom:12px;">✅ Todos os itens conformes</div>'}
+    ${ncs.length>0?`<div class="alert alert-danger" style="margin-bottom:12px;">⚠️ ${ncs.length} item(ns) Não Conforme(s)</div>`:'<div class="alert alert-info" style="margin-bottom:12px;">✅ Todos os itens conformes</div>'}
     <div style="max-height:320px;overflow-y:auto;border:1px solid var(--cinza-borda);border-radius:8px;padding:8px;">
-      ${il || '<div style="color:var(--texto-sec);padding:10px;">Sem itens registrados</div>'}
+      ${il||'<div style="color:var(--texto-sec);padding:10px;">Sem itens registrados</div>'}
     </div>
-    ${c.obs ? `<div class="alert alert-warn" style="margin-top:10px;">📝 <strong>Observações:</strong> ${c.obs}</div>` : ''}
+    ${c.obs?`<div class="alert alert-warn" style="margin-top:10px;">📝 <strong>Obs:</strong> ${c.obs}</div>`:''}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--cinza-borda);">
       <div>
-        <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Assinatura: ${c.nome||'—'}</div>
-        ${c.sigMotorista ? `<img src="${c.sigMotorista}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">` : '<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
+        <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Assinatura: ${c.nome||'—'} (${tipoLabel})</div>
+        ${c.sigMotorista?`<img src="${c.sigMotorista}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">`:'<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
       </div>
       <div>
-        <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Visto Chefe: ${c.chefe||'—'}</div>
-        ${c.sigChefe ? `<img src="${c.sigChefe}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">` : '<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
+        <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Visto Chefe: ${c.chefe||c.nome_chefe||'—'}</div>
+        ${c.sigChefe?`<img src="${c.sigChefe}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">`:'<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
       </div>
     </div>`;
   openModal('modal-cl');
@@ -643,16 +667,17 @@ async function loadRelatorio() {
       </div>
     </div>
     ${data.map((c,idx)=>{
-      const itens = Object.values(c.itens||{});
-      const il = itens.map(v=>{
+      const itens=Object.values(c.itens||{});
+      const il=itens.map(v=>{
         const st=v.status==='NC'?'color:var(--vermelho)':'';
         const ic=v.status==='C'?'✅':v.status==='NC'?'❌':'➖';
         return `<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:.5px solid #eee;font-size:11px;${st}">${ic} <strong>${v.num||''}</strong> ${v.item||''}</div>`;
       }).join('');
+      const tipoLabel=c.preenchidoPor==='nome_guerra_ba2'?'BA-2':c.preenchidoPor==='lider_resgate'?'Líder':'Motorista';
       return `<div class="card" style="break-inside:avoid;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
           <div>
-            <div style="font-size:15px;font-weight:700;">#${idx+1} — ${c.placa} | ${c.modelo||''}</div>
+            <div style="font-size:15px;font-weight:700;">#${idx+1} — ${c.placa} | ${c.modelo||''} | ${tipoLabel}</div>
             <div style="font-size:12px;color:var(--texto-sec);">${c.data||'—'} dia ${c.dia||'—'} | ${c.nome||c.motorista||'—'} | ${c.equipe||'—'}</div>
           </div>
           <span class="badge ${c.status==='ok'?'badge-ok':'badge-nok'}">${c.status==='ok'?'Aprovado':(c.nc||0)+' NC'}</span>
@@ -660,8 +685,8 @@ async function loadRelatorio() {
         <div style="columns:2;column-gap:16px;">${il}</div>
         ${c.obs?`<div class="alert alert-warn" style="margin-top:8px;font-size:12px;">📝 ${c.obs}</div>`:''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding-top:10px;border-top:.5px solid var(--cinza-borda);">
-          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Motorista: ${c.nome||'—'}</div>${c.sigMotorista?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
-          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Chefe: ${c.chefe||'—'}</div>${c.sigChefe?`<img src="${c.sigChefe}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
+          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">${tipoLabel}: ${c.nome||'—'}</div>${c.sigMotorista?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
+          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Chefe: ${c.chefe||c.nome_chefe||'—'}</div>${c.sigChefe?`<img src="${c.sigChefe}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
         </div>
       </div>`;
     }).join('')}`;
@@ -699,17 +724,17 @@ function openModalUsuario(u=null) {
   toggleEquipeField();
   openModal('modal-usr');
 }
-function editarUsuario(u) { openModalUsuario(u); }
+function editarUsuario(u){ openModalUsuario(u); }
 function toggleEquipeField(){
   document.getElementById('usr-equipe-row').style.display=document.getElementById('usr-role').value==='chefe'?'block':'none';
 }
 async function salvarUsuario(){
   const id=document.getElementById('usr-id').value;
   const body={
-    nome:  document.getElementById('usr-nome').value.trim(),
-    login: document.getElementById('usr-login').value.trim(),
-    role:  document.getElementById('usr-role').value,
-    equipe_id: Number(document.getElementById('usr-equipe').value)||null
+    nome: document.getElementById('usr-nome').value.trim(),
+    login:document.getElementById('usr-login').value.trim(),
+    role: document.getElementById('usr-role').value,
+    equipe_id:Number(document.getElementById('usr-equipe').value)||null
   };
   const senha=document.getElementById('usr-senha').value;
   if(senha) body.senha=senha;
@@ -739,12 +764,12 @@ async function loadEquipes() {
         <button class="btn btn-outline btn-sm" onclick='editarEquipe(${JSON.stringify(e).replace(/'/g,"&#39;")})'>Editar</button>
         <button class="btn btn-danger btn-sm" onclick='delEquipe(${e.id})'>✕</button>
       </td></tr>`;
-  }).join('') || '<tr><td colspan="4" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhuma equipe</td></tr>';
+  }).join('')||'<tr><td colspan="4" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhuma equipe</td></tr>';
 }
 function openModalEquipe(e=null){
   document.getElementById('modal-eq-title').textContent=e?'Editar Equipe':'Nova Equipe';
-  document.getElementById('eq-id').value   =e?.id||'';
-  document.getElementById('eq-nome').value =e?.nome||'';
+  document.getElementById('eq-id').value=e?.id||'';
+  document.getElementById('eq-nome').value=e?.nome||'';
   document.getElementById('eq-chefe').value=e?.chefe||'';
   openModal('modal-eq');
 }
@@ -779,7 +804,7 @@ async function loadViaturas(){
 }
 function openModalViat(v=null){
   document.getElementById('modal-viat-title').textContent=v?'Editar Viatura':'Nova Viatura';
-  document.getElementById('viat-id').value   =v?.id||'';
+  document.getElementById('viat-id').value=v?.id||'';
   document.getElementById('viat-placa').value=v?.placa||'';
   document.getElementById('viat-modelo').value=v?.modelo||'';
   const sel=document.getElementById('viat-equipe');
