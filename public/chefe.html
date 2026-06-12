@@ -48,7 +48,6 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
 .sig-clear{font-size:11px;color:var(--texto-sec);cursor:pointer;background:none;border:none;padding:4px 0;text-align:right;display:block;}
 .nc-item{padding:6px 10px;background:var(--vermelho-claro);border-radius:6px;font-size:12px;color:var(--vermelho);margin-bottom:4px;}
 .login-box{max-width:400px;margin:80px auto;}
-.equipe-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700;background:var(--azul-claro);color:var(--azul);margin-bottom:16px;}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
@@ -106,7 +105,6 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
     </div>
     <button class="btn btn-outline" onclick="sair()">Sair</button>
   </div>
-
   <div id="lista-checklists"></div>
 </div>
 
@@ -123,31 +121,20 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
 </div>
 
 <script>
-const SENHAS = {
-  Alfa: 'alfa123',
-  Bravo: 'bravo123',
-  Charlie: 'charlie123',
-  Delta: 'delta123'
-};
-
-const CHEFES = {
-  Alfa: 'Cerqueira',
-  Bravo: 'Savio',
-  Charlie: 'Cleber',
-  Delta: 'Douglas'
-};
+const SENHAS = { Alfa:'alfa123', Bravo:'bravo123', Charlie:'charlie123', Delta:'delta123' };
+const CHEFES = { Alfa:'Cerqueira', Bravo:'Savio', Charlie:'Cleber', Delta:'Douglas' };
 
 let equipeLogada = null;
 let checklistAtual = null;
 
 function fazerLogin() {
   const equipe = document.getElementById('login-equipe').value;
-  const senha = document.getElementById('login-senha').value;
-  const erro = document.getElementById('login-error');
+  const senha  = document.getElementById('login-senha').value;
+  const erro   = document.getElementById('login-error');
 
-  if (!equipe) { erro.textContent = 'Selecione sua equipe.'; erro.style.display='block'; return; }
-  if (!senha) { erro.textContent = 'Digite sua senha.'; erro.style.display='block'; return; }
-  if (SENHAS[equipe] !== senha) { erro.textContent = 'Senha incorreta.'; erro.style.display='block'; return; }
+  if (!equipe) { erro.textContent='Selecione sua equipe.'; erro.style.display='block'; return; }
+  if (!senha)  { erro.textContent='Digite sua senha.';     erro.style.display='block'; return; }
+  if (SENHAS[equipe] !== senha) { erro.textContent='Senha incorreta.'; erro.style.display='block'; return; }
 
   equipeLogada = equipe;
   erro.style.display = 'none';
@@ -163,13 +150,11 @@ function fazerLogin() {
 async function carregarChecklists() {
   const lista = document.getElementById('lista-checklists');
   lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto-sec);">Carregando...</div>';
-
   try {
-    const r = await fetch('/api/checklists/publico?equipe='+equipeLogada);
-    const todos = await r.json();
-    const meus = todos.filter(c => c.equipe === equipeLogada);
+    const r = await fetch('/api/checklists/publico?equipe=' + equipeLogada);
+    const meus = await r.json();
 
-    if (meus.length === 0) {
+    if (!Array.isArray(meus) || meus.length === 0) {
       lista.innerHTML = '<div class="card" style="text-align:center;padding:40px;color:var(--texto-sec);">Nenhum checklist encontrado para sua equipe.</div>';
       return;
     }
@@ -185,7 +170,7 @@ async function carregarChecklists() {
       return `<div class="checklist-item" onclick="abrirChecklist('${c.id}')">
         <div class="checklist-header">
           <div>
-            <div class="checklist-title">${c.formulario_titulo}</div>
+            <div class="checklist-title">${c.formulario_titulo || 'Checklist Inspeção Viaturas'}</div>
             <div class="checklist-meta">📅 ${c.data} • 🚑 ${c.placa} — ${c.modelo} • 👤 ${c.nome}</div>
           </div>
           ${statusBadge}
@@ -193,21 +178,26 @@ async function carregarChecklists() {
       </div>`;
     }).join('');
   } catch(e) {
-    lista.innerHTML = '<div class="alert alert-error">Erro ao carregar checklists.</div>';
+    lista.innerHTML = '<div class="alert alert-error">Erro ao carregar: ' + e.message + '</div>';
   }
 }
 
 async function abrirChecklist(id) {
-  const r = await fetch('/api/checklists');
-  const todos = await r.json();
-  checklistAtual = todos.find(c => c.id == id);
-  if (!checklistAtual) return;
+  try {
+    const r = await fetch('/api/checklists/publico/' + id);
+    if (!r.ok) throw new Error('Checklist não encontrado');
+    checklistAtual = await r.json();
+  } catch(e) {
+    alert('Erro ao abrir checklist: ' + e.message);
+    return;
+  }
 
-  document.getElementById('modal-titulo').textContent = checklistAtual.formulario_titulo;
+  document.getElementById('modal-titulo').textContent = checklistAtual.formulario_titulo || 'Checklist Inspeção Viaturas';
 
-  const ncs = Object.values(checklistAtual.itens || {}).filter(i => i.status === 'NC');
-  const total = Object.values(checklistAtual.itens || {}).length;
-  const conformes = Object.values(checklistAtual.itens || {}).filter(i => i.status === 'C').length;
+  const itens     = Object.values(checklistAtual.itens || {});
+  const ncs       = itens.filter(i => i.status === 'NC');
+  const total     = itens.length;
+  const conformes = itens.filter(i => i.status === 'C').length;
 
   let html = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;font-size:13px;">
@@ -224,14 +214,13 @@ async function abrirChecklist(id) {
 
   if (ncs.length > 0) {
     html += `<div style="margin-bottom:16px;"><strong style="font-size:13px;">Itens Não Conformes:</strong><div style="margin-top:8px;">`;
-    ncs.forEach(nc => {
-      html += `<div class="nc-item">⚠ ${nc.num} — ${nc.item}</div>`;
-    });
+    ncs.forEach(nc => { html += `<div class="nc-item">⚠ ${nc.num} — ${nc.item}</div>`; });
     html += `</div></div>`;
   }
 
   if (checklistAtual.obs) {
-    html += `<div style="margin-bottom:16px;"><strong style="font-size:13px;">Observações:</strong><div style="background:var(--cinza-claro);padding:10px;border-radius:8px;font-size:13px;margin-top:6px;">${checklistAtual.obs}</div></div>`;
+    html += `<div style="margin-bottom:16px;"><strong style="font-size:13px;">Observações:</strong>
+      <div style="background:var(--cinza-claro);padding:10px;border-radius:8px;font-size:13px;margin-top:6px;">${checklistAtual.obs}</div></div>`;
   }
 
   if (checklistAtual.assinatura_chefe_aprovado) {
@@ -296,9 +285,7 @@ async function assinarChecklist() {
         aprovado_em: new Date().toISOString()
       })
     });
-
     if (!r.ok) throw new Error(await r.text());
-
     fecharModal();
     carregarChecklists();
     alert('✅ Checklist aprovado com sucesso!');
@@ -327,7 +314,6 @@ function sair() {
 document.getElementById('modal-checklist').addEventListener('click', e => {
   if (e.target === e.currentTarget) fecharModal();
 });
-
 document.getElementById('login-senha').addEventListener('keypress', e => {
   if (e.key === 'Enter') fazerLogin();
 });
