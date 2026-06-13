@@ -9,18 +9,57 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const BIN_ID  = '6a2c1f77da38895dfeb57148';
-const API_KEY = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
+// ── SUPABASE CONFIG ──
+const SUPA_URL    = 'https://qwzvnvmcwdnvopehwnee.supabase.co';
+const SUPA_KEY    = 'sb_secret_nLndfLmW-BfqWtx3AZOfRw_CoMo9QOW';
 
+// ── CLOUDINARY CONFIG ──
 const CLOUD_NAME   = 'drj7tagld';
 const CLOUD_KEY    = '824487421874555';
 const CLOUD_SECRET = 'gWdHK5gEkxLEnPmun91kcboGugs';
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
-// ✅ Upload assinatura para Cloudinary
-async function uploadCloudinary(base64img, publicId) {
+// ── SUPABASE REQUEST ──
+function supaFetch(method, table, body=null, query='') {
   return new Promise((resolve, reject) => {
+    const bodyBuf = body ? Buffer.from(JSON.stringify(body), 'utf8') : null;
+    const options = {
+      hostname: 'qwzvnvmcwdnvopehwnee.supabase.co',
+      path: `/rest/v1/${table}${query}`,
+      method,
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': method==='POST' ? 'return=representation' : 'return=representation',
+        ...(bodyBuf ? { 'Content-Length': bodyBuf.length } : {})
+      }
+    };
+    const req = https.request(options, res => {
+      let raw = '';
+      res.on('data', d => raw += d);
+      res.on('end', () => {
+        try {
+          const parsed = raw ? JSON.parse(raw) : [];
+          if (res.statusCode >= 400) {
+            console.error('Supabase error:', res.statusCode, raw.slice(0,200));
+            reject(new Error(parsed.message || raw.slice(0,100)));
+            return;
+          }
+          resolve(parsed);
+        } catch(e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    if (bodyBuf) req.write(bodyBuf);
+    req.end();
+  });
+}
+
+// ── CLOUDINARY UPLOAD ──
+async function uploadCloudinary(base64img, publicId) {
+  return new Promise((resolve) => {
     try {
       if (!base64img || base64img.length < 100) { resolve(''); return; }
       const timestamp = Math.floor(Date.now() / 1000);
@@ -56,129 +95,16 @@ async function uploadCloudinary(base64img, publicId) {
         res.on('end', () => {
           try {
             const parsed = JSON.parse(raw);
-            if (parsed.secure_url) {
-              console.log('Cloudinary OK:', parsed.secure_url);
-              resolve(parsed.secure_url);
-            } else {
-              console.error('Cloudinary error:', raw.slice(0,200));
-              resolve('');
-            }
+            if (parsed.secure_url) { console.log('Cloudinary OK:', parsed.secure_url); resolve(parsed.secure_url); }
+            else { console.error('Cloudinary error:', raw.slice(0,200)); resolve(''); }
           } catch(e) { resolve(''); }
         });
       });
-      req.on('error', e => { console.error('Cloudinary req error:', e.message); resolve(''); });
+      req.on('error', () => resolve(''));
       req.write(bodyBuf);
       req.end();
-    } catch(e) { console.error('uploadCloudinary error:', e.message); resolve(''); }
+    } catch(e) { resolve(''); }
   });
-}
-
-function jsonbinGet(binId) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'api.jsonbin.io',
-      path: `/v3/b/${binId}`,
-      method: 'GET',
-      headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' }
-    };
-    const req = https.request(options, res => {
-      let raw = '';
-      res.on('data', d => raw += d);
-      res.on('end', () => {
-        try {
-          const parsed = JSON.parse(raw);
-          if (parsed.message && !parsed.record) { reject(new Error(parsed.message)); return; }
-          resolve(parsed.record);
-        } catch(e) { reject(e); }
-      });
-    });
-    req.on('error', reject);
-    req.end();
-  });
-}
-
-function jsonbinPut(binId, data) {
-  return new Promise((resolve, reject) => {
-    const bodyBuffer = Buffer.from(JSON.stringify(data), 'utf8');
-    const options = {
-      hostname: 'api.jsonbin.io',
-      path: `/v3/b/${binId}`,
-      method: 'PUT',
-      headers: {
-        'X-Master-Key': API_KEY,
-        'Content-Type': 'application/json',
-        'Content-Length': bodyBuffer.length
-      }
-    };
-    const req = https.request(options, res => {
-      let raw = '';
-      res.on('data', d => raw += d);
-      res.on('end', () => {
-        try {
-          const parsed = JSON.parse(raw);
-          if (parsed.message && !parsed.record) {
-            console.error('JSONBin PUT error:', parsed.message);
-            reject(new Error(parsed.message));
-            return;
-          }
-          resolve(parsed);
-        } catch(e) { reject(e); }
-      });
-    });
-    req.on('error', reject);
-    req.write(bodyBuffer);
-    req.end();
-  });
-}
-
-async function readDB() {
-  try {
-    const d = await jsonbinGet(BIN_ID);
-    if (!d.usuarios)   d.usuarios   = defaultDB().usuarios;
-    if (!d.equipes)    d.equipes    = defaultDB().equipes;
-    if (!d.viaturas)   d.viaturas   = defaultDB().viaturas;
-    if (!d.checklists) d.checklists = [];
-    if (!d.alertas)    d.alertas    = [];
-    return d;
-  } catch(e) {
-    console.error('readDB error:', e.message);
-    return defaultDB();
-  }
-}
-
-async function writeDB(db) {
-  try {
-    const size = Buffer.byteLength(JSON.stringify(db), 'utf8');
-    console.log('writeDB size:', Math.round(size/1024), 'KB');
-    await jsonbinPut(BIN_ID, db);
-    console.log('writeDB OK');
-  } catch(e) {
-    console.error('writeDB error:', e.message);
-    throw e;
-  }
-}
-
-function defaultDB() {
-  return {
-    usuarios: [
-      { id: 1, nome: 'Gerente', login: 'admin', senha: hash('admin123'), role: 'admin' },
-      { id: 2, nome: 'Chefe Alpha', login: 'chefe1', senha: hash('chefe123'), role: 'chefe', equipe_id: 1 }
-    ],
-    equipes: [
-      { id: 1, nome: 'Equipe Alfa',    chefe: 'Cerqueira' },
-      { id: 2, nome: 'Equipe Bravo',   chefe: 'Savio' },
-      { id: 3, nome: 'Equipe Charlie', chefe: 'Cleber' },
-      { id: 4, nome: 'Equipe Delta',   chefe: 'Douglas' }
-    ],
-    viaturas: [
-      { id: 1, placa: 'CRS',      modelo: 'IVECO DAILY',      equipe_id: 1 },
-      { id: 2, placa: 'DOSA 318', modelo: 'IVECO MAGIRUS X6', cci: '02', equipe_id: 2 },
-      { id: 3, placa: 'AP-2',     modelo: 'FÊNIX',            cci: '03', equipe_id: 3 },
-      { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', cci: '01', equipe_id: 4 }
-    ],
-    checklists: [],
-    alertas: []
-  };
 }
 
 const sessions = {};
@@ -206,25 +132,30 @@ function requireAuth(roles=[]) {
   };
 }
 
-function getEquipeNome(db, id) {
-  const e = db.equipes.find(e => e.id == id);
-  return e ? e.nome.replace('Equipe ', '') : '';
-}
-function getViaturaPlacar(db, id) {
-  const v = db.viaturas.find(v => v.id == id);
-  return v ? v.placa : '';
-}
+const USUARIOS = [
+  { id: 1, nome: 'Gerente', login: 'admin', senha: hash('admin123'), role: 'admin' }
+];
+const EQUIPES = [
+  { id: 1, nome: 'Equipe Alfa',    chefe: 'Cerqueira' },
+  { id: 2, nome: 'Equipe Bravo',   chefe: 'Savio' },
+  { id: 3, nome: 'Equipe Charlie', chefe: 'Cleber' },
+  { id: 4, nome: 'Equipe Delta',   chefe: 'Douglas' }
+];
+const VIATURAS = [
+  { id: 1, placa: 'CRS',      modelo: 'IVECO DAILY',      equipe_id: 1 },
+  { id: 2, placa: 'DOSA 318', modelo: 'IVECO MAGIRUS X6', cci: '02', equipe_id: 2 },
+  { id: 3, placa: 'AP-2',     modelo: 'FÊNIX',            cci: '03', equipe_id: 3 },
+  { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', cci: '01', equipe_id: 4 }
+];
+const SENHAS_CHEFE = { Alfa:'alfa123', Bravo:'bravo123', Charlie:'charlie123', Delta:'delta123' };
 
 // AUTH
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { login, senha } = req.body;
-    const db = await readDB();
-    const u = db.usuarios.find(x => x.login === login && x.senha === hash(senha));
-    if (!u) return res.status(401).json({ erro: 'Login ou senha incorretos' });
-    const token = newSession(u);
-    res.json({ token, nome: u.nome, role: u.role, equipe_id: u.equipe_id });
-  } catch(e) { res.status(500).json({ erro: e.message }); }
+app.post('/api/auth/login', (req, res) => {
+  const { login, senha } = req.body;
+  const u = USUARIOS.find(x => x.login === login && x.senha === hash(senha));
+  if (!u) return res.status(401).json({ erro: 'Login ou senha incorretos' });
+  const token = newSession(u);
+  res.json({ token, nome: u.nome, role: u.role });
 });
 
 app.post('/api/auth/logout', (req, res) => {
@@ -234,193 +165,181 @@ app.post('/api/auth/logout', (req, res) => {
 });
 
 app.get('/api/auth/me', requireAuth(), (req, res) => {
-  res.json({ nome: req.user.nome, role: req.user.role, equipe_id: req.user.equipe_id });
+  res.json({ nome: req.user.nome, role: req.user.role });
 });
 
-// USUARIOS
-app.get('/api/usuarios', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  res.json(db.usuarios.map(u => ({ ...u, senha: undefined })));
-});
-app.post('/api/usuarios', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  if (db.usuarios.find(u => u.login === req.body.login))
-    return res.status(400).json({ erro: 'Login já existe' });
-  const u = { id: Date.now(), ...req.body, senha: hash(req.body.senha) };
-  db.usuarios.push(u); await writeDB(db);
-  res.json({ ...u, senha: undefined });
-});
-app.put('/api/usuarios/:id', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  const idx = db.usuarios.findIndex(u => u.id == req.params.id);
-  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
-  const upd = { ...db.usuarios[idx], ...req.body };
-  if (req.body.senha) upd.senha = hash(req.body.senha);
-  db.usuarios[idx] = upd; await writeDB(db);
-  res.json({ ...upd, senha: undefined });
-});
-app.delete('/api/usuarios/:id', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  db.usuarios = db.usuarios.filter(u => u.id != req.params.id);
-  await writeDB(db); res.json({ ok: true });
-});
+// EQUIPES / VIATURAS (estáticos)
+app.get('/api/equipes',  (req, res) => res.json(EQUIPES));
+app.get('/api/viaturas', (req, res) => res.json(VIATURAS));
 
-// EQUIPES
-app.get('/api/equipes', async (req, res) => res.json((await readDB()).equipes));
-app.post('/api/equipes', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  const e = { id: Date.now(), ...req.body };
-  db.equipes.push(e); await writeDB(db); res.json(e);
-});
-app.put('/api/equipes/:id', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  const idx = db.equipes.findIndex(e => e.id == req.params.id);
-  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
-  db.equipes[idx] = { ...db.equipes[idx], ...req.body };
-  await writeDB(db); res.json(db.equipes[idx]);
-});
-app.delete('/api/equipes/:id', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  db.equipes = db.equipes.filter(e => e.id != req.params.id);
-  await writeDB(db); res.json({ ok: true });
-});
+// ── CHECKLISTS ──
 
-// VIATURAS
-app.get('/api/viaturas', async (req, res) => res.json((await readDB()).viaturas));
-app.post('/api/viaturas', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  const v = { id: Date.now(), ...req.body };
-  db.viaturas.push(v); await writeDB(db); res.json(v);
-});
-app.put('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  const idx = db.viaturas.findIndex(v => v.id == req.params.id);
-  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
-  db.viaturas[idx] = { ...db.viaturas[idx], ...req.body };
-  await writeDB(db); res.json(db.viaturas[idx]);
-});
-app.delete('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
-  const db = await readDB();
-  db.viaturas = db.viaturas.filter(v => v.id != req.params.id);
-  await writeDB(db); res.json({ ok: true });
-});
+// Converte registro do Supabase para formato do frontend
+function fromSupa(c) {
+  return {
+    id: c.id,
+    data: c.data,
+    dataFormatada: c.data_formatada,
+    mes: c.mes,
+    dia: c.dia,
+    sci: c.sci,
+    cci: c.cci,
+    placa: c.placa,
+    modelo: c.modelo,
+    tipo_viatura: c.tipo_viatura,
+    formulario_id: c.formulario_id,
+    formulario_titulo: c.formulario_titulo,
+    preenchidoPor: c.preenchido_por,
+    nome: c.nome,
+    equipe: c.equipe,
+    nome_chefe: c.nome_chefe,
+    obs: c.obs,
+    itens: c.itens,
+    nc: c.nc,
+    status: c.status,
+    sigMotorista: c.sig_motorista || '',
+    sigChefe: c.sig_chefe || '',
+    aprovado_chefe: c.aprovado_chefe,
+    chefe: c.chefe,
+    equipe_chefe: c.equipe_chefe,
+    data_aprovacao: c.data_aprovacao
+  };
+}
 
-// CHECKLISTS PÚBLICO
+// PÚBLICO — sem autenticação
 app.get('/api/checklists/publico', async (req, res) => {
   try {
-    const db = await readDB();
-    res.json([...db.checklists].reverse());
+    const data = await supaFetch('GET', 'checklists', null, '?order=id.desc');
+    res.json(data.map(fromSupa));
   } catch(e) {
+    console.error('publico error:', e.message);
     res.status(500).json({ erro: e.message });
   }
 });
 
 app.get('/api/checklists/publico/:id', async (req, res) => {
   try {
-    const db = await readDB();
-    const c = db.checklists.find(c => String(c.id) === String(req.params.id));
-    if (!c) return res.status(404).json({ erro: 'Não encontrado' });
-    res.json(c);
+    const data = await supaFetch('GET', 'checklists', null, `?id=eq.${req.params.id}`);
+    if (!data.length) return res.status(404).json({ erro: 'Não encontrado' });
+    res.json(fromSupa(data[0]));
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
 });
 
-// CHECKLISTS AUTENTICADO
+// AUTENTICADO
 app.get('/api/checklists', requireAuth(), async (req, res) => {
   try {
-    const db = await readDB();
-    let data = [...db.checklists];
-    if (req.query.mes) data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
-    if (req.query.viatura_id) {
-      const placa = getViaturaPlacar(db, req.query.viatura_id);
-      data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
-    }
-    if (req.query.status) data = data.filter(c => c.status === req.query.status);
+    let query = '?order=id.desc';
+    if (req.query.mes) query += `&mes=eq.${req.query.mes}`;
+    if (req.query.status) query += `&status=eq.${req.query.status}`;
+    const data = await supaFetch('GET', 'checklists', null, query);
+    let result = data.map(fromSupa);
     if (req.query.equipe_id) {
-      const eq = db.equipes.find(e => e.id == req.query.equipe_id);
+      const eq = EQUIPES.find(e => e.id == req.query.equipe_id);
       if (eq) {
-        const nomeSimples  = eq.nome.replace('Equipe ', '');
-        const nomeCompleto = eq.nome;
-        data = data.filter(c =>
+        const nomeSimples = eq.nome.replace('Equipe ', '');
+        result = result.filter(c =>
           c.equipe === nomeSimples ||
-          c.equipe === nomeCompleto ||
-          c.nome_chefe === eq.chefe ||
-          c.equipe_id == req.query.equipe_id
+          c.equipe === eq.nome ||
+          c.nome_chefe === eq.chefe
         );
       }
     }
-    res.json(data.reverse());
+    if (req.query.viatura_id) {
+      const v = VIATURAS.find(v => v.id == req.query.viatura_id);
+      if (v) result = result.filter(c => c.placa === v.placa);
+    }
+    res.json(result);
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
 });
 
-// ✅ SALVAR CHECKLIST — envia assinatura para Cloudinary
+// ✅ SALVAR CHECKLIST
 app.post('/api/checklists', async (req, res) => {
   try {
-    const db = await readDB();
     const id = Date.now();
-    console.log('Salvando checklist:', req.body.formulario_id, req.body.preenchidoPor, req.body.equipe);
+    console.log('Salvando:', req.body.formulario_id, req.body.preenchidoPor, req.body.equipe, req.body.nome);
 
-    // Upload assinatura motorista para Cloudinary
+    // Upload assinatura para Cloudinary
     const sigUrl = await uploadCloudinary(req.body.sigMotorista, `sig_mot_${id}`);
+    console.log('sigUrl:', sigUrl ? 'OK' : 'vazio');
 
-    const r = {
+    const record = {
       id,
-      ...req.body,
-      sigMotorista: sigUrl,
-      sigChefe: ''
+      data: req.body.data,
+      data_formatada: req.body.dataFormatada,
+      mes: req.body.mes,
+      dia: req.body.dia,
+      sci: req.body.sci || 'CUIABÁ',
+      cci: req.body.cci || '',
+      placa: req.body.placa,
+      modelo: req.body.modelo,
+      tipo_viatura: req.body.tipo_viatura,
+      formulario_id: req.body.formulario_id,
+      formulario_titulo: req.body.formulario_titulo,
+      preenchido_por: req.body.preenchidoPor,
+      nome: req.body.nome,
+      equipe: req.body.equipe,
+      nome_chefe: req.body.nome_chefe,
+      obs: req.body.obs || '',
+      itens: req.body.itens || {},
+      nc: req.body.nc || 0,
+      status: req.body.status || 'ok',
+      sig_motorista: sigUrl,
+      sig_chefe: '',
+      aprovado_chefe: false
     };
 
-    db.checklists.push(r);
-    if (r.nc > 0) {
-      db.alertas = db.alertas || [];
-      db.alertas.push({
-        id: Date.now()+1, tipo: 'nok',
-        msg: `${r.nc} NC — ${r.placa} — ${r.nome} (${r.preenchidoPor==='nome_guerra_ba2'?'BA-2':'Motorista'})`,
-        checklist_id: r.id, data: r.data, lido: false
+    const saved = await supaFetch('POST', 'checklists', record);
+
+    // Alerta se NC
+    if (record.nc > 0) {
+      await supaFetch('POST', 'alertas', {
+        id: Date.now()+1,
+        tipo: 'nok',
+        msg: `${record.nc} NC — ${record.placa} — ${record.nome} (${record.preenchido_por==='nome_guerra_ba2'?'BA-2':'Motorista'})`,
+        checklist_id: id,
+        data: record.data,
+        lido: false
       });
     }
-    await writeDB(db);
-    console.log('Checklist salvo! Total:', db.checklists.length);
-    res.json(r);
+
+    console.log('Checklist salvo!');
+    res.json(fromSupa(Array.isArray(saved) ? saved[0] : saved));
   } catch(e) {
-    console.error('Erro ao salvar checklist:', e.message);
+    console.error('Erro ao salvar:', e.message);
     res.status(500).json({ erro: e.message });
   }
 });
 
-app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), async (req, res) => {
+app.delete('/api/checklists/:id', requireAuth(['admin']), async (req, res) => {
   try {
-    const db = await readDB();
-    db.checklists = db.checklists.filter(c => c.id != req.params.id);
-    await writeDB(db);
+    await supaFetch('DELETE', 'checklists', null, `?id=eq.${req.params.id}`);
     res.json({ ok: true });
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
 });
 
-// ✅ APROVAR — envia assinatura do chefe para Cloudinary
+// ✅ APROVAR — assinatura do chefe para Cloudinary
 app.post('/api/checklists/:id/aprovar', async (req, res) => {
   try {
-    const db = await readDB();
-    const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
-    if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
-
-    // Upload assinatura chefe para Cloudinary
+    console.log('Aprovando checklist:', req.params.id);
     const sigChefeUrl = await uploadCloudinary(req.body.sigChefe, `sig_chefe_${req.params.id}`);
+    console.log('sigChefeUrl:', sigChefeUrl ? 'OK' : 'vazio');
 
-    db.checklists[idx] = {
-      ...db.checklists[idx],
-      ...req.body,
-      sigChefe: sigChefeUrl,
-      aprovado_chefe: true
-    };
-    await writeDB(db);
-    console.log('Aprovado! sigChefe URL:', sigChefeUrl);
-    res.json(db.checklists[idx]);
+    const updated = await supaFetch('PATCH', 'checklists', {
+      sig_chefe: sigChefeUrl,
+      aprovado_chefe: true,
+      chefe: req.body.chefe,
+      equipe_chefe: req.body.equipe_chefe,
+      data_aprovacao: req.body.data_aprovacao
+    }, `?id=eq.${req.params.id}`);
+
+    console.log('Aprovado!');
+    res.json(fromSupa(Array.isArray(updated) ? updated[0] : updated));
   } catch(e) {
     console.error('Erro ao aprovar:', e.message);
     res.status(500).json({ erro: e.message });
@@ -428,45 +347,41 @@ app.post('/api/checklists/:id/aprovar', async (req, res) => {
 });
 
 // ALERTAS
-app.get('/api/alertas', requireAuth(['admin','chefe']), async (req, res) => {
+app.get('/api/alertas', requireAuth(['admin']), async (req, res) => {
   try {
-    const db = await readDB();
-    res.json((db.alertas||[]).filter(a=>!a.lido).reverse().slice(0,50));
+    const data = await supaFetch('GET', 'alertas', null, '?lido=eq.false&order=id.desc&limit=50');
+    res.json(data);
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
-app.put('/api/alertas/:id/lido', requireAuth(['admin','chefe']), async (req, res) => {
+app.put('/api/alertas/:id/lido', requireAuth(['admin']), async (req, res) => {
   try {
-    const db = await readDB();
-    const a = (db.alertas||[]).find(x=>x.id==req.params.id);
-    if (a) { a.lido=true; await writeDB(db); }
+    await supaFetch('PATCH', 'alertas', { lido: true }, `?id=eq.${req.params.id}`);
     res.json({ ok: true });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
-app.put('/api/alertas/lidos/todos', requireAuth(['admin','chefe']), async (req, res) => {
+app.put('/api/alertas/lidos/todos', requireAuth(['admin']), async (req, res) => {
   try {
-    const db = await readDB();
-    (db.alertas||[]).forEach(a=>a.lido=true);
-    await writeDB(db);
+    await supaFetch('PATCH', 'alertas', { lido: true }, '?lido=eq.false');
     res.json({ ok: true });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
 // DASHBOARD
-app.get('/api/dashboard', requireAuth(['admin','chefe']), async (req, res) => {
+app.get('/api/dashboard', requireAuth(['admin']), async (req, res) => {
   try {
-    const db = await readDB();
     const mes = req.query.mes || new Date().toISOString().slice(0,7);
-    const cls = db.checklists.filter(c => c.data && c.data.startsWith(mes));
-    const porViatura = db.viaturas.map(v => {
-      const myCls = cls.filter(c => c.viatura_id == v.id || c.placa == v.placa);
+    const data = await supaFetch('GET', 'checklists', null, `?mes=eq.${mes}&order=id.desc`);
+    const cls = data.map(fromSupa);
+    const alertas = await supaFetch('GET', 'alertas', null, '?lido=eq.false');
+
+    const porViatura = VIATURAS.map(v => {
+      const myCls = cls.filter(c => c.placa === v.placa);
       const nok = myCls.filter(c=>c.status==='nok').length;
-      const eq = db.equipes.find(e=>e.id==v.equipe_id)||{};
-      return { ...v, equipe: eq.nome||'—', total: myCls.length, ok: myCls.length-nok, nok };
+      return { ...v, total: myCls.length, ok: myCls.length-nok, nok };
     });
-    const porEquipe = db.equipes.map(e => {
+    const porEquipe = EQUIPES.map(e => {
       const nomeSimples = e.nome.replace('Equipe ','');
       const myCls = cls.filter(c =>
-        c.equipe_id == e.id ||
         c.equipe === nomeSimples ||
         c.equipe === e.nome ||
         c.nome_chefe === e.chefe
@@ -484,7 +399,7 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), async (req, res) => {
     }
     const motMap={};
     cls.forEach(c=>{
-      const n=c.nome||c.motorista||'—';
+      const n=c.nome||'—';
       if(!motMap[n]) motMap[n]={nome:n,total:0,nok:0};
       motMap[n].total++;
       if(c.status==='nok') motMap[n].nok++;
@@ -493,7 +408,7 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), async (req, res) => {
       mes, total:cls.length,
       ok:cls.filter(c=>c.status==='ok').length,
       nok:cls.filter(c=>c.status==='nok').length,
-      alertas:(db.alertas||[]).filter(a=>!a.lido).length,
+      alertas: alertas.length,
       porViatura, porEquipe, porDia,
       motoristas:Object.values(motMap).sort((a,b)=>b.total-a.total)
     });
@@ -503,15 +418,15 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), async (req, res) => {
 // EXPORT CSV
 app.get('/api/export/csv', requireAuth(), async (req, res) => {
   try {
-    const db = await readDB();
-    let data = [...db.checklists];
-    if (req.query.mes) data = data.filter(c=>c.data&&c.data.startsWith(req.query.mes));
-    data.sort((a,b)=>a.data>b.data?1:-1);
+    let query = '?order=data.asc';
+    if (req.query.mes) query += `&mes=eq.${req.query.mes}`;
+    const data = await supaFetch('GET', 'checklists', null, query);
+    const cls = data.map(fromSupa);
     const header=['ID','Data','Placa','Modelo','Tipo','Equipe','Nome','Status','NC','Observacao'];
-    const rows=data.map(c=>[
+    const rows=cls.map(c=>[
       c.id, c.data, c.placa, c.modelo||'',
       c.preenchidoPor==='nome_guerra_ba2'?'BA-2':c.preenchidoPor==='lider_resgate'?'Líder':'Motorista',
-      c.equipe, c.nome||c.motorista||'',
+      c.equipe, c.nome||'',
       c.status, c.nc||0, (c.obs||'').replace(/,/g,';')
     ]);
     const csv='\uFEFF'+[header,...rows].map(r=>r.join(',')).join('\n');
@@ -522,4 +437,4 @@ app.get('/api/export/csv', requireAuth(), async (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, '0.0.0.0', () => console.log(`✅ CheckViatura em http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`✅ CheckViatura Supabase em http://localhost:${PORT}`));
