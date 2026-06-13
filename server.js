@@ -9,18 +9,14 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ── SUPABASE CONFIG ──
 const SUPA_URL    = 'https://qwzvnvmcwdnvopehwnee.supabase.co';
 const SUPA_KEY    = 'sb_secret_nLndfLmW-BfqWtx3AZOfRw_CoMo9QOW';
-
-// ── CLOUDINARY CONFIG ──
 const CLOUD_NAME   = 'drj7tagld';
 const CLOUD_KEY    = '824487421874555';
 const CLOUD_SECRET = 'gWdHK5gEkxLEnPmun91kcboGugs';
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
-// ── SUPABASE REQUEST ──
 function supaFetch(method, table, body=null, query='') {
   return new Promise((resolve, reject) => {
     const bodyBuf = body ? Buffer.from(JSON.stringify(body), 'utf8') : null;
@@ -32,7 +28,7 @@ function supaFetch(method, table, body=null, query='') {
         'apikey': SUPA_KEY,
         'Authorization': `Bearer ${SUPA_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': method==='POST' ? 'return=representation' : 'return=representation',
+        'Prefer': 'return=representation',
         ...(bodyBuf ? { 'Content-Length': bodyBuf.length } : {})
       }
     };
@@ -57,7 +53,22 @@ function supaFetch(method, table, body=null, query='') {
   });
 }
 
-// ── CLOUDINARY UPLOAD ──
+// ✅ Registra histórico
+async function registrarHistorico(acao, descricao, usuario, checklistId, placa) {
+  try {
+    await supaFetch('POST', 'historico', {
+      id: Date.now(),
+      acao,
+      descricao,
+      usuario: usuario || 'Sistema',
+      checklist_id: checklistId || null,
+      placa: placa || ''
+    });
+  } catch(e) {
+    console.error('Erro ao registrar histórico:', e.message);
+  }
+}
+
 async function uploadCloudinary(base64img, publicId) {
   return new Promise((resolve) => {
     try {
@@ -95,8 +106,8 @@ async function uploadCloudinary(base64img, publicId) {
         res.on('end', () => {
           try {
             const parsed = JSON.parse(raw);
-            if (parsed.secure_url) { console.log('Cloudinary OK:', parsed.secure_url); resolve(parsed.secure_url); }
-            else { console.error('Cloudinary error:', raw.slice(0,200)); resolve(''); }
+            if (parsed.secure_url) { resolve(parsed.secure_url); }
+            else { resolve(''); }
           } catch(e) { resolve(''); }
         });
       });
@@ -147,19 +158,24 @@ const VIATURAS = [
   { id: 3, placa: 'AP-2',     modelo: 'FÊNIX',            cci: '03', equipe_id: 3 },
   { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', cci: '01', equipe_id: 4 }
 ];
-const SENHAS_CHEFE = { Alfa:'alfa123', Bravo:'bravo123', Charlie:'charlie123', Delta:'delta123' };
 
 // AUTH
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   const { login, senha } = req.body;
   const u = USUARIOS.find(x => x.login === login && x.senha === hash(senha));
-  if (!u) return res.status(401).json({ erro: 'Login ou senha incorretos' });
+  if (!u) {
+    await registrarHistorico('LOGIN_FALHOU', `Tentativa de login com usuário: ${login}`, login, null, null);
+    return res.status(401).json({ erro: 'Login ou senha incorretos' });
+  }
   const token = newSession(u);
+  await registrarHistorico('LOGIN', `${u.nome} entrou no sistema`, u.nome, null, null);
   res.json({ token, nome: u.nome, role: u.role });
 });
 
-app.post('/api/auth/logout', (req, res) => {
+app.post('/api/auth/logout', async (req, res) => {
   const auth = req.headers.authorization || '';
+  const s = sessions[auth.replace('Bearer ', '')];
+  if (s) await registrarHistorico('LOGOUT', `${s.nome} saiu do sistema`, s.nome, null, null);
   delete sessions[auth.replace('Bearer ', '')];
   res.json({ ok: true });
 });
@@ -168,13 +184,9 @@ app.get('/api/auth/me', requireAuth(), (req, res) => {
   res.json({ nome: req.user.nome, role: req.user.role });
 });
 
-// EQUIPES / VIATURAS (estáticos)
 app.get('/api/equipes',  (req, res) => res.json(EQUIPES));
 app.get('/api/viaturas', (req, res) => res.json(VIATURAS));
 
-// ── CHECKLISTS ──
-
-// Converte registro do Supabase para formato do frontend
 function fromSupa(c) {
   return {
     id: c.id,
@@ -206,13 +218,11 @@ function fromSupa(c) {
   };
 }
 
-// PÚBLICO — sem autenticação
 app.get('/api/checklists/publico', async (req, res) => {
   try {
     const data = await supaFetch('GET', 'checklists', null, '?order=id.desc');
     res.json(data.map(fromSupa));
   } catch(e) {
-    console.error('publico error:', e.message);
     res.status(500).json({ erro: e.message });
   }
 });
@@ -227,7 +237,6 @@ app.get('/api/checklists/publico/:id', async (req, res) => {
   }
 });
 
-// AUTENTICADO
 app.get('/api/checklists', requireAuth(), async (req, res) => {
   try {
     let query = '?order=id.desc';
@@ -256,16 +265,11 @@ app.get('/api/checklists', requireAuth(), async (req, res) => {
   }
 });
 
-// ✅ SALVAR CHECKLIST
 app.post('/api/checklists', async (req, res) => {
   try {
     const id = Date.now();
-    console.log('Salvando:', req.body.formulario_id, req.body.preenchidoPor, req.body.equipe, req.body.nome);
-
-    // Upload assinatura para Cloudinary
     const sigUrl = await uploadCloudinary(req.body.sigMotorista, `sig_mot_${id}`);
-    console.log('sigUrl:', sigUrl ? 'OK' : 'vazio');
-
+    const tipoLabel = req.body.preenchidoPor==='nome_guerra_ba2'?'BA-2':req.body.preenchidoPor==='lider_resgate'?'Líder':'Motorista';
     const record = {
       id,
       data: req.body.data,
@@ -291,22 +295,28 @@ app.post('/api/checklists', async (req, res) => {
       sig_chefe: '',
       aprovado_chefe: false
     };
-
     const saved = await supaFetch('POST', 'checklists', record);
 
-    // Alerta se NC
+    // ✅ Histórico — criação
+    await registrarHistorico(
+      'CHECKLIST_CRIADO',
+      `${tipoLabel} ${req.body.nome} preencheu checklist da viatura ${req.body.placa} — dia ${req.body.dia} — ${req.body.nc||0} NC`,
+      req.body.nome,
+      id,
+      req.body.placa
+    );
+
     if (record.nc > 0) {
       await supaFetch('POST', 'alertas', {
         id: Date.now()+1,
         tipo: 'nok',
-        msg: `${record.nc} NC — ${record.placa} — ${record.nome} (${record.preenchido_por==='nome_guerra_ba2'?'BA-2':'Motorista'})`,
+        msg: `${record.nc} NC — ${record.placa} — ${record.nome} (${tipoLabel})`,
         checklist_id: id,
         data: record.data,
         lido: false
       });
     }
 
-    console.log('Checklist salvo!');
     res.json(fromSupa(Array.isArray(saved) ? saved[0] : saved));
   } catch(e) {
     console.error('Erro ao salvar:', e.message);
@@ -316,20 +326,29 @@ app.post('/api/checklists', async (req, res) => {
 
 app.delete('/api/checklists/:id', requireAuth(['admin']), async (req, res) => {
   try {
+    // Busca dados antes de excluir
+    const dados = await supaFetch('GET', 'checklists', null, `?id=eq.${req.params.id}`);
+    const c = dados[0];
     await supaFetch('DELETE', 'checklists', null, `?id=eq.${req.params.id}`);
+
+    // ✅ Histórico — exclusão
+    await registrarHistorico(
+      'CHECKLIST_EXCLUIDO',
+      `Admin excluiu checklist da viatura ${c?.placa||'?'} — ${c?.nome||'?'} — dia ${c?.dia||'?'}`,
+      req.user?.nome || 'Admin',
+      Number(req.params.id),
+      c?.placa || ''
+    );
+
     res.json({ ok: true });
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
 });
 
-// ✅ APROVAR — assinatura do chefe para Cloudinary
 app.post('/api/checklists/:id/aprovar', async (req, res) => {
   try {
-    console.log('Aprovando checklist:', req.params.id);
     const sigChefeUrl = await uploadCloudinary(req.body.sigChefe, `sig_chefe_${req.params.id}`);
-    console.log('sigChefeUrl:', sigChefeUrl ? 'OK' : 'vazio');
-
     const updated = await supaFetch('PATCH', 'checklists', {
       sig_chefe: sigChefeUrl,
       aprovado_chefe: true,
@@ -338,7 +357,17 @@ app.post('/api/checklists/:id/aprovar', async (req, res) => {
       data_aprovacao: req.body.data_aprovacao
     }, `?id=eq.${req.params.id}`);
 
-    console.log('Aprovado!');
+    // ✅ Histórico — aprovação
+    const dados = await supaFetch('GET', 'checklists', null, `?id=eq.${req.params.id}`);
+    const c = dados[0];
+    await registrarHistorico(
+      'CHECKLIST_APROVADO',
+      `Chefe ${req.body.chefe} (Equipe ${req.body.equipe_chefe}) aprovou checklist da viatura ${c?.placa||'?'} — ${c?.nome||'?'} — dia ${c?.dia||'?'}`,
+      req.body.chefe,
+      Number(req.params.id),
+      c?.placa || ''
+    );
+
     res.json(fromSupa(Array.isArray(updated) ? updated[0] : updated));
   } catch(e) {
     console.error('Erro ao aprovar:', e.message);
@@ -366,6 +395,16 @@ app.put('/api/alertas/lidos/todos', requireAuth(['admin']), async (req, res) => 
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
+// ✅ HISTÓRICO
+app.get('/api/historico', requireAuth(['admin']), async (req, res) => {
+  try {
+    let query = '?order=data_acao.desc&limit=100';
+    if (req.query.placa) query += `&placa=eq.${req.query.placa}`;
+    const data = await supaFetch('GET', 'historico', null, query);
+    res.json(data);
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
 // DASHBOARD
 app.get('/api/dashboard', requireAuth(['admin']), async (req, res) => {
   try {
@@ -373,7 +412,6 @@ app.get('/api/dashboard', requireAuth(['admin']), async (req, res) => {
     const data = await supaFetch('GET', 'checklists', null, `?mes=eq.${mes}&order=id.desc`);
     const cls = data.map(fromSupa);
     const alertas = await supaFetch('GET', 'alertas', null, '?lido=eq.false');
-
     const porViatura = VIATURAS.map(v => {
       const myCls = cls.filter(c => c.placa === v.placa);
       const nok = myCls.filter(c=>c.status==='nok').length;
