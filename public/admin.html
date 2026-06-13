@@ -81,6 +81,10 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .badge-pendente{background:var(--amarelo-claro);color:var(--amarelo);}
 .badge-admin{background:var(--azul-claro);color:var(--azul);}
 .badge-chefe{background:#EAF3DE;color:var(--verde);}
+.badge-criado{background:#E0F2FE;color:#0369A1;}
+.badge-aprovado{background:var(--verde-claro);color:var(--verde);}
+.badge-excluido{background:var(--vermelho-claro);color:var(--vermelho);}
+.badge-login{background:var(--cinza-claro);color:var(--cinza);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
 .form-row.full{grid-template-columns:1fr;}
 .form-group{display:flex;flex-direction:column;gap:4px;}
@@ -120,6 +124,12 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .dot-green{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:5px;}
+.hist-row{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:.5px solid var(--cinza-borda);}
+.hist-row:last-child{border-bottom:none;}
+.hist-icon{font-size:20px;flex-shrink:0;}
+.hist-body{flex:1;}
+.hist-desc{font-size:13px;color:var(--texto);}
+.hist-meta{font-size:11px;color:var(--texto-sec);margin-top:3px;}
 @media(max-width:700px){aside{display:none;}.charts-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
 @media print{header,aside,#login-screen,.no-print{display:none!important;}.page{display:block!important;}#app{display:flex!important;}}
 </style>
@@ -153,6 +163,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
       <div class="side-section">Visão Geral</div>
       <div class="side-item active" onclick="showPage('dashboard',this)"><span class="icon">📊</span> Dashboard</div>
       <div class="side-item" onclick="showPage('alertas',this)"><span class="icon">🔔</span> Alertas</div>
+      <div class="side-item" onclick="showPage('historico',this)"><span class="icon">🕓</span> Histórico</div>
       <div class="side-section">Operação</div>
       <div class="side-item" onclick="showPage('checklists',this)"><span class="icon">📋</span> Checklists</div>
       <div class="side-item" onclick="showPage('relatorio',this)"><span class="icon">🖨</span> Relatório</div>
@@ -199,6 +210,36 @@ main{flex:1;overflow-y:auto;padding:22px;}
         </div>
       </div>
 
+      <!-- HISTÓRICO -->
+      <div class="page" id="page-historico">
+        <div class="page-header">
+          <div><div class="page-title">🕓 Histórico</div><div class="page-sub">Todas as ações registradas no sistema</div></div>
+          <button class="btn btn-outline" onclick="loadHistorico()">🔄 Atualizar</button>
+        </div>
+        <div class="filter-row">
+          <div class="form-group">
+            <label>Viatura</label>
+            <select id="hist-viatura" onchange="loadHistorico()">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Ação</label>
+            <select id="hist-acao" onchange="loadHistorico()">
+              <option value="">Todas</option>
+              <option value="CHECKLIST_CRIADO">Checklist Criado</option>
+              <option value="CHECKLIST_APROVADO">Checklist Aprovado</option>
+              <option value="CHECKLIST_EXCLUIDO">Checklist Excluído</option>
+              <option value="LOGIN">Login</option>
+              <option value="LOGOUT">Logout</option>
+            </select>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div id="historico-list"><div style="padding:24px;text-align:center;color:var(--texto-sec);">Carregando…</div></div>
+        </div>
+      </div>
+
       <!-- CHECKLISTS -->
       <div class="page" id="page-checklists">
         <div class="page-header">
@@ -217,7 +258,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
           </div>
           <div class="form-group"><label>Equipe</label><select id="f-equipe" onchange="loadChecklists()"><option value="">Todas</option></select></div>
           <div class="form-group"><label>Mês</label><input type="month" id="f-mes" onchange="loadChecklists()"></div>
-          <div class="form-group"><label>Dia Específico</label><input type="date" id="f-data" onchange="loadChecklists()" placeholder="dd/mm/aaaa"></div>
+          <div class="form-group"><label>Dia Específico</label><input type="date" id="f-data" onchange="loadChecklists()"></div>
           <div class="form-group"><label>Status</label><select id="f-status" onchange="loadChecklists()"><option value="">Todos</option><option value="ok">Aprovado</option><option value="nok">Com pendência</option></select></div>
           <div class="form-group" style="justify-content:flex-end;">
             <button class="btn btn-outline btn-sm" onclick="limparFiltros()">✕ Limpar</button>
@@ -419,12 +460,14 @@ if (TOKEN) startApp();
 
 async function loadMaster() {
   [_viaturas, _equipes] = await Promise.all([api('/viaturas'), api('/equipes')]);
-  ['f-viatura','r-viatura'].forEach(id=>{
+  ['f-viatura','r-viatura','hist-viatura'].forEach(id=>{
     const s=document.getElementById(id);
-    s.innerHTML='<option value="">Todas</option>'+_viaturas.map(v=>`<option value="${v.id}">${v.placa} — ${v.modelo}</option>`).join('');
+    if(!s) return;
+    s.innerHTML='<option value="">Todas</option>'+_viaturas.map(v=>`<option value="${v.placa}">${v.placa} — ${v.modelo}</option>`).join('');
   });
   ['f-equipe','r-equipe'].forEach(id=>{
     const s=document.getElementById(id);
+    if(!s) return;
     s.innerHTML='<option value="">Todas</option>'+_equipes.map(e=>`<option value="${e.id}">${e.nome}</option>`).join('');
   });
 }
@@ -433,6 +476,7 @@ function getEquipe(id){ return _equipes.find(e=>e.id==id)||{}; }
 
 const pageLoaders = {
   dashboard: loadDashboard, alertas: loadAlertas,
+  historico: loadHistorico,
   checklists: loadChecklists, relatorio: loadRelatorio,
   usuarios: loadUsuarios, equipes: loadEquipes, viaturas: loadViaturas,
 };
@@ -533,6 +577,68 @@ async function marcarTodosLidos() {
   loadAlertas(); updateBell(0);
 }
 
+// ✅ HISTÓRICO
+async function loadHistorico() {
+  const list = document.getElementById('historico-list');
+  list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--texto-sec);">Carregando…</div>';
+  try {
+    let q = '/historico?';
+    const placa = document.getElementById('hist-viatura')?.value;
+    if(placa) q += `placa=${placa}&`;
+    const data = await api(q);
+
+    const acao = document.getElementById('hist-acao')?.value;
+    const filtrado = acao ? data.filter(h=>h.acao===acao) : data;
+
+    if(!filtrado.length){
+      list.innerHTML='<div style="padding:28px;text-align:center;color:var(--texto-sec);">Nenhum registro encontrado</div>';
+      return;
+    }
+
+    const icones = {
+      CHECKLIST_CRIADO:'📋',
+      CHECKLIST_APROVADO:'✅',
+      CHECKLIST_EXCLUIDO:'🗑️',
+      LOGIN:'🔑',
+      LOGOUT:'🚪',
+      LOGIN_FALHOU:'⛔'
+    };
+    const badges = {
+      CHECKLIST_CRIADO:'badge-criado',
+      CHECKLIST_APROVADO:'badge-aprovado',
+      CHECKLIST_EXCLUIDO:'badge-excluido',
+      LOGIN:'badge-login',
+      LOGOUT:'badge-login',
+      LOGIN_FALHOU:'badge-nok'
+    };
+    const labels = {
+      CHECKLIST_CRIADO:'Criado',
+      CHECKLIST_APROVADO:'Aprovado',
+      CHECKLIST_EXCLUIDO:'Excluído',
+      LOGIN:'Login',
+      LOGOUT:'Logout',
+      LOGIN_FALHOU:'Falha Login'
+    };
+
+    list.innerHTML = filtrado.map(h=>{
+      const dt = h.data_acao ? new Date(h.data_acao).toLocaleString('pt-BR') : '—';
+      return `<div class="hist-row">
+        <div class="hist-icon">${icones[h.acao]||'📌'}</div>
+        <div class="hist-body">
+          <div class="hist-desc">
+            <span class="badge ${badges[h.acao]||'badge-pendente'}">${labels[h.acao]||h.acao}</span>
+            ${h.placa?`<strong style="margin-left:6px;">${h.placa}</strong>`:''}
+            <span style="margin-left:6px;">${h.descricao||'—'}</span>
+          </div>
+          <div class="hist-meta">👤 ${h.usuario||'—'} &nbsp;|&nbsp; 🕐 ${dt}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = `<div class="alert alert-danger" style="margin:16px;">Erro ao carregar histórico: ${e.message}</div>`;
+  }
+}
+
 async function loadChecklists() {
   const q=new URLSearchParams();
   const mes=document.getElementById('f-mes').value; if(mes) q.set('mes',mes);
@@ -542,17 +648,11 @@ async function loadChecklists() {
   const tbody=document.getElementById('cl-body');
   tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Carregando…</td></tr>';
   const data=await api('/checklists?'+q);
-
-  // ✅ Filtro por tipo
   const tipo = document.getElementById('f-tipo').value;
-  // ✅ Filtro por data específica
   const dataEsp = document.getElementById('f-data').value;
-
   let filtrado = tipo ? data.filter(c => c.formulario_id && c.formulario_id.includes(tipo)) : data;
   if(dataEsp) filtrado = filtrado.filter(c => c.data === dataEsp);
-
   if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro encontrado</td></tr>';return;}
-
   tbody.innerHTML=filtrado.map(c=>{
     const cls=c.aprovado_chefe?'badge-ok':c.status==='ok'?'badge-ok':'badge-nok';
     const lbl=c.aprovado_chefe?'Aprovado':c.status==='ok'?'OK':(c.nc||0)+' NC';
@@ -619,8 +719,7 @@ function imprimirCL() {
   const titulo = document.getElementById('modal-cl-title').textContent;
   const corpo  = document.getElementById('modal-cl-body').innerHTML;
   const win = window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <title>${titulo}</title>
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${titulo}</title>
     <style>body{font-family:Arial,sans-serif;padding:20px;font-size:12px;color:#000;}h2{color:#C43D00;margin-bottom:16px;font-size:16px;}.cl-item{display:flex;align-items:center;gap:8px;padding:4px 8px;border-bottom:0.5px solid #eee;border-radius:4px;margin-bottom:2px;}.alert{padding:8px 12px;border-radius:6px;margin-bottom:10px;}.alert-danger{background:#FEF2F2;color:#A32D2D;}.alert-info{background:#FFF0E8;color:#C43D00;}.alert-warn{background:#FAEEDA;color:#BA7517;}img{max-height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;}@media print{body{padding:10px;}}</style>
     </head><body><h2>med+ Group — ${titulo}</h2>${corpo}<script>window.onload=()=>window.print();<\/script></body></html>`);
   win.document.close();
@@ -661,31 +760,21 @@ async function loadRelatorio() {
     </div>
     ${data.map((c,idx)=>{
       const itens=Object.values(c.itens||{});
-      const il=itens.map(v=>{
-        const st=v.status==='NC'?'color:var(--vermelho)':'';
-        const ic=v.status==='C'?'✅':v.status==='NC'?'❌':'➖';
-        return `<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:.5px solid #eee;font-size:11px;${st}">${ic} <strong>${v.num||''}</strong> ${v.item||''}</div>`;
-      }).join('');
+      const il=itens.map(v=>{const st=v.status==='NC'?'color:var(--vermelho)':'';const ic=v.status==='C'?'✅':v.status==='NC'?'❌':'➖';return `<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:.5px solid #eee;font-size:11px;${st}">${ic} <strong>${v.num||''}</strong> ${v.item||''}</div>`;}).join('');
       const tipoLabel=c.preenchidoPor==='nome_guerra_ba2'?'BA-2':c.preenchidoPor==='lider_resgate'?'Líder':'Motorista';
       return `<div class="card" style="break-inside:avoid;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-          <div>
-            <div style="font-size:15px;font-weight:700;">#${idx+1} — ${c.placa} | ${c.modelo||''} | ${tipoLabel}</div>
-            <div style="font-size:12px;color:var(--texto-sec);">${c.data||'—'} dia ${c.dia||'—'} | ${c.nome||'—'} | ${c.equipe||'—'}</div>
-          </div>
+          <div><div style="font-size:15px;font-weight:700;">#${idx+1} — ${c.placa} | ${c.modelo||''} | ${tipoLabel}</div>
+          <div style="font-size:12px;color:var(--texto-sec);">${c.data||'—'} dia ${c.dia||'—'} | ${c.nome||'—'} | ${c.equipe||'—'}</div></div>
           <span class="badge ${c.status==='ok'?'badge-ok':'badge-nok'}">${c.status==='ok'?'Aprovado':(c.nc||0)+' NC'}</span>
         </div>
         <div style="columns:2;column-gap:16px;">${il}</div>
         ${c.obs?`<div class="alert alert-warn" style="margin-top:8px;font-size:12px;">📝 ${c.obs}</div>`:''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding-top:10px;border-top:.5px solid var(--cinza-borda);">
-          <div>
-            <div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">${tipoLabel}: ${c.nome||'—'}</div>
-            ${c.sigMotorista&&c.sigMotorista.startsWith('http')?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Chefe: ${c.chefe||c.nome_chefe||'—'}</div>
-            ${c.sigChefe&&c.sigChefe.startsWith('http')?`<img src="${c.sigChefe}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}
-          </div>
+          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">${tipoLabel}: ${c.nome||'—'}</div>
+          ${c.sigMotorista&&c.sigMotorista.startsWith('http')?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
+          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Chefe: ${c.chefe||c.nome_chefe||'—'}</div>
+          ${c.sigChefe&&c.sigChefe.startsWith('http')?`<img src="${c.sigChefe}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
         </div>
       </div>`;
     }).join('')}`;
@@ -711,11 +800,11 @@ async function loadUsuarios() {
 }
 function openModalUsuario(u=null) {
   document.getElementById('modal-usr-title').textContent = u?'Editar Usuário':'Novo Usuário';
-  document.getElementById('usr-id').value   = u?.id||'';
-  document.getElementById('usr-nome').value = u?.nome||'';
-  document.getElementById('usr-login').value= u?.login||'';
-  document.getElementById('usr-senha').value= '';
-  document.getElementById('usr-role').value = u?.role||'chefe';
+  document.getElementById('usr-id').value=u?.id||'';
+  document.getElementById('usr-nome').value=u?.nome||'';
+  document.getElementById('usr-login').value=u?.login||'';
+  document.getElementById('usr-senha').value='';
+  document.getElementById('usr-role').value=u?.role||'chefe';
   document.getElementById('usr-err').style.display='none';
   const eq=document.getElementById('usr-equipe');
   eq.innerHTML=_equipes.map(e=>`<option value="${e.id}">${e.nome}</option>`).join('');
@@ -729,12 +818,7 @@ function toggleEquipeField(){
 }
 async function salvarUsuario(){
   const id=document.getElementById('usr-id').value;
-  const body={
-    nome: document.getElementById('usr-nome').value.trim(),
-    login:document.getElementById('usr-login').value.trim(),
-    role: document.getElementById('usr-role').value,
-    equipe_id:Number(document.getElementById('usr-equipe').value)||null
-  };
+  const body={nome:document.getElementById('usr-nome').value.trim(),login:document.getElementById('usr-login').value.trim(),role:document.getElementById('usr-role').value,equipe_id:Number(document.getElementById('usr-equipe').value)||null};
   const senha=document.getElementById('usr-senha').value;
   if(senha) body.senha=senha;
   const errEl=document.getElementById('usr-err');
