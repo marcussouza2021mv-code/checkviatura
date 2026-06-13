@@ -162,11 +162,10 @@ async function gerar(){
     ) && c.mes === mes
   );
 
-  const porDia = {};
+const porDia = {};
   filtrados.forEach(c => {
     const d = String(parseInt(c.dia)).padStart(2,'0');
-    if(!porDia[d]) porDia[d]=c;
-  });
+    if(!porDia[d] || c.id > porDia[d].id) porDia[d]=c;
 
   const [ano,mesNum] = mes.split('-').map(Number);
   const totalDias = new Date(ano,mesNum,0).getDate();
