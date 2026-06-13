@@ -22,8 +22,8 @@ body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
   height:190mm;
   background:#fff;
   margin:0 auto 20px;
-  padding:3mm 4mm;
-  font-size:6pt;
+  padding:2mm 3mm;
+  font-size:5.5pt;
   box-shadow:0 2px 12px rgba(0,0,0,.15);
   display:flex;
   flex-direction:column;
@@ -36,46 +36,51 @@ body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
 .cab-titulo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #000;padding:2px;}
 .cab-titulo-top{font-size:6pt;font-weight:700;margin-bottom:1px;}
 .cab-titulo-text{font-size:11pt;font-weight:900;text-align:center;}
-.cab-codigo{width:42mm;font-size:6.5pt;}
+.cab-codigo{width:42mm;font-size:6pt;}
 .cab-codigo-row{padding:2px 4px;border-bottom:1px solid #000;display:flex;justify-content:space-between;align-items:center;}
 .cab-codigo-row:last-child{border-bottom:none;}
 .cab-codigo-row span{font-weight:700;}
 
-.instrucao{border:1px solid #000;border-top:none;padding:1px 4px;font-size:4.8pt;line-height:1.2;}
-.referencia{border:1px solid #000;border-top:none;display:flex;align-items:center;padding:1px 6px;gap:10px;font-size:6pt;font-weight:700;}
-.info-bar{border:1px solid #000;border-top:none;display:flex;font-size:6pt;}
+.instrucao{border:1px solid #000;border-top:none;padding:1px 4px;font-size:4.5pt;line-height:1.2;}
+.referencia{border:1px solid #000;border-top:none;display:flex;align-items:center;padding:1px 6px;gap:10px;font-size:5.5pt;font-weight:700;}
+.info-bar{border:1px solid #000;border-top:none;display:flex;font-size:5.5pt;}
 .info-cell{padding:1px 5px;border-right:1px solid #000;display:flex;gap:3px;align-items:center;}
 .info-cell:last-child{border-right:none;flex:1;}
 .info-cell b{font-weight:700;}
 
 .tab-wrap{border:1px solid #000;border-top:none;flex:1;overflow:hidden;}
 table.cl{width:100%;border-collapse:collapse;table-layout:fixed;}
-.cl th,.cl td{border:0.3px solid #999;text-align:center;padding:0px 1px;font-size:5.5pt;overflow:hidden;}
-.cl th.th-num{width:5.5mm;background:#dce3f0;font-weight:700;font-size:5.5pt;}
-.cl th.th-item{text-align:left;padding:1px 2px;background:#dce3f0;font-weight:700;width:46mm;font-size:5.5pt;}
-.cl th.th-dia{background:#dce3f0;font-weight:700;font-size:5pt;}
-.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:5.5pt;}
-.cl td.td-item{text-align:left;padding:0px 2px;font-size:5.2pt;white-space:normal;line-height:1.15;font-weight:600;}
-.cl td.td-c{color:#1a6b1a;font-weight:900;font-size:6pt;}
-.cl td.td-nc{color:#9B1C1C;font-weight:900;background:#FEE2E2;font-size:6pt;}
-.cl td.td-na{color:#6B7280;font-size:5.5pt;}
+.cl th,.cl td{border:0.3px solid #999;text-align:center;padding:0px;font-size:5pt;overflow:hidden;line-height:1.1;}
+.cl th.th-num{width:5mm;background:#dce3f0;font-weight:700;font-size:5pt;}
+.cl th.th-item{text-align:left;padding:0px 2px;background:#dce3f0;font-weight:700;width:44mm;font-size:5pt;}
+.cl th.th-dia{background:#dce3f0;font-weight:700;font-size:4.5pt;}
+.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:5pt;}
+.cl td.td-item{text-align:left;padding:0px 2px;font-size:4.8pt;white-space:normal;line-height:1.1;font-weight:600;}
+.cl td.td-c{color:#1a6b1a;font-weight:900;font-size:5.5pt;}
+.cl td.td-nc{color:#9B1C1C;font-weight:900;background:#FEE2E2;font-size:5.5pt;}
+.cl td.td-na{color:#6B7280;font-size:5pt;}
 .cl td.td-vazio{color:#eee;}
 .cl td.td-futuro{color:#e0e0e0;background:#fafafa;}
-.cl tr.tr-assin td{height:9mm;vertical-align:bottom;padding:0px;}
-.cl tr.tr-assin td.td-item{font-size:5.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
-.cl tr.tr-chefe-sig td{height:9mm;vertical-align:bottom;padding:0px;background:#f9f9f9;}
-.cl tr.tr-chefe-sig td.td-item{font-size:5.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;}
-.sig-img{max-width:100%;max-height:8mm;object-fit:contain;display:block;margin:0 auto;}
+
+.cl tr.tr-assin td{height:7mm;vertical-align:middle;padding:0px;border-top:1px solid #888;}
+.cl tr.tr-assin td.td-item{font-size:5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
+.cl tr.tr-nome td{height:3mm;vertical-align:middle;padding:0px;border-top:0.3px solid #ccc;background:#f9f9f9;}
+.cl tr.tr-nome td.td-item{font-size:4.5pt;color:#555;font-style:italic;vertical-align:middle;font-weight:600;text-align:left;padding:0px 2px;}
+.cl tr.tr-chefe-sig td{height:7mm;vertical-align:middle;padding:0px;border-top:1px solid #888;background:#f0f4ff;}
+.cl tr.tr-chefe-sig td.td-item{font-size:5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
+
+.sig-img{max-width:100%;max-height:6mm;object-fit:contain;display:block;margin:0 auto;}
+.nome-txt{font-size:4pt;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#333;font-weight:600;}
 
 .rodape{border:1px solid #000;border-top:none;padding:1px 4px;}
-.rod-obs-title{font-size:5.5pt;font-weight:700;margin-bottom:0px;}
-.rod-obs-text{font-size:5pt;min-height:4mm;max-height:6mm;overflow:hidden;}
-.cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:1px 4px;font-size:5pt;color:#444;}
+.rod-obs-title{font-size:5pt;font-weight:700;margin-bottom:0px;}
+.rod-obs-text{font-size:4.5pt;min-height:3mm;max-height:5mm;overflow:hidden;}
+.cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:1px 4px;font-size:4.5pt;color:#444;}
 
 @media print{
   body{background:#fff;}
   .no-print{display:none!important;}
-  .folha{box-shadow:none;margin:0;padding:3mm 4mm;width:100%;height:100%;}
+  .folha{box-shadow:none;margin:0;padding:2mm 3mm;width:100%;height:100%;}
   @page{size:A4 landscape;margin:0;}
 }
 </style>
@@ -175,22 +180,35 @@ async function gerar(){
   const mesLabel = MESES[mesNum-1].toUpperCase()+' / '+ano;
   const obs = filtrados.map(c=>c.obs).filter(Boolean).join(' | ') || '';
 
+  // ✅ Assinatura motorista/BA — URL do Cloudinary
   let tdAssin = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
     if(fut) return `<td class="td-futuro"></td>`;
     if(!c)  return `<td></td>`;
     const sig = c.sigMotorista||'';
-    return `<td style="padding:0px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:8mm;"></div>'}</td>`;
+    const isUrl = sig.startsWith('http');
+    return `<td style="padding:0px;">${isUrl?`<img class="sig-img" src="${sig}" crossorigin="anonymous">`:'<div style="height:6mm;"></div>'}</td>`;
   }).join('');
 
+  // ✅ Nome do motorista
+  let tdNome = dias.map(d=>{
+    const c = porDia[d];
+    const fut = parseInt(d)>diaHoje;
+    if(fut) return `<td class="td-futuro"></td>`;
+    if(!c)  return `<td></td>`;
+    return `<td><div class="nome-txt">${(c.nome||'').substring(0,10)}</div></td>`;
+  }).join('');
+
+  // ✅ Assinatura chefe — URL do Cloudinary
   let tdChefeAssin = dias.map(d=>{
     const c = porDia[d];
     const fut = parseInt(d)>diaHoje;
     if(fut) return `<td class="td-futuro"></td>`;
     if(!c)  return `<td></td>`;
     const sig = c.sigChefe||'';
-    return `<td style="padding:0px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:8mm;"></div>'}</td>`;
+    const isUrl = sig.startsWith('http');
+    return `<td style="padding:0px;">${isUrl?`<img class="sig-img" src="${sig}" crossorigin="anonymous">`:'<div style="height:6mm;"></div>'}</td>`;
   }).join('');
 
   let linhas = itens.map((item,idx)=>{
@@ -238,15 +256,15 @@ async function gerar(){
     <div class="tab-wrap">
       <table class="cl">
         <colgroup>
-          <col style="width:5.5mm">
-          <col style="width:46mm">
+          <col style="width:5mm">
+          <col style="width:44mm">
           ${dias.map(()=>`<col>`).join('')}
         </colgroup>
         <thead>
           <tr>
             <th class="th-num">#</th>
             <th class="th-item">ITEM A INSPECIONAR</th>
-            <th colspan="${totalDias}" style="background:#dce3f0;font-size:6pt;font-weight:700;padding:1px;">COMPONENTES — DIAS DO MÊS</th>
+            <th colspan="${totalDias}" style="background:#dce3f0;font-size:5.5pt;font-weight:700;padding:1px;">COMPONENTES — DIAS DO MÊS</th>
           </tr>
           <tr>
             <th class="th-num"></th>
@@ -260,6 +278,11 @@ async function gerar(){
             <td class="td-num"></td>
             <td class="td-item">${TIPO_LABEL[tipo]}<br><em>Assinatura</em></td>
             ${tdAssin}
+          </tr>
+          <tr class="tr-nome">
+            <td class="td-num"></td>
+            <td class="td-item"><em>Nome</em></td>
+            ${tdNome}
           </tr>
           <tr class="tr-chefe-sig">
             <td class="td-num"></td>
