@@ -1,331 +1,535 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checklist Inspeção Viaturas — med+ Group</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
-.no-print{background:#fff;padding:16px 20px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;border-bottom:2px solid #E8520A;margin-bottom:20px;}
-.no-print label{font-size:11px;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:#555;}
-.no-print select,.no-print input{padding:8px 10px;border:1px solid #ccc;border-radius:6px;font-size:13px;font-family:inherit;}
-.btn{padding:9px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;}
-.btn-gerar{background:#E8520A;color:#fff;}
-.btn-pdf{background:#111;color:#fff;}
-.btn-baixar{background:#1a7f37;color:#fff;}
-.btn-voltar{background:transparent;border:1px solid #ccc;color:#333;cursor:pointer;}
+const express = require('express');
+const cors    = require('cors');
+const path    = require('path');
+const crypto  = require('crypto');
+const https   = require('https');
 
-.folha{
-  width:277mm;
-  height:190mm;
-  background:#fff;
-  margin:0 auto 20px;
-  padding:3mm 4mm;
-  font-size:6pt;
-  box-shadow:0 2px 12px rgba(0,0,0,.15);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+const BIN_ID      = '6a2c1f77da38895dfeb57148';
+const BIN_SIG_ID  = '6a2cb778f5f4af5e29e9e355';
+const API_KEY     = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
+
+function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
+
+function comprimirSig(sig) {
+  if (!sig || typeof sig !== 'string') return '';
+  if (sig.length > 20000) return sig.substring(0, 20000);
+  return sig;
 }
 
-.cab-wrap{display:flex;border:1px solid #000;}
-.cab-logo{width:26mm;border-right:1px solid #000;display:flex;align-items:center;justify-content:center;padding:2px;}
-.cab-logo img{max-width:22mm;max-height:13mm;object-fit:contain;}
-.cab-titulo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #000;padding:2px;}
-.cab-titulo-top{font-size:6pt;font-weight:700;margin-bottom:1px;}
-.cab-titulo-text{font-size:11pt;font-weight:900;text-align:center;}
-.cab-codigo{width:42mm;font-size:6.5pt;}
-.cab-codigo-row{padding:2px 4px;border-bottom:1px solid #000;display:flex;justify-content:space-between;align-items:center;}
-.cab-codigo-row:last-child{border-bottom:none;}
-.cab-codigo-row span{font-weight:700;}
-
-.instrucao{border:1px solid #000;border-top:none;padding:1px 4px;font-size:4.8pt;line-height:1.2;}
-.referencia{border:1px solid #000;border-top:none;display:flex;align-items:center;padding:1px 6px;gap:10px;font-size:6pt;font-weight:700;}
-.info-bar{border:1px solid #000;border-top:none;display:flex;font-size:6pt;}
-.info-cell{padding:1px 5px;border-right:1px solid #000;display:flex;gap:3px;align-items:center;}
-.info-cell:last-child{border-right:none;flex:1;}
-.info-cell b{font-weight:700;}
-
-.tab-wrap{border:1px solid #000;border-top:none;flex:1;overflow:hidden;}
-table.cl{width:100%;border-collapse:collapse;table-layout:fixed;}
-.cl th,.cl td{border:0.3px solid #999;text-align:center;padding:0px 1px;font-size:5.5pt;overflow:hidden;}
-.cl th.th-num{width:5.5mm;background:#dce3f0;font-weight:700;font-size:5.5pt;}
-.cl th.th-item{text-align:left;padding:1px 2px;background:#dce3f0;font-weight:700;width:46mm;font-size:5.5pt;}
-.cl th.th-dia{background:#dce3f0;font-weight:700;font-size:5pt;}
-.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:5.5pt;}
-.cl td.td-item{text-align:left;padding:0px 2px;font-size:5.2pt;white-space:normal;line-height:1.15;font-weight:600;}
-.cl td.td-c{color:#1a6b1a;font-weight:900;font-size:6pt;}
-.cl td.td-nc{color:#9B1C1C;font-weight:900;background:#FEE2E2;font-size:6pt;}
-.cl td.td-na{color:#6B7280;font-size:5.5pt;}
-.cl td.td-vazio{color:#eee;}
-.cl td.td-futuro{color:#e0e0e0;background:#fafafa;}
-
-/* ✅ Linhas de assinatura pequenas mas legíveis */
-.cl tr.tr-assin td{height:8mm;vertical-align:middle;padding:0px;border-top:1px solid #aaa;}
-.cl tr.tr-assin td.td-item{font-size:5.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
-.cl tr.tr-nome td{height:4mm;vertical-align:middle;padding:0px;border-top:0.3px solid #ccc;background:#f9f9f9;}
-.cl tr.tr-nome td.td-item{font-size:5pt;color:#555;font-style:italic;vertical-align:middle;font-weight:600;text-align:left;padding:0px 2px;}
-.cl tr.tr-chefe-sig td{height:8mm;vertical-align:middle;padding:0px;border-top:1px solid #aaa;background:#f0f4ff;}
-.cl tr.tr-chefe-sig td.td-item{font-size:5.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
-
-.sig-img{max-width:100%;max-height:7mm;object-fit:contain;display:block;margin:0 auto;}
-.nome-txt{font-size:4.5pt;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#333;font-weight:600;}
-
-.rodape{border:1px solid #000;border-top:none;padding:1px 4px;}
-.rod-obs-title{font-size:5.5pt;font-weight:700;margin-bottom:0px;}
-.rod-obs-text{font-size:5pt;min-height:4mm;max-height:5mm;overflow:hidden;}
-.cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:1px 4px;font-size:5pt;color:#444;}
-
-@media print{
-  body{background:#fff;}
-  .no-print{display:none!important;}
-  .folha{box-shadow:none;margin:0;padding:3mm 4mm;width:100%;height:100%;}
-  @page{size:A4 landscape;margin:0;}
+function prepararParaSalvar(db) {
+  const dbCopy = JSON.parse(JSON.stringify(db));
+  dbCopy.checklists = dbCopy.checklists.map(c => ({
+    ...c,
+    sigMotorista: c.sigMotorista === 'SIM' ? 'SIM' : (c.sigMotorista ? 'SIM' : ''),
+    sigChefe: c.sigChefe === 'SIM' ? 'SIM' : (c.sigChefe ? 'SIM' : '')
+  }));
+  return dbCopy;
 }
-</style>
-</head>
-<body>
 
-<div class="no-print">
-  <div>
-    <label>Viatura</label>
-    <select id="sel-viatura">
-      <option value="">Selecione...</option>
-      <option value="CRS">CRS — IVECO DAILY</option>
-      <option value="DOSA 318">DOSA 318 — IVECO MAGIRUS X6</option>
-      <option value="AP-2">AP-2 — FÊNIX</option>
-      <option value="DOSA 371">DOSA 371 — IVECO MAGIRUS X6</option>
-    </select>
-  </div>
-  <div>
-    <label>Tipo</label>
-    <select id="sel-tipo">
-      <option value="motorista">Motorista</option>
-      <option value="lider_resgate">Líder de Resgate</option>
-      <option value="nome_guerra_ba2">BA-2</option>
-    </select>
-  </div>
-  <div>
-    <label>Mês/Ano</label>
-    <input type="month" id="sel-mes">
-  </div>
-  <button class="btn btn-gerar" onclick="gerar()">🔍 Gerar</button>
-  <button class="btn btn-pdf" onclick="window.print()">🖨️ Imprimir</button>
-  <button class="btn btn-baixar" onclick="baixarPDF()">⬇ Baixar PDF</button>
-  <a href="/admin.html"><button class="btn btn-voltar">← Admin</button></a>
-</div>
-
-<div id="saida"></div>
-
-<script>
-document.getElementById('sel-mes').value = new Date().toISOString().slice(0,7);
-
-const CCI    = {'CRS':'—','DOSA 318':'02','AP-2':'03','DOSA 371':'01'};
-const MODELO = {'CRS':'IVECO DAILY','DOSA 318':'IVECO MAGIRUS X6','AP-2':'FÊNIX','DOSA 371':'IVECO MAGIRUS X6'};
-const TIPO_LABEL = {motorista:'Motorista',lider_resgate:'Líder de Resgate',nome_guerra_ba2:'Nome de Guerra "BA-2"'};
-const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
-const ITENS = {
-  'CRS':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO FLUÍDO DA DIREÇÃO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIA','NÍVEL DE COMBUSTÍVEL','NÍVEL DO FLUÍDO DE FREIO','LIMPADOR DE PÁRA-BRISAS','FARÓIS','SETAS DIRECIONAIS','LUZ DE RÉ','COLETE E IMOBILIZAÇÃO','LUZ DE FREIO','PISCA ALERTA','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR','ILUMINAÇÃO EXTERNA','ILUMINAÇÃO INTERNA DO BAÚ','GIROFLEX','MEGAFONE','SIRENE','MAPA DE GRADE','BUZINA','CALIBRAGEM DOS PNEUS','DIREÇÃO','FREIOS','SUSPENSÃO','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR','CHAVE DE RODA','TRIÂNGULO DE SINALIZAÇÃO','MACACO','GUINCHO COMPLETO COM CONTROLE','TACÓGRAFO','TOMADA EXTERNA'],
-    lider_resgate:['DESENCARCERADOR HIDRÁULICO','SERRA CIRCULAR PARA CORTE PESADO DE METAL','SERRA SABRE','MACHADO DE RESGATE SEM CUNHA','PÉ-DE-CABRA - 95 CM','PÉ-DE-CABRA - 165 CM','ESCADA EXTENSORA','GANCHO OU GARRA DE SALVAMENTO','FERRAMENTA DE CORTE DE CINTOS DE SEGURANÇA','MANTA RESISTENTE AO FOGO','TORRE DE ILUMINAÇÃO','LANTERNAS PORTÁTEIS','MACA RÍGIDA','COLAR CERVICAL RETRÁTIL','COLETE DE MOBILIZAÇÃO DORSO-LOMBAR MD KED','KIT MÉDICO PRIMEIROS SOCORROS','INALADOR DE OXIGÊNIO COM CILINDRO','CONJUNTO DE TALAS PARA IMOBILIZAÇÃO DE MEMBROS']
-  },
-  'DOSA 318':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (PAINEL DE DIREÇÃO ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR E MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO INTERNA COMPARTIMENTOS','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACIONÁRIO E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','PAINÉIS DE OPERAÇÃO / TFT','NÍVEL DO TANQUE DE ÁGUA','PARTIDA DO MOTOR ESTACIONÁRIO','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK OPERADOR E SALVAMENTO','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','EXTINTOR ABC 2KG','CHAVE DE ABERTURA DAS VÁLVULAS DE PQ COMPARTIMENTO TRASEIRO','ALAVANCA DE ELEVAÇÃO DA CABINE'],
-    nome_guerra_ba2:['01 MANGUEIRA DE 1½" (30M) COMP. "R1"','01 MANGUEIRA DE 2½" (30M) COMP. "R1"','01 CHAVE STORZ DE 1½" COMP. "R1"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 MANGUEIRA DE 1½" (30M) COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "R2"','02 CALÇOS COMP. "R2"','TAMPA CILINDRO "N2" COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "L3"','01 MANIVELA CARRETEL PQ COMP. "L3"','01 MANGOTE PQ 1" (30M) COMP. "L3"','01 "PISTOLA" DE PQ COMP. "L3"','01 STECKLEITER COMP. "L3"','01 MANGUEIRA DE 1½" (30M) COMP. "L2"','01 MANGUEIRA DE 2½" (30M) COMP. "L2"','02 CHAVE STORZ DE 1½" COMP. "L2"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "L2"','01 ESGUICHO "VR" COMP. "L2"','02 CHAVES MANGOTE SUCÇÃO COMP. "L1"','02 CHAVES VÁLVULAS CORPO BOMBA COMP. "L1"','01 CHAVE ANGULAR VÁLVULAS COMP. SUPERIOR','01 ESCADA EXTENSORA (4 PARTES) COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 CHAVE CANHÃO TETO COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 DERIVANTE 2½" PARA 2x1½" CABINE','01 PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
-  },
-  'AP-2':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (PAINEL DE DIREÇÃO ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR','MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACIONÁRIO E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','NÍVEL DO TANQUE DE ÁGUA','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','EXTINTOR ABC 2KG','ALAVANCA DE ELEVAÇÃO DA CABINE'],
-    nome_guerra_ba2:['01 MANGUEIRA DE 1½" (30M) COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','02 CHAVES STORZ COMP. "R1"','01 MANGUEIRA DE 1½" (30M) COMP. "R2"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 CHAVE CANHÃO SUPERIOR COMP. TRASEIRO','01 MANGUEIRA DE 1½" (30M) COMP. "L1"','01 ESGUICHO "VR" COMP. "L1"','02 CHAVES STORZ COMP. "L1"','01 ESCADA EXTENSORA COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
-  },
-  'DOSA 371':{
-    motorista:['LATARIA, PINTURA','LIMPEZA GERAL DO CARRO','NÍVEL DO ÓLEO DO MOTOR','NÍVEL DO FLUÍDO DE ARREFECIMENTO','NÍVEL DO ARLA 32 (PAINEL DE DIREÇÃO ADBLUE)','REGULAGEM BANCO DO OPERADOR','TACÓGRAFO','IGNIÇÃO','PARTIDA DO MOTOR','PAINEL DE INSTRUMENTOS E ADVERTÊNCIAS','NÍVEL DE COMBUSTÍVEL','BUZINA','LIMPADOR DE PÁRA-BRISAS','PÁRA-BRISAS E RETROVISORES','FARÓIS','SETAS DIRECIONAIS E PISCA ALERTA','LUZ DE RÉ, CIDADE E FREIO','ILUMINAÇÃO GERAL DA CABINE','RÁDIO TRANSCEPTOR E MEGAFONE','GIROFLEX E SIRENE','MAPA DE GRADE','ILUMINAÇÃO INTERNA COMPARTIMENTOS','ILUMINAÇÃO EXTERNA / LUZES DE TRABALHO','CALIBRAGEM DE PNEUS (VISUAL)','DIREÇÃO E SUSPENSÃO','FREIOS, FREIO ESTACIONÁRIO E FREIO MOTOR','ENCAIXE CAIXA DE MARCHAS','TEMPERATURA DO MOTOR E PRESSÃO DO ÓLEO','PAINÉIS DE OPERAÇÃO / TFT','NÍVEL DO TANQUE DE ÁGUA','PARTIDA DO MOTOR ESTACIONÁRIO','BOMBA DE INCÊNDIO','CANHÃO MONITOR DE TETO','CANHÃO MONITOR DE PÁRA-CHOQUE','COMANDOS JOYSTICK OPERADOR E SALVAMENTO','SISTEMA DE ESCORVA','PRESSÃO DO CILINDRO DE NITROGÊNIO','01 CHAVE DE ABERTURA MANUAL DAS VÁLVULAS DE PQ, COMPARTIMENTO TRASEIRO','NÍVEL DO TANQUE DE LGE','TRIÂNGULO DE SINALIZAÇÃO','01 CHAVE DE ABERTURA MANUAL DAS VÁLVULAS DE PC, COMPARTIMENTO TRASEIRO','ALAVANCA DE ELEVAÇÃO DA CABINE'],
-    nome_guerra_ba2:['01 MANGUEIRA DE 1½" (30M) COMP. "R1"','01 MANGUEIRA DE 2½" (30M) COMP. "R1"','01 CHAVE STORZ DE 1½" COMP. "R1"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "R1"','01 ESGUICHO "VR" COMP. "R1"','01 MANIVELA CARRETEL PQ COMP. "R2"','01 MANGOTE PQ 1" (30M) COMP. "R2"','01 "PISTOLA" DE PQ COMP. "R2"','01 MANGUEIRA DE 1½" (30M) COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "R2"','02 CALÇOS COMP. "R2"','TAMPA CILINDRO "N2" COMP. "R2"','01 CHAVE STORZ DE 1½" COMP. "L3"','01 MANIVELA CARRETEL PQ COMP. "L3"','01 MANGOTE PQ 1" (30M) COMP. "L3"','01 "PISTOLA" DE PQ COMP. "L3"','01 STECKLEITER COMP. "L3"','01 MANGUEIRA DE 1½" (30M) COMP. "L2"','01 MANGUEIRA DE 2½" (30M) COMP. "L2"','02 CHAVE STORZ DE 1½" COMP. "L2"','01 REDUÇÃO DE 2½" PARA 1½" COMP. "L2"','01 ESGUICHO "VR" COMP. "L2"','02 CHAVES MANGOTE SUCÇÃO COMP. "L1"','02 CHAVES VÁLVULAS CORPO BOMBA COMP. "L1"','01 CHAVE ANGULAR VÁLVULAS COMP. SUPERIOR','01 ESCADA EXTENSORA (4 PARTES) COMP. SUPERIOR','02 MANGOTES 4" (SUCÇÃO) COMP. SUPERIOR','01 CHAVE CANHÃO TETO COMP. SUPERIOR','01 RALO DE SUCÇÃO COMP. SUPERIOR','01 DERIVANTE 2½" PARA 2x1½" CABINE','01 PRESILHA TAMPA TANQUE "LGE" COMP. SUPERIOR','01 PRESILHA TAMPA TANQUE ÁGUA COMP. SUPERIOR','01 TELA TANQUE "LGE" COMP. SUPERIOR','01 TELA TANQUE ÁGUA COMP. SUPERIOR']
-  }
-};
-
-async function gerar(){
-  const viatura = document.getElementById('sel-viatura').value;
-  const tipo    = document.getElementById('sel-tipo').value;
-  const mes     = document.getElementById('sel-mes').value;
-  if(!viatura){alert('Selecione a viatura!');return;}
-  if(!mes){alert('Selecione o mês!');return;}
-
-  const saida = document.getElementById('saida');
-  saida.innerHTML = '<div style="text-align:center;padding:40px;color:#888;">Carregando...</div>';
-
-  const r = await fetch('/api/checklists/publico');
-  const todos = await r.json();
-
-  const filtrados = todos.filter(c =>
-    c.placa === viatura &&
-    c.formulario_id && c.formulario_id.toLowerCase().includes(
-      tipo==='nome_guerra_ba2'?'ba':tipo==='lider_resgate'?'equipamentos':'motorista'
-    ) && c.mes === mes
-  );
-
-  const porDia = {};
-  filtrados.forEach(c => {
-    const d = String(parseInt(c.dia)).padStart(2,'0');
-    if(!porDia[d]) porDia[d]=c;
+function jsonbinGet(binId) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.jsonbin.io',
+      path: `/v3/b/${binId}`,
+      method: 'GET',
+      headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' }
+    };
+    const req = https.request(options, res => {
+      let raw = '';
+      res.on('data', d => raw += d);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.message && !parsed.record) { reject(new Error(parsed.message)); return; }
+          resolve(parsed.record);
+        } catch(e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.end();
   });
-
-  const [ano,mesNum] = mes.split('-').map(Number);
-  const totalDias = new Date(ano,mesNum,0).getDate();
-  const hoje = new Date();
-  const diaHoje = (ano===hoje.getFullYear()&&mesNum===hoje.getMonth()+1)?hoje.getDate():totalDias;
-  const dias = Array.from({length:totalDias},(_,i)=>String(i+1).padStart(2,'0'));
-  const itens = (ITENS[viatura]&&ITENS[viatura][tipo])||[];
-  const mesLabel = MESES[mesNum-1].toUpperCase()+' / '+ano;
-  const obs = filtrados.map(c=>c.obs).filter(Boolean).join(' | ') || '';
-
-  // ✅ Linha assinatura do motorista/BA (imagem)
-  let tdAssin = dias.map(d=>{
-    const c = porDia[d];
-    const fut = parseInt(d)>diaHoje;
-    if(fut) return `<td class="td-futuro"></td>`;
-    if(!c)  return `<td></td>`;
-    const sig = c.sigMotorista||'';
-    return `<td style="padding:0px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:7mm;"></div>'}</td>`;
-  }).join('');
-
-  // ✅ Linha nome do motorista/BA
-  let tdNome = dias.map(d=>{
-    const c = porDia[d];
-    const fut = parseInt(d)>diaHoje;
-    if(fut) return `<td class="td-futuro"></td>`;
-    if(!c)  return `<td></td>`;
-    return `<td><div class="nome-txt">${(c.nome||'').substring(0,10)}</div></td>`;
-  }).join('');
-
-  // ✅ Linha assinatura do chefe (imagem)
-  let tdChefeAssin = dias.map(d=>{
-    const c = porDia[d];
-    const fut = parseInt(d)>diaHoje;
-    if(fut) return `<td class="td-futuro"></td>`;
-    if(!c)  return `<td></td>`;
-    const sig = c.sigChefe||'';
-    return `<td style="padding:0px;">${sig&&sig.length>100?`<img class="sig-img" src="${sig}">`:'<div style="height:7mm;"></div>'}</td>`;
-  }).join('');
-
-  let linhas = itens.map((item,idx)=>{
-    let tds = dias.map(d=>{
-      const c = porDia[d];
-      const fut = parseInt(d)>diaHoje;
-      if(fut) return `<td class="td-futuro">—</td>`;
-      if(!c)  return `<td class="td-vazio"></td>`;
-      const st = c.itens?.[`item-${idx}`]?.status;
-      if(st==='C')  return `<td class="td-c">C</td>`;
-      if(st==='NC') return `<td class="td-nc">NC</td>`;
-      if(st==='NA') return `<td class="td-na">NA</td>`;
-      return `<td class="td-vazio">-</td>`;
-    }).join('');
-    return `<tr><td class="td-num">${idx+1}</td><td class="td-item">${item}</td>${tds}</tr>`;
-  }).join('');
-
-  saida.innerHTML = `
-  <div class="folha" id="folha-pdf">
-    <div class="cab-wrap">
-      <div class="cab-logo"><img src="/Med+.png" alt="med+ Group"></div>
-      <div class="cab-titulo">
-        <div class="cab-titulo-top">FORMULÁRIO</div>
-        <div class="cab-titulo-text">Checklist Inspeção Viaturas</div>
-      </div>
-      <div class="cab-codigo">
-        <div class="cab-codigo-row"><span>CÓDIGO:</span> MMS.BR.BA.FOR.007</div>
-        <div class="cab-codigo-row"><span>VERSÃO:</span> C0 &nbsp; <span>DATA:</span> 06/2025</div>
-      </div>
-    </div>
-    <div class="instrucao">Para correto preenchimento assinalar "C" (conforme), "NC" (não conforme) ou "NA" (não aplicável). Para todos os itens NC o chefe de equipe deverá ser comunicado e o campo de observações preenchido com a descrição da avaria.</div>
-    <div class="referencia">
-      <span>REFERÊNCIA:</span>
-      <span>C- CONFORME</span>
-      <span>NC- NÃO CONFORME</span>
-      <span>NA- NÃO APLICÁVEL</span>
-    </div>
-    <div class="info-bar">
-      <div class="info-cell"><b>SCI:</b> CUIABÁ</div>
-      <div class="info-cell"><b>CCI:</b> ${CCI[viatura]||'—'}</div>
-      <div class="info-cell"><b>VIATURA:</b> ${viatura}</div>
-      <div class="info-cell"><b>MODELO:</b> ${MODELO[viatura]||'—'}</div>
-      <div class="info-cell"><b>MÊS/ANO:</b> ${mesLabel}</div>
-    </div>
-    <div class="tab-wrap">
-      <table class="cl">
-        <colgroup>
-          <col style="width:5.5mm">
-          <col style="width:46mm">
-          ${dias.map(()=>`<col>`).join('')}
-        </colgroup>
-        <thead>
-          <tr>
-            <th class="th-num">#</th>
-            <th class="th-item">ITEM A INSPECIONAR</th>
-            <th colspan="${totalDias}" style="background:#dce3f0;font-size:6pt;font-weight:700;padding:1px;">COMPONENTES — DIAS DO MÊS</th>
-          </tr>
-          <tr>
-            <th class="th-num"></th>
-            <th class="th-item"></th>
-            ${dias.map(d=>`<th class="th-dia" style="${parseInt(d)>diaHoje?'color:#bbb':''}">${parseInt(d)}</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          ${linhas}
-          <tr class="tr-assin">
-            <td class="td-num"></td>
-            <td class="td-item">${TIPO_LABEL[tipo]}<br><em>Assinatura</em></td>
-            ${tdAssin}
-          </tr>
-          <tr class="tr-nome">
-            <td class="td-num"></td>
-            <td class="td-item"><em>Nome</em></td>
-            ${tdNome}
-          </tr>
-          <tr class="tr-chefe-sig">
-            <td class="td-num"></td>
-            <td class="td-item">Chefe de Equipe<br><em>Assinatura</em></td>
-            ${tdChefeAssin}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="rodape">
-      <div class="rod-obs-title">ALTERAÇÕES E OBSERVAÇÕES:</div>
-      <div class="rod-obs-text">${obs||'&nbsp;'}</div>
-    </div>
-    <div class="cod-rodape">
-      <span>MMS.BR.BA.FOR.007 Rev.00</span>
-      <span>Impresso: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>
-    </div>
-  </div>`;
 }
 
-async function baixarPDF() {
-  const el = document.getElementById('folha-pdf');
-  if(!el){ alert('Gere o relatório primeiro!'); return; }
-  const viatura = document.getElementById('sel-viatura').value || 'checklist';
-  const mes = document.getElementById('sel-mes').value || '';
-  const tipo = document.getElementById('sel-tipo').value || '';
-  const nomeArquivo = `checklist_${viatura}_${tipo}_${mes}.pdf`;
-  const opt = {
-    margin: 0,
-    filename: nomeArquivo,
-    image: { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, logging:false, width:1047 },
-    jsPDF: { unit:'mm', format:'a4', orientation:'landscape' }
-  };
-  const btn = document.querySelector('.btn-baixar');
-  btn.textContent = '⏳ Gerando PDF...';
-  btn.disabled = true;
+function jsonbinPut(binId, data) {
+  return new Promise((resolve, reject) => {
+    const bodyBuffer = Buffer.from(JSON.stringify(data), 'utf8');
+    const options = {
+      hostname: 'api.jsonbin.io',
+      path: `/v3/b/${binId}`,
+      method: 'PUT',
+      headers: {
+        'X-Master-Key': API_KEY,
+        'Content-Type': 'application/json',
+        'Content-Length': bodyBuffer.length
+      }
+    };
+    const req = https.request(options, res => {
+      let raw = '';
+      res.on('data', d => raw += d);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.message && !parsed.record) {
+            console.error('JSONBin PUT error:', parsed.message, 'size:', Math.round(bodyBuffer.length/1024)+'KB');
+            reject(new Error(parsed.message));
+            return;
+          }
+          resolve(parsed);
+        } catch(e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.write(bodyBuffer);
+    req.end();
+  });
+}
+
+async function readDB() {
   try {
-    await html2pdf().set(opt).from(el).save();
-  } finally {
-    btn.textContent = '⬇ Baixar PDF';
-    btn.disabled = false;
+    const d = await jsonbinGet(BIN_ID);
+    if (!d.usuarios)   d.usuarios   = defaultDB().usuarios;
+    if (!d.equipes)    d.equipes    = defaultDB().equipes;
+    if (!d.viaturas)   d.viaturas   = defaultDB().viaturas;
+    if (!d.checklists) d.checklists = [];
+    if (!d.alertas)    d.alertas    = [];
+    return d;
+  } catch(e) {
+    console.error('readDB error:', e.message);
+    return defaultDB();
   }
 }
-</script>
-</body>
-</html>
+
+async function writeDB(db) {
+  try {
+    const dbSemSig = prepararParaSalvar(db);
+    const size = Buffer.byteLength(JSON.stringify(dbSemSig), 'utf8');
+    console.log('writeDB size:', Math.round(size/1024), 'KB');
+    await jsonbinPut(BIN_ID, dbSemSig);
+    console.log('writeDB OK');
+  } catch(e) {
+    console.error('writeDB error:', e.message);
+    throw e;
+  }
+}
+
+async function readSigs() {
+  try {
+    const d = await jsonbinGet(BIN_SIG_ID);
+    if (!d.assinaturas) d.assinaturas = [];
+    return d;
+  } catch(e) {
+    console.error('readSigs error:', e.message);
+    return { assinaturas: [] };
+  }
+}
+
+async function writeSigs(sigs) {
+  try {
+    await jsonbinPut(BIN_SIG_ID, sigs);
+    console.log('writeSigs OK');
+  } catch(e) {
+    console.error('writeSigs error:', e.message);
+  }
+}
+
+async function getSig(checklistId) {
+  try {
+    const d = await readSigs();
+    return d.assinaturas.find(s => String(s.id) === String(checklistId)) || null;
+  } catch(e) { return null; }
+}
+
+async function saveSig(checklistId, sigMotorista, sigChefe) {
+  try {
+    const d = await readSigs();
+    const idx = d.assinaturas.findIndex(s => String(s.id) === String(checklistId));
+    const entry = { id: checklistId, sigMotorista: sigMotorista||'', sigChefe: sigChefe||'' };
+    if (idx >= 0) d.assinaturas[idx] = entry;
+    else d.assinaturas.push(entry);
+    await writeSigs(d);
+  } catch(e) {
+    console.error('saveSig error:', e.message);
+  }
+}
+
+async function enrichWithSig(checklists) {
+  try {
+    const sigs = await readSigs();
+    return checklists.map(c => {
+      const sig = sigs.assinaturas.find(s => String(s.id) === String(c.id));
+      return {
+        ...c,
+        sigMotorista: sig ? sig.sigMotorista : '',
+        sigChefe: sig ? sig.sigChefe : ''
+      };
+    });
+  } catch(e) {
+    return checklists;
+  }
+}
+
+function defaultDB() {
+  return {
+    usuarios: [
+      { id: 1, nome: 'Gerente', login: 'admin', senha: hash('admin123'), role: 'admin' },
+      { id: 2, nome: 'Chefe Alpha', login: 'chefe1', senha: hash('chefe123'), role: 'chefe', equipe_id: 1 }
+    ],
+    equipes: [
+      { id: 1, nome: 'Equipe Alfa',    chefe: 'Cerqueira' },
+      { id: 2, nome: 'Equipe Bravo',   chefe: 'Savio' },
+      { id: 3, nome: 'Equipe Charlie', chefe: 'Cleber' },
+      { id: 4, nome: 'Equipe Delta',   chefe: 'Douglas' }
+    ],
+    viaturas: [
+      { id: 1, placa: 'CRS',      modelo: 'IVECO DAILY',      equipe_id: 1 },
+      { id: 2, placa: 'DOSA 318', modelo: 'IVECO MAGIRUS X6', cci: '02', equipe_id: 2 },
+      { id: 3, placa: 'AP-2',     modelo: 'FÊNIX',            cci: '03', equipe_id: 3 },
+      { id: 4, placa: 'DOSA 371', modelo: 'IVECO MAGIRUS X6', cci: '01', equipe_id: 4 }
+    ],
+    checklists: [],
+    alertas: []
+  };
+}
+
+const sessions = {};
+function newSession(user) {
+  const token = crypto.randomBytes(32).toString('hex');
+  sessions[token] = { ...user, ts: Date.now() };
+  return token;
+}
+function getSession(req) {
+  const auth = req.headers.authorization || '';
+  const token = auth.replace('Bearer ', '');
+  const s = sessions[token];
+  if (!s) return null;
+  if (Date.now() - s.ts > 8 * 60 * 60 * 1000) { delete sessions[token]; return null; }
+  s.ts = Date.now();
+  return s;
+}
+function requireAuth(roles=[]) {
+  return (req, res, next) => {
+    const s = getSession(req);
+    if (!s) return res.status(401).json({ erro: 'Não autenticado' });
+    if (roles.length && !roles.includes(s.role)) return res.status(403).json({ erro: 'Sem permissão' });
+    req.user = s;
+    next();
+  };
+}
+
+function getEquipeNome(db, id) {
+  const e = db.equipes.find(e => e.id == id);
+  return e ? e.nome.replace('Equipe ', '') : '';
+}
+function getViaturaPlacar(db, id) {
+  const v = db.viaturas.find(v => v.id == id);
+  return v ? v.placa : '';
+}
+
+// AUTH
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { login, senha } = req.body;
+    const db = await readDB();
+    const u = db.usuarios.find(x => x.login === login && x.senha === hash(senha));
+    if (!u) return res.status(401).json({ erro: 'Login ou senha incorretos' });
+    const token = newSession(u);
+    res.json({ token, nome: u.nome, role: u.role, equipe_id: u.equipe_id });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  const auth = req.headers.authorization || '';
+  delete sessions[auth.replace('Bearer ', '')];
+  res.json({ ok: true });
+});
+
+app.get('/api/auth/me', requireAuth(), (req, res) => {
+  res.json({ nome: req.user.nome, role: req.user.role, equipe_id: req.user.equipe_id });
+});
+
+// USUARIOS
+app.get('/api/usuarios', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  res.json(db.usuarios.map(u => ({ ...u, senha: undefined })));
+});
+app.post('/api/usuarios', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  if (db.usuarios.find(u => u.login === req.body.login))
+    return res.status(400).json({ erro: 'Login já existe' });
+  const u = { id: Date.now(), ...req.body, senha: hash(req.body.senha) };
+  db.usuarios.push(u); await writeDB(db);
+  res.json({ ...u, senha: undefined });
+});
+app.put('/api/usuarios/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  const idx = db.usuarios.findIndex(u => u.id == req.params.id);
+  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
+  const upd = { ...db.usuarios[idx], ...req.body };
+  if (req.body.senha) upd.senha = hash(req.body.senha);
+  db.usuarios[idx] = upd; await writeDB(db);
+  res.json({ ...upd, senha: undefined });
+});
+app.delete('/api/usuarios/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  db.usuarios = db.usuarios.filter(u => u.id != req.params.id);
+  await writeDB(db); res.json({ ok: true });
+});
+
+// EQUIPES
+app.get('/api/equipes', async (req, res) => res.json((await readDB()).equipes));
+app.post('/api/equipes', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  const e = { id: Date.now(), ...req.body };
+  db.equipes.push(e); await writeDB(db); res.json(e);
+});
+app.put('/api/equipes/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  const idx = db.equipes.findIndex(e => e.id == req.params.id);
+  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
+  db.equipes[idx] = { ...db.equipes[idx], ...req.body };
+  await writeDB(db); res.json(db.equipes[idx]);
+});
+app.delete('/api/equipes/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  db.equipes = db.equipes.filter(e => e.id != req.params.id);
+  await writeDB(db); res.json({ ok: true });
+});
+
+// VIATURAS
+app.get('/api/viaturas', async (req, res) => res.json((await readDB()).viaturas));
+app.post('/api/viaturas', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  const v = { id: Date.now(), ...req.body };
+  db.viaturas.push(v); await writeDB(db); res.json(v);
+});
+app.put('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  const idx = db.viaturas.findIndex(v => v.id == req.params.id);
+  if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
+  db.viaturas[idx] = { ...db.viaturas[idx], ...req.body };
+  await writeDB(db); res.json(db.viaturas[idx]);
+});
+app.delete('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
+  const db = await readDB();
+  db.viaturas = db.viaturas.filter(v => v.id != req.params.id);
+  await writeDB(db); res.json({ ok: true });
+});
+
+// CHECKLISTS PÚBLICO
+app.get('/api/checklists/publico', async (req, res) => {
+  try {
+    const db = await readDB();
+    const enriched = await enrichWithSig(db.checklists);
+    res.json([...enriched].reverse());
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
+});
+
+app.get('/api/checklists/publico/:id', async (req, res) => {
+  try {
+    const db = await readDB();
+    const c = db.checklists.find(c => String(c.id) === String(req.params.id));
+    if (!c) return res.status(404).json({ erro: 'Não encontrado' });
+    const sig = await getSig(c.id);
+    res.json({ ...c, sigMotorista: sig?.sigMotorista||'', sigChefe: sig?.sigChefe||'' });
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
+});
+
+// CHECKLISTS AUTENTICADO
+app.get('/api/checklists', requireAuth(), async (req, res) => {
+  try {
+    const db = await readDB();
+    let data = [...db.checklists];
+    if (req.query.mes) data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
+    if (req.query.viatura_id) {
+      const placa = getViaturaPlacar(db, req.query.viatura_id);
+      data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
+    }
+    if (req.query.status) data = data.filter(c => c.status === req.query.status);
+    if (req.query.equipe_id) {
+      const eq = db.equipes.find(e => e.id == req.query.equipe_id);
+      if (eq) {
+        const nomeSimples  = eq.nome.replace('Equipe ', '');
+        const nomeCompleto = eq.nome;
+        data = data.filter(c =>
+          c.equipe === nomeSimples ||
+          c.equipe === nomeCompleto ||
+          c.nome_chefe === eq.chefe ||
+          c.equipe_id == req.query.equipe_id
+        );
+      }
+    }
+    const enriched = await enrichWithSig(data);
+    res.json(enriched.reverse());
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
+});
+
+app.post('/api/checklists', async (req, res) => {
+  try {
+    const db = await readDB();
+    const id = Date.now();
+    const sigMotorista = req.body.sigMotorista || '';
+    const sigChefe = req.body.sigChefe || '';
+    const r = {
+      id,
+      ...req.body,
+      sigMotorista: sigMotorista ? 'SIM' : '',
+      sigChefe: sigChefe ? 'SIM' : ''
+    };
+    console.log('Salvando:', r.formulario_id, r.preenchidoPor, r.equipe, r.nome);
+    db.checklists.push(r);
+    if (r.nc > 0) {
+      db.alertas = db.alertas || [];
+      db.alertas.push({
+        id: Date.now()+1, tipo: 'nok',
+        msg: `${r.nc} NC — ${r.placa} — ${r.nome} (${r.preenchidoPor==='nome_guerra_ba2'?'BA-2':'Motorista'})`,
+        checklist_id: r.id, data: r.data, lido: false
+      });
+    }
+    await writeDB(db);
+    await saveSig(id, sigMotorista, sigChefe);
+    console.log('Salvo! Total:', db.checklists.length);
+    res.json({ ...r, sigMotorista, sigChefe });
+  } catch(e) {
+    console.error('Erro:', e.message);
+    res.status(500).json({ erro: e.message });
+  }
+});
+
+app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), async (req, res) => {
+  try {
+    const db = await readDB();
+    db.checklists = db.checklists.filter(c => c.id != req.params.id);
+    await writeDB(db);
+    res.json({ ok: true });
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
+});
+
+app.post('/api/checklists/:id/aprovar', async (req, res) => {
+  try {
+    const db = await readDB();
+    const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
+    if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
+    const sigChefe = req.body.sigChefe || '';
+    db.checklists[idx] = {
+      ...db.checklists[idx],
+      ...req.body,
+      sigChefe: sigChefe ? 'SIM' : ''
+    };
+    await writeDB(db);
+    const sigAtual = await getSig(req.params.id);
+    await saveSig(req.params.id, sigAtual?.sigMotorista||'', sigChefe);
+    res.json({ ...db.checklists[idx], sigChefe });
+  } catch(e) {
+    res.status(500).json({ erro: e.message });
+  }
+});
+
+// ALERTAS
+app.get('/api/alertas', requireAuth(['admin','chefe']), async (req, res) => {
+  try {
+    const db = await readDB();
+    res.json((db.alertas||[]).filter(a=>!a.lido).reverse().slice(0,50));
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+app.put('/api/alertas/:id/lido', requireAuth(['admin','chefe']), async (req, res) => {
+  try {
+    const db = await readDB();
+    const a = (db.alertas||[]).find(x=>x.id==req.params.id);
+    if (a) { a.lido=true; await writeDB(db); }
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+app.put('/api/alertas/lidos/todos', requireAuth(['admin','chefe']), async (req, res) => {
+  try {
+    const db = await readDB();
+    (db.alertas||[]).forEach(a=>a.lido=true);
+    await writeDB(db);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// DASHBOARD
+app.get('/api/dashboard', requireAuth(['admin','chefe']), async (req, res) => {
+  try {
+    const db = await readDB();
+    const mes = req.query.mes || new Date().toISOString().slice(0,7);
+    const cls = db.checklists.filter(c => c.data && c.data.startsWith(mes));
+    const porViatura = db.viaturas.map(v => {
+      const myCls = cls.filter(c => c.viatura_id == v.id || c.placa == v.placa);
+      const nok = myCls.filter(c=>c.status==='nok').length;
+      const eq = db.equipes.find(e=>e.id==v.equipe_id)||{};
+      return { ...v, equipe: eq.nome||'—', total: myCls.length, ok: myCls.length-nok, nok };
+    });
+    const porEquipe = db.equipes.map(e => {
+      const nomeSimples = e.nome.replace('Equipe ','');
+      const myCls = cls.filter(c =>
+        c.equipe_id == e.id ||
+        c.equipe === nomeSimples ||
+        c.equipe === e.nome ||
+        c.nome_chefe === e.chefe
+      );
+      const nok = myCls.filter(c=>c.status==='nok').length;
+      return { ...e, total: myCls.length, ok: myCls.length-nok, nok };
+    });
+    const hoje = new Date();
+    const porDia = [];
+    for (let i=6;i>=0;i--) {
+      const d=new Date(hoje); d.setDate(d.getDate()-i);
+      const key=d.toISOString().slice(0,10);
+      const dc=cls.filter(c=>c.data&&c.data.startsWith(key));
+      porDia.push({dia:key.slice(5),total:dc.length,nok:dc.filter(c=>c.status==='nok').length});
+    }
+    const motMap={};
+    cls.forEach(c=>{
+      const n=c.nome||c.motorista||'—';
+      if(!motMap[n]) motMap[n]={nome:n,total:0,nok:0};
+      motMap[n].total++;
+      if(c.status==='nok') motMap[n].nok++;
+    });
+    res.json({
+      mes, total:cls.length,
+      ok:cls.filter(c=>c.status==='ok').length,
+      nok:cls.filter(c=>c.status==='nok').length,
+      alertas:(db.alertas||[]).filter(a=>!a.lido).length,
+      porViatura, porEquipe, porDia,
+      motoristas:Object.values(motMap).sort((a,b)=>b.total-a.total)
+    });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// EXPORT CSV
+app.get('/api/export/csv', requireAuth(), async (req, res) => {
+  try {
+    const db = await readDB();
+    let data = [...db.checklists];
+    if (req.query.mes) data = data.filter(c=>c.data&&c.data.startsWith(req.query.mes));
+    data.sort((a,b)=>a.data>b.data?1:-1);
+    const header=['ID','Data','Placa','Modelo','Tipo','Equipe','Nome','Status','NC','Observacao'];
+    const rows=data.map(c=>[
+      c.id, c.data, c.placa, c.modelo||'',
+      c.preenchidoPor==='nome_guerra_ba2'?'BA-2':c.preenchidoPor==='lider_resgate'?'Líder':'Motorista',
+      c.equipe, c.nome||c.motorista||'',
+      c.status, c.nc||0, (c.obs||'').replace(/,/g,';')
+    ]);
+    const csv='\uFEFF'+[header,...rows].map(r=>r.join(',')).join('\n');
+    res.setHeader('Content-Type','text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition','attachment; filename="checklists.csv"');
+    res.send(csv);
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, '0.0.0.0', () => console.log(`✅ CheckViatura em http://localhost:${PORT}`));
