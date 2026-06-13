@@ -209,7 +209,6 @@ function doLogout() {
   document.getElementById('app').style.display='none';
 }
 
-// auto login
 const saved = localStorage.getItem('chefe_equipe');
 if(saved && SENHAS[saved]) {
   ME.equipe = saved;
@@ -223,15 +222,11 @@ async function carregarChecklists() {
   try {
     const r = await fetch('/api/checklists/publico');
     const todos = await r.json();
-
-    // ✅ Filtro corrigido — pega motorista E BA pela equipe OU nome do chefe
     todosChecklists = todos.filter(c => {
-      const equipeOk = c.equipe === ME.equipe ||
-                       c.equipe === 'Equipe ' + ME.equipe;
+      const equipeOk = c.equipe === ME.equipe || c.equipe === 'Equipe ' + ME.equipe;
       const chefeOk  = c.nome_chefe === ME.chefe;
       return equipeOk || chefeOk;
     });
-
     renderLista();
   } catch(e) {
     document.getElementById('lista-checklists').innerHTML =
@@ -318,23 +313,25 @@ async function abrirChecklist(id) {
   obsEl.innerHTML = c.obs
     ? `<div class="alert alert-warn" style="margin-bottom:14px;">📝 ${c.obs}</div>` : '';
 
-  // Assinatura do preenchedor
   const motLabel = c.preenchidoPor==='nome_guerra_ba2'?'ASSINATURA BA-2':
                    c.preenchidoPor==='lider_resgate'?'ASSINATURA LÍDER':'ASSINATURA MOTORISTA';
   document.getElementById('modal-sig-mot-label').textContent = motLabel;
   const sigImg   = document.getElementById('modal-sig-mot-img');
   const sigVazio = document.getElementById('modal-sig-mot-vazio');
-  if(c.sigMotorista && c.sigMotorista.length > 100) {
-    sigImg.src = c.sigMotorista; sigImg.style.display='block';
+
+  // ✅ Suporta URL do Cloudinary e base64
+  if(c.sigMotorista && (c.sigMotorista.startsWith('http') || c.sigMotorista.length > 100)) {
+    sigImg.src = c.sigMotorista;
+    sigImg.style.display='block';
     sigVazio.style.display='none';
   } else {
-    sigImg.style.display='none'; sigVazio.style.display='block';
+    sigImg.style.display='none';
+    sigVazio.style.display='block';
   }
   document.getElementById('modal-sig-mot-nome').textContent = c.nome||'—';
 
-  // Botão aprovar e canvas
-  const btnAprovar  = document.getElementById('btn-aprovar');
-  const sigBox      = document.getElementById('sig-chefe-box');
+  const btnAprovar = document.getElementById('btn-aprovar');
+  const sigBox     = document.getElementById('sig-chefe-box');
   if(c.aprovado_chefe) {
     btnAprovar.style.display='none';
     sigBox.style.display='none';
@@ -343,7 +340,6 @@ async function abrirChecklist(id) {
     sigBox.style.display='block';
   }
 
-  // Abre modal PRIMEIRO, depois inicia canvas com delay
   document.getElementById('modal-cl').classList.add('open');
 
   if(!c.aprovado_chefe) {
@@ -367,7 +363,8 @@ async function aprovarChecklist() {
   btn.innerHTML='<span class="spinner"></span>Aprovando...';
 
   const canvas = document.getElementById('canvas-chefe-modal');
-  const sigChefe = canvas.toDataURL();
+  // ✅ PNG para assinatura sem fundo preto
+  const sigChefe = canvas.toDataURL('image/png');
 
   try {
     const r = await fetch(`/api/checklists/${clAtual.id}/aprovar`, {
@@ -401,7 +398,6 @@ async function aprovarChecklist() {
 function initCanvas(id) {
   const c = document.getElementById(id);
   if(!c) return;
-  // Limpa canvas anterior
   const ctx = c.getContext('2d');
   const dpr = window.devicePixelRatio||1;
   const w = c.offsetWidth;
@@ -413,7 +409,6 @@ function initCanvas(id) {
   ctx.lineWidth   = 2.5;
   ctx.lineCap     = 'round';
   ctx.lineJoin    = 'round';
-  // Remove eventos antigos clonando
   const novo = c.cloneNode(true);
   c.parentNode.replaceChild(novo, c);
   const nc = document.getElementById(id);
@@ -440,8 +435,7 @@ function clearCanvas(id) {
   const c = document.getElementById(id);
   if(!c) return;
   const dpr = window.devicePixelRatio||1;
-  c.getContext('2d').clearRect(0,0,c.width/dpr*dpr,c.height/dpr*dpr);
-  // Reinicia canvas
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
   initCanvas(id);
 }
 
