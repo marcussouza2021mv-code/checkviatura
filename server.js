@@ -9,26 +9,68 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const BIN_ID      = '6a2c1f77da38895dfeb57148';
-const BIN_SIG_ID  = '6a2cb778f5f4af5e29e9e355';
-const API_KEY     = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
+const BIN_ID  = '6a2c1f77da38895dfeb57148';
+const API_KEY = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
+
+const CLOUD_NAME   = 'drj7tagld';
+const CLOUD_KEY    = '824487421874555';
+const CLOUD_SECRET = 'gWdHK5gEkxLEnPmun91kcboGugs';
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
-function comprimirSig(sig) {
-  if (!sig || typeof sig !== 'string') return '';
-  if (sig.length > 20000) return sig.substring(0, 20000);
-  return sig;
-}
-
-function prepararParaSalvar(db) {
-  const dbCopy = JSON.parse(JSON.stringify(db));
-  dbCopy.checklists = dbCopy.checklists.map(c => ({
-    ...c,
-    sigMotorista: c.sigMotorista === 'SIM' ? 'SIM' : (c.sigMotorista ? 'SIM' : ''),
-    sigChefe: c.sigChefe === 'SIM' ? 'SIM' : (c.sigChefe ? 'SIM' : '')
-  }));
-  return dbCopy;
+// ✅ Upload assinatura para Cloudinary
+async function uploadCloudinary(base64img, publicId) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!base64img || base64img.length < 100) { resolve(''); return; }
+      const timestamp = Math.floor(Date.now() / 1000);
+      const sigStr = `public_id=${publicId}&timestamp=${timestamp}${CLOUD_SECRET}`;
+      const signature = crypto.createHash('sha256').update(sigStr).digest('hex');
+      const imgData = base64img.includes(',') ? base64img.split(',')[1] : base64img;
+      const boundary = '----FormBoundary' + Date.now();
+      const fields = {
+        file: `data:image/jpeg;base64,${imgData}`,
+        api_key: CLOUD_KEY,
+        timestamp: String(timestamp),
+        public_id: publicId,
+        signature
+      };
+      let body = '';
+      for (const [k, v] of Object.entries(fields)) {
+        body += `--${boundary}\r\nContent-Disposition: form-data; name="${k}"\r\n\r\n${v}\r\n`;
+      }
+      body += `--${boundary}--\r\n`;
+      const bodyBuf = Buffer.from(body, 'utf8');
+      const options = {
+        hostname: 'api.cloudinary.com',
+        path: `/v1_1/${CLOUD_NAME}/image/upload`,
+        method: 'POST',
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${boundary}`,
+          'Content-Length': bodyBuf.length
+        }
+      };
+      const req = https.request(options, res => {
+        let raw = '';
+        res.on('data', d => raw += d);
+        res.on('end', () => {
+          try {
+            const parsed = JSON.parse(raw);
+            if (parsed.secure_url) {
+              console.log('Cloudinary OK:', parsed.secure_url);
+              resolve(parsed.secure_url);
+            } else {
+              console.error('Cloudinary error:', raw.slice(0,200));
+              resolve('');
+            }
+          } catch(e) { resolve(''); }
+        });
+      });
+      req.on('error', e => { console.error('Cloudinary req error:', e.message); resolve(''); });
+      req.write(bodyBuf);
+      req.end();
+    } catch(e) { console.error('uploadCloudinary error:', e.message); resolve(''); }
+  });
 }
 
 function jsonbinGet(binId) {
@@ -75,7 +117,7 @@ function jsonbinPut(binId, data) {
         try {
           const parsed = JSON.parse(raw);
           if (parsed.message && !parsed.record) {
-            console.error('JSONBin PUT error:', parsed.message, 'size:', Math.round(bodyBuffer.length/1024)+'KB');
+            console.error('JSONBin PUT error:', parsed.message);
             reject(new Error(parsed.message));
             return;
           }
@@ -106,70 +148,13 @@ async function readDB() {
 
 async function writeDB(db) {
   try {
-    const dbSemSig = prepararParaSalvar(db);
-    const size = Buffer.byteLength(JSON.stringify(dbSemSig), 'utf8');
+    const size = Buffer.byteLength(JSON.stringify(db), 'utf8');
     console.log('writeDB size:', Math.round(size/1024), 'KB');
-    await jsonbinPut(BIN_ID, dbSemSig);
+    await jsonbinPut(BIN_ID, db);
     console.log('writeDB OK');
   } catch(e) {
     console.error('writeDB error:', e.message);
     throw e;
-  }
-}
-
-async function readSigs() {
-  try {
-    const d = await jsonbinGet(BIN_SIG_ID);
-    if (!d.assinaturas) d.assinaturas = [];
-    return d;
-  } catch(e) {
-    console.error('readSigs error:', e.message);
-    return { assinaturas: [] };
-  }
-}
-
-async function writeSigs(sigs) {
-  try {
-    await jsonbinPut(BIN_SIG_ID, sigs);
-    console.log('writeSigs OK');
-  } catch(e) {
-    console.error('writeSigs error:', e.message);
-  }
-}
-
-async function getSig(checklistId) {
-  try {
-    const d = await readSigs();
-    return d.assinaturas.find(s => String(s.id) === String(checklistId)) || null;
-  } catch(e) { return null; }
-}
-
-async function saveSig(checklistId, sigMotorista, sigChefe) {
-  try {
-    const d = await readSigs();
-    const idx = d.assinaturas.findIndex(s => String(s.id) === String(checklistId));
-    const entry = { id: checklistId, sigMotorista: sigMotorista||'', sigChefe: sigChefe||'' };
-    if (idx >= 0) d.assinaturas[idx] = entry;
-    else d.assinaturas.push(entry);
-    await writeSigs(d);
-  } catch(e) {
-    console.error('saveSig error:', e.message);
-  }
-}
-
-async function enrichWithSig(checklists) {
-  try {
-    const sigs = await readSigs();
-    return checklists.map(c => {
-      const sig = sigs.assinaturas.find(s => String(s.id) === String(c.id));
-      return {
-        ...c,
-        sigMotorista: sig ? sig.sigMotorista : '',
-        sigChefe: sig ? sig.sigChefe : ''
-      };
-    });
-  } catch(e) {
-    return checklists;
   }
 }
 
@@ -324,8 +309,7 @@ app.delete('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
 app.get('/api/checklists/publico', async (req, res) => {
   try {
     const db = await readDB();
-    const enriched = await enrichWithSig(db.checklists);
-    res.json([...enriched].reverse());
+    res.json([...db.checklists].reverse());
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
@@ -336,8 +320,7 @@ app.get('/api/checklists/publico/:id', async (req, res) => {
     const db = await readDB();
     const c = db.checklists.find(c => String(c.id) === String(req.params.id));
     if (!c) return res.status(404).json({ erro: 'Não encontrado' });
-    const sig = await getSig(c.id);
-    res.json({ ...c, sigMotorista: sig?.sigMotorista||'', sigChefe: sig?.sigChefe||'' });
+    res.json(c);
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
@@ -367,26 +350,29 @@ app.get('/api/checklists', requireAuth(), async (req, res) => {
         );
       }
     }
-    const enriched = await enrichWithSig(data);
-    res.json(enriched.reverse());
+    res.json(data.reverse());
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
 });
 
+// ✅ SALVAR CHECKLIST — envia assinatura para Cloudinary
 app.post('/api/checklists', async (req, res) => {
   try {
     const db = await readDB();
     const id = Date.now();
-    const sigMotorista = req.body.sigMotorista || '';
-    const sigChefe = req.body.sigChefe || '';
+    console.log('Salvando checklist:', req.body.formulario_id, req.body.preenchidoPor, req.body.equipe);
+
+    // Upload assinatura motorista para Cloudinary
+    const sigUrl = await uploadCloudinary(req.body.sigMotorista, `sig_mot_${id}`);
+
     const r = {
       id,
       ...req.body,
-      sigMotorista: sigMotorista ? 'SIM' : '',
-      sigChefe: sigChefe ? 'SIM' : ''
+      sigMotorista: sigUrl,
+      sigChefe: ''
     };
-    console.log('Salvando:', r.formulario_id, r.preenchidoPor, r.equipe, r.nome);
+
     db.checklists.push(r);
     if (r.nc > 0) {
       db.alertas = db.alertas || [];
@@ -397,11 +383,10 @@ app.post('/api/checklists', async (req, res) => {
       });
     }
     await writeDB(db);
-    await saveSig(id, sigMotorista, sigChefe);
-    console.log('Salvo! Total:', db.checklists.length);
-    res.json({ ...r, sigMotorista, sigChefe });
+    console.log('Checklist salvo! Total:', db.checklists.length);
+    res.json(r);
   } catch(e) {
-    console.error('Erro:', e.message);
+    console.error('Erro ao salvar checklist:', e.message);
     res.status(500).json({ erro: e.message });
   }
 });
@@ -417,22 +402,27 @@ app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), async (req, re
   }
 });
 
+// ✅ APROVAR — envia assinatura do chefe para Cloudinary
 app.post('/api/checklists/:id/aprovar', async (req, res) => {
   try {
     const db = await readDB();
     const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
     if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
-    const sigChefe = req.body.sigChefe || '';
+
+    // Upload assinatura chefe para Cloudinary
+    const sigChefeUrl = await uploadCloudinary(req.body.sigChefe, `sig_chefe_${req.params.id}`);
+
     db.checklists[idx] = {
       ...db.checklists[idx],
       ...req.body,
-      sigChefe: sigChefe ? 'SIM' : ''
+      sigChefe: sigChefeUrl,
+      aprovado_chefe: true
     };
     await writeDB(db);
-    const sigAtual = await getSig(req.params.id);
-    await saveSig(req.params.id, sigAtual?.sigMotorista||'', sigChefe);
-    res.json({ ...db.checklists[idx], sigChefe });
+    console.log('Aprovado! sigChefe URL:', sigChefeUrl);
+    res.json(db.checklists[idx]);
   } catch(e) {
+    console.error('Erro ao aprovar:', e.message);
     res.status(500).json({ erro: e.message });
   }
 });
