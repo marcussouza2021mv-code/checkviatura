@@ -18,11 +18,11 @@ body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
 .btn-voltar{background:transparent;border:1px solid #ccc;color:#333;cursor:pointer;}
 
 .folha{
-  width:277mm;
-  height:190mm;
+  width:297mm;
+  height:210mm;
   background:#fff;
   margin:0 auto 20px;
-  padding:2mm 2.5mm;
+  padding:3mm 3mm;
   font-size:5pt;
   box-shadow:0 2px 12px rgba(0,0,0,.15);
   display:flex;
@@ -31,53 +31,53 @@ body{font-family:'Arial',sans-serif;background:#f0f0f0;color:#000;}
 }
 
 .cab-wrap{display:flex;border:1px solid #000;flex-shrink:0;}
-.cab-logo{width:22mm;border-right:1px solid #000;display:flex;align-items:center;justify-content:center;padding:2px;}
-.cab-logo img{max-width:19mm;max-height:11mm;object-fit:contain;}
+.cab-logo{width:24mm;border-right:1px solid #000;display:flex;align-items:center;justify-content:center;padding:2px;}
+.cab-logo img{max-width:20mm;max-height:13mm;object-fit:contain;}
 .cab-titulo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #000;padding:2px;}
 .cab-titulo-top{font-size:5pt;font-weight:700;margin-bottom:1px;}
-.cab-titulo-text{font-size:10pt;font-weight:900;text-align:center;}
-.cab-codigo{width:38mm;font-size:5pt;}
-.cab-codigo-row{padding:1px 3px;border-bottom:1px solid #000;display:flex;justify-content:space-between;align-items:center;}
+.cab-titulo-text{font-size:11pt;font-weight:900;text-align:center;}
+.cab-codigo{width:40mm;font-size:5pt;}
+.cab-codigo-row{padding:1px 4px;border-bottom:1px solid #000;display:flex;justify-content:space-between;align-items:center;}
 .cab-codigo-row:last-child{border-bottom:none;}
 .cab-codigo-row span{font-weight:700;}
 
-.instrucao{border:1px solid #000;border-top:none;padding:1px 3px;font-size:3.8pt;line-height:1.1;flex-shrink:0;}
-.referencia{border:1px solid #000;border-top:none;display:flex;align-items:center;padding:1px 4px;gap:8px;font-size:4.8pt;font-weight:700;flex-shrink:0;}
-.info-bar{border:1px solid #000;border-top:none;display:flex;font-size:4.8pt;flex-shrink:0;}
-.info-cell{padding:1px 3px;border-right:1px solid #000;display:flex;gap:2px;align-items:center;}
+.instrucao{border:1px solid #000;border-top:none;padding:1px 3px;font-size:4pt;line-height:1.1;flex-shrink:0;}
+.referencia{border:1px solid #000;border-top:none;display:flex;align-items:center;padding:1px 5px;gap:8px;font-size:5pt;font-weight:700;flex-shrink:0;}
+.info-bar{border:1px solid #000;border-top:none;display:flex;font-size:5pt;flex-shrink:0;}
+.info-cell{padding:1px 4px;border-right:1px solid #000;display:flex;gap:2px;align-items:center;}
 .info-cell:last-child{border-right:none;flex:1;}
 .info-cell b{font-weight:700;}
 
 .tab-wrap{border:1px solid #000;border-top:none;flex:1;overflow:hidden;}
 table.cl{width:100%;border-collapse:collapse;table-layout:fixed;height:100%;}
-.cl th,.cl td{border:0.3px solid #aaa;text-align:center;padding:0px;font-size:4.2pt;overflow:hidden;line-height:1.05;}
-.cl th.th-num{width:4mm;background:#dce3f0;font-weight:700;font-size:4.2pt;}
-.cl th.th-item{text-align:left;padding:0px 1px;background:#dce3f0;font-weight:700;width:36mm;font-size:4.2pt;}
-.cl th.th-dia{background:#dce3f0;font-weight:700;font-size:3.8pt;}
-.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:4.2pt;}
-.cl td.td-item{text-align:left;padding:0px 1px;font-size:4pt;white-space:normal;line-height:1.05;font-weight:600;}
-.cl td.td-c{color:#1a6b1a;font-weight:900;font-size:4.5pt;}
-.cl td.td-nc{color:#9B1C1C;font-weight:900;background:#FEE2E2;font-size:4.5pt;}
-.cl td.td-na{color:#6B7280;font-size:4.2pt;}
+.cl th,.cl td{border:0.3px solid #aaa;text-align:center;padding:0px;font-size:4.5pt;overflow:hidden;line-height:1.1;}
+.cl th.th-num{width:4mm;background:#dce3f0;font-weight:700;font-size:4.5pt;}
+.cl th.th-item{text-align:left;padding:0px 1px;background:#dce3f0;font-weight:700;width:38mm;font-size:4.5pt;}
+.cl th.th-dia{background:#dce3f0;font-weight:700;font-size:4pt;}
+.cl td.td-num{background:#f5f5f5;font-weight:700;color:#444;font-size:4.5pt;}
+.cl td.td-item{text-align:left;padding:0px 1px;font-size:4.2pt;white-space:normal;line-height:1.1;font-weight:600;}
+.cl td.td-c{color:#1a6b1a;font-weight:900;font-size:5pt;}
+.cl td.td-nc{color:#9B1C1C;font-weight:900;background:#FEE2E2;font-size:5pt;}
+.cl td.td-na{color:#6B7280;font-size:4.5pt;}
 .cl td.td-vazio{color:#eee;}
 .cl td.td-futuro{color:#e0e0e0;background:#fafafa;}
 
-.cl tr.tr-assin td{height:7mm;vertical-align:middle;padding:0px;border-top:1px solid #888;}
-.cl tr.tr-assin td.td-item{font-size:4.2pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
-.cl tr.tr-chefe-sig td{height:7mm;vertical-align:middle;padding:0px;border-top:1px solid #888;background:#f0f4ff;}
-.cl tr.tr-chefe-sig td.td-item{font-size:4.2pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
+.cl tr.tr-assin td{height:8mm;vertical-align:middle;padding:0px;border-top:1px solid #888;}
+.cl tr.tr-assin td.td-item{font-size:4.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
+.cl tr.tr-chefe-sig td{height:8mm;vertical-align:middle;padding:0px;border-top:1px solid #888;background:#f0f4ff;}
+.cl tr.tr-chefe-sig td.td-item{font-size:4.5pt;color:#333;font-style:italic;vertical-align:middle;font-weight:700;text-align:left;padding:0px 2px;}
 
-.sig-img{max-width:100%;max-height:6.5mm;object-fit:contain;display:block;margin:0 auto;}
+.sig-img{max-width:100%;max-height:7mm;object-fit:contain;display:block;margin:0 auto;}
 
 .rodape{border:1px solid #000;border-top:none;padding:1px 3px;flex-shrink:0;}
-.rod-obs-title{font-size:4.2pt;font-weight:700;}
-.rod-obs-text{font-size:3.8pt;min-height:2.5mm;max-height:4mm;overflow:hidden;}
-.cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:1px 3px;font-size:3.8pt;color:#444;flex-shrink:0;}
+.rod-obs-title{font-size:4.5pt;font-weight:700;}
+.rod-obs-text{font-size:4pt;min-height:3mm;max-height:5mm;overflow:hidden;}
+.cod-rodape{border:1px solid #000;border-top:none;display:flex;justify-content:space-between;padding:1px 3px;font-size:4pt;color:#444;flex-shrink:0;}
 
 @media print{
   body{background:#fff;}
   .no-print{display:none!important;}
-  .folha{box-shadow:none;margin:0;padding:2mm 2.5mm;width:100%;height:190mm;}
+  .folha{box-shadow:none;margin:0;padding:3mm;width:297mm;height:210mm;}
   @page{size:A4 landscape;margin:0;}
 }
 </style>
@@ -184,7 +184,7 @@ async function gerar(){
     if(!c)  return `<td></td>`;
     const sig = c.sigMotorista||'';
     const isUrl = sig.startsWith('http');
-    return `<td style="padding:0px;">${isUrl?`<img class="sig-img" src="${sig}" crossorigin="anonymous">`:'<div style="height:6.5mm;"></div>'}</td>`;
+    return `<td style="padding:0px;">${isUrl?`<img class="sig-img" src="${sig}" crossorigin="anonymous">`:'<div style="height:7mm;"></div>'}</td>`;
   }).join('');
 
   let tdChefeAssin = dias.map(d=>{
@@ -194,7 +194,7 @@ async function gerar(){
     if(!c)  return `<td></td>`;
     const sig = c.sigChefe||'';
     const isUrl = sig.startsWith('http');
-    return `<td style="padding:0px;">${isUrl?`<img class="sig-img" src="${sig}" crossorigin="anonymous">`:'<div style="height:6.5mm;"></div>'}</td>`;
+    return `<td style="padding:0px;">${isUrl?`<img class="sig-img" src="${sig}" crossorigin="anonymous">`:'<div style="height:7mm;"></div>'}</td>`;
   }).join('');
 
   let linhas = itens.map((item,idx)=>{
@@ -243,7 +243,7 @@ async function gerar(){
       <table class="cl">
         <colgroup>
           <col style="width:4mm">
-          <col style="width:36mm">
+          <col style="width:38mm">
           ${dias.map(()=>`<col>`).join('')}
         </colgroup>
         <thead>
@@ -295,7 +295,7 @@ async function baixarPDF() {
     margin: 0,
     filename: nomeArquivo,
     image: { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, logging:false, width:1047 },
+    html2canvas: { scale:2, useCORS:true, logging:false, width:1122 },
     jsPDF: { unit:'mm', format:'a4', orientation:'landscape' }
   };
   const btn = document.querySelector('.btn-baixar');
