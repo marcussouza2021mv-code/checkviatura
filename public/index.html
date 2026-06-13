@@ -519,9 +519,9 @@ async function salvarChecklist() {
     });
   });
 
-  // ✅ JPEG com qualidade reduzida para caber no JSONBin
+// ✅ PNG para assinatura sem fundo preto
   const canvas = document.getElementById('canvas-motorista');
-  const sigMotorista = canvas.toDataURL('image/jpeg', 0.4);
+  const sigMotorista = canvas.toDataURL('image/png');
 
   const registro={
     data: state.data,
