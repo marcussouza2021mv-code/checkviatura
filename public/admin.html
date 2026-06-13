@@ -110,7 +110,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:16px;}
 .modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
 .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;}
-.filter-row .form-group{min-width:140px;}
+.filter-row .form-group{min-width:130px;}
 .alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
 .alert-info{background:var(--azul-claro);color:var(--azul);}
 .alert-warn{background:var(--amarelo-claro);color:var(--amarelo);}
@@ -120,19 +120,12 @@ main{flex:1;overflow-y:auto;padding:22px;}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .dot-green{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:5px;}
-@media(max-width:700px){
-  aside{display:none;}
-  .charts-grid{grid-template-columns:1fr;}
-  .form-row{grid-template-columns:1fr;}
-}
-@media print{
-  header,aside,#login-screen,.no-print{display:none!important;}
-  .page{display:block!important;}
-  #app{display:flex!important;}
-}
+@media(max-width:700px){aside{display:none;}.charts-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+@media print{header,aside,#login-screen,.no-print{display:none!important;}.page{display:block!important;}#app{display:flex!important;}}
 </style>
 </head>
-<body><div id="login-screen">
+<body>
+<div id="login-screen">
   <div class="login-box">
     <div class="login-logo"><img src="/Med+.png" alt="med+ Group"></div>
     <div class="login-title">CheckViatura</div>
@@ -210,7 +203,7 @@ main{flex:1;overflow-y:auto;padding:22px;}
       <div class="page" id="page-checklists">
         <div class="page-header">
           <div><div class="page-title">Checklists</div></div>
-          <a class="btn btn-outline no-print" onclick="exportCSV()">⬇ Exportar CSV</a>
+          <button class="btn btn-outline no-print" onclick="exportCSV()">⬇ Exportar CSV</button>
         </div>
         <div class="filter-row no-print">
           <div class="form-group"><label>Viatura</label><select id="f-viatura" onchange="loadChecklists()"><option value="">Todas</option></select></div>
@@ -224,18 +217,16 @@ main{flex:1;overflow-y:auto;padding:22px;}
           </div>
           <div class="form-group"><label>Equipe</label><select id="f-equipe" onchange="loadChecklists()"><option value="">Todas</option></select></div>
           <div class="form-group"><label>Mês</label><input type="month" id="f-mes" onchange="loadChecklists()"></div>
+          <div class="form-group"><label>Dia Específico</label><input type="date" id="f-data" onchange="loadChecklists()" placeholder="dd/mm/aaaa"></div>
           <div class="form-group"><label>Status</label><select id="f-status" onchange="loadChecklists()"><option value="">Todos</option><option value="ok">Aprovado</option><option value="nok">Com pendência</option></select></div>
+          <div class="form-group" style="justify-content:flex-end;">
+            <button class="btn btn-outline btn-sm" onclick="limparFiltros()">✕ Limpar</button>
+          </div>
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
             <thead><tr>
-              <th>Data</th>
-              <th>Viatura</th>
-              <th>Tipo</th>
-              <th>Motorista / BA-2</th>
-              <th>Equipe</th>
-              <th>Status</th>
-              <th class="no-print">Ações</th>
+              <th>Data</th><th>Viatura</th><th>Tipo</th><th>Motorista / BA-2</th><th>Equipe</th><th>Status</th><th class="no-print">Ações</th>
             </tr></thead>
             <tbody id="cl-body"></tbody>
           </table>
@@ -248,7 +239,6 @@ main{flex:1;overflow-y:auto;padding:22px;}
           <div><div class="page-title">Relatório Mensal</div></div>
           <div class="btns-row no-print">
             <button class="btn btn-outline" onclick="window.open('/relatorio.html','_blank')">🖨 Abrir Relatório Completo</button>
-            <button class="btn btn-outline" onclick="exportCSV()">⬇ CSV</button>
           </div>
         </div>
         <div class="filter-row no-print">
@@ -366,7 +356,9 @@ main{flex:1;overflow-y:auto;padding:22px;}
     <button class="btn btn-outline" onclick="closeModal('modal-viat')">Cancelar</button>
     <button class="btn btn-primary" onclick="salvarViat()">Salvar</button>
   </div>
-</div></div><script>
+</div></div>
+
+<script>
 const API = '';
 let TOKEN = localStorage.getItem('adm_token') || '';
 let ME = null;
@@ -451,6 +443,16 @@ function showPage(p, el) {
   document.getElementById('page-'+p).classList.add('active');
   if (el) el.classList.add('active');
   if (pageLoaders[p]) pageLoaders[p]();
+}
+
+function limparFiltros() {
+  document.getElementById('f-viatura').value = '';
+  document.getElementById('f-tipo').value = '';
+  document.getElementById('f-equipe').value = '';
+  document.getElementById('f-mes').value = new Date().toISOString().slice(0,7);
+  document.getElementById('f-data').value = '';
+  document.getElementById('f-status').value = '';
+  loadChecklists();
 }
 
 async function loadDashboard() {
@@ -541,14 +543,18 @@ async function loadChecklists() {
   tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Carregando…</td></tr>';
   const data=await api('/checklists?'+q);
 
-  // Filtro por tipo
+  // ✅ Filtro por tipo
   const tipo = document.getElementById('f-tipo').value;
-  const filtrado = tipo ? data.filter(c => c.formulario_id && c.formulario_id.includes(tipo)) : data;
+  // ✅ Filtro por data específica
+  const dataEsp = document.getElementById('f-data').value;
 
-  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro</td></tr>';return;}
+  let filtrado = tipo ? data.filter(c => c.formulario_id && c.formulario_id.includes(tipo)) : data;
+  if(dataEsp) filtrado = filtrado.filter(c => c.data === dataEsp);
+
+  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--texto-sec);">Nenhum registro encontrado</td></tr>';return;}
 
   tbody.innerHTML=filtrado.map(c=>{
-    const cls=c.status==='ok'?'badge-ok': c.aprovado_chefe?'badge-ok':'badge-nok';
+    const cls=c.aprovado_chefe?'badge-ok':c.status==='ok'?'badge-ok':'badge-nok';
     const lbl=c.aprovado_chefe?'Aprovado':c.status==='ok'?'OK':(c.nc||0)+' NC';
     const tipoLabel = c.preenchidoPor==='nome_guerra_ba2'?'<span class="badge" style="background:#E0F2FE;color:#0369A1;">BA-2</span>':
                       c.preenchidoPor==='lider_resgate'?'<span class="badge" style="background:#FEF9C3;color:#854D0E;">Líder</span>':
@@ -599,11 +605,11 @@ async function verCL(id) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--cinza-borda);">
       <div>
         <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Assinatura: ${c.nome||'—'} (${tipoLabel})</div>
-        ${c.sigMotorista?`<img src="${c.sigMotorista}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">`:'<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
+        ${c.sigMotorista&&c.sigMotorista.startsWith('http')?`<img src="${c.sigMotorista}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">`:'<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
       </div>
       <div>
         <div style="font-size:11px;color:var(--texto-sec);margin-bottom:4px;">✍️ Visto Chefe: ${c.chefe||c.nome_chefe||'—'}</div>
-        ${c.sigChefe?`<img src="${c.sigChefe}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">`:'<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
+        ${c.sigChefe&&c.sigChefe.startsWith('http')?`<img src="${c.sigChefe}" style="height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;max-width:100%;">`:'<div style="height:55px;border:1px dashed #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;">Sem assinatura</div>'}
       </div>
     </div>`;
   openModal('modal-cl');
@@ -615,21 +621,8 @@ function imprimirCL() {
   const win = window.open('','_blank');
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
     <title>${titulo}</title>
-    <style>
-      body{font-family:Arial,sans-serif;padding:20px;font-size:12px;color:#000;}
-      h2{color:#C43D00;margin-bottom:16px;font-size:16px;}
-      .cl-item{display:flex;align-items:center;gap:8px;padding:4px 8px;border-bottom:0.5px solid #eee;border-radius:4px;margin-bottom:2px;}
-      .alert{padding:8px 12px;border-radius:6px;margin-bottom:10px;}
-      .alert-danger{background:#FEF2F2;color:#A32D2D;}
-      .alert-info{background:#FFF0E8;color:#C43D00;}
-      .alert-warn{background:#FAEEDA;color:#BA7517;}
-      img{max-height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;}
-      @media print{body{padding:10px;}}
-    </style></head><body>
-    <h2>med+ Group — ${titulo}</h2>
-    ${corpo}
-    <script>window.onload=()=>window.print();<\/script>
-    </body></html>`);
+    <style>body{font-family:Arial,sans-serif;padding:20px;font-size:12px;color:#000;}h2{color:#C43D00;margin-bottom:16px;font-size:16px;}.cl-item{display:flex;align-items:center;gap:8px;padding:4px 8px;border-bottom:0.5px solid #eee;border-radius:4px;margin-bottom:2px;}.alert{padding:8px 12px;border-radius:6px;margin-bottom:10px;}.alert-danger{background:#FEF2F2;color:#A32D2D;}.alert-info{background:#FFF0E8;color:#C43D00;}.alert-warn{background:#FAEEDA;color:#BA7517;}img{max-height:55px;border:1px solid #ccc;border-radius:5px;background:#fafaf8;}@media print{body{padding:10px;}}</style>
+    </head><body><h2>med+ Group — ${titulo}</h2>${corpo}<script>window.onload=()=>window.print();<\/script></body></html>`);
   win.document.close();
 }
 
@@ -678,15 +671,21 @@ async function loadRelatorio() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
           <div>
             <div style="font-size:15px;font-weight:700;">#${idx+1} — ${c.placa} | ${c.modelo||''} | ${tipoLabel}</div>
-            <div style="font-size:12px;color:var(--texto-sec);">${c.data||'—'} dia ${c.dia||'—'} | ${c.nome||c.motorista||'—'} | ${c.equipe||'—'}</div>
+            <div style="font-size:12px;color:var(--texto-sec);">${c.data||'—'} dia ${c.dia||'—'} | ${c.nome||'—'} | ${c.equipe||'—'}</div>
           </div>
           <span class="badge ${c.status==='ok'?'badge-ok':'badge-nok'}">${c.status==='ok'?'Aprovado':(c.nc||0)+' NC'}</span>
         </div>
         <div style="columns:2;column-gap:16px;">${il}</div>
         ${c.obs?`<div class="alert alert-warn" style="margin-top:8px;font-size:12px;">📝 ${c.obs}</div>`:''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding-top:10px;border-top:.5px solid var(--cinza-borda);">
-          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">${tipoLabel}: ${c.nome||'—'}</div>${c.sigMotorista?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
-          <div><div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Chefe: ${c.chefe||c.nome_chefe||'—'}</div>${c.sigChefe?`<img src="${c.sigChefe}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}</div>
+          <div>
+            <div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">${tipoLabel}: ${c.nome||'—'}</div>
+            ${c.sigMotorista&&c.sigMotorista.startsWith('http')?`<img src="${c.sigMotorista}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--texto-sec);margin-bottom:3px;">Chefe: ${c.chefe||c.nome_chefe||'—'}</div>
+            ${c.sigChefe&&c.sigChefe.startsWith('http')?`<img src="${c.sigChefe}" style="height:45px;border:1px solid #ccc;border-radius:4px;background:#fafaf8;">`:'<div style="height:45px;border:1px dashed #ccc;border-radius:4px;"></div>'}
+          </div>
         </div>
       </div>`;
     }).join('')}`;
