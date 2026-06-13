@@ -6,7 +6,7 @@ const https   = require('https');
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const BIN_ID  = '6a2c1f77da38895dfeb57148';
@@ -14,9 +14,28 @@ const API_KEY = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
+// ✅ Comprime assinatura base64 para caber no JSONBin
+function comprimirSig(sig) {
+  if (!sig || typeof sig !== 'string') return '';
+  if (sig.length > 20000) return sig.substring(0, 20000);
+  return sig;
+}
+
+// ✅ Remove assinaturas grandes do DB antes de salvar
+function prepararParaSalvar(db) {
+  const dbCopy = JSON.parse(JSON.stringify(db));
+  dbCopy.checklists = dbCopy.checklists.map(c => ({
+    ...c,
+    sigMotorista: comprimirSig(c.sigMotorista),
+    sigChefe: comprimirSig(c.sigChefe)
+  }));
+  return dbCopy;
+}
+
 function jsonbinRequest(method, data=null) {
   return new Promise((resolve, reject) => {
     const body = data ? JSON.stringify(data) : null;
+    const bodyBuffer = body ? Buffer.from(body, 'utf8') : null;
     const options = {
       hostname: 'api.jsonbin.io',
       path: `/v3/b/${BIN_ID}`,
@@ -24,7 +43,7 @@ function jsonbinRequest(method, data=null) {
       headers: {
         'X-Master-Key': API_KEY,
         'Content-Type': 'application/json',
-        ...(body ? { 'Content-Length': Buffer.byteLength(body) } : {})
+        ...(bodyBuffer ? { 'Content-Length': bodyBuffer.length } : {})
       }
     };
     const req = https.request(options, res => {
@@ -33,12 +52,17 @@ function jsonbinRequest(method, data=null) {
       res.on('end', () => {
         try {
           const parsed = JSON.parse(raw);
+          if (parsed.message && !parsed.record) {
+            console.error('JSONBin error:', parsed.message);
+            reject(new Error(parsed.message));
+            return;
+          }
           resolve(method === 'GET' ? parsed.record : parsed);
         } catch(e) { reject(e); }
       });
     });
     req.on('error', reject);
-    if (body) req.write(body);
+    if (bodyBuffer) req.write(bodyBuffer);
     req.end();
   });
 }
@@ -46,23 +70,28 @@ function jsonbinRequest(method, data=null) {
 async function readDB() {
   try {
     const d = await jsonbinRequest('GET');
-    if (!d.usuarios)   d.usuarios   = [];
-    if (!d.equipes)    d.equipes    = [];
-    if (!d.viaturas)   d.viaturas   = [];
+    if (!d.usuarios)   d.usuarios   = defaultDB().usuarios;
+    if (!d.equipes)    d.equipes    = defaultDB().equipes;
+    if (!d.viaturas)   d.viaturas   = defaultDB().viaturas;
     if (!d.checklists) d.checklists = [];
     if (!d.alertas)    d.alertas    = [];
     return d;
   } catch(e) {
     console.error('readDB error:', e.message);
-    return { usuarios:[], equipes:[], viaturas:[], checklists:[], alertas:[] };
+    return defaultDB();
   }
 }
 
 async function writeDB(db) {
   try {
-    await jsonbinRequest('PUT', db);
+    const dbComprimido = prepararParaSalvar(db);
+    const json = JSON.stringify(dbComprimido);
+    console.log('writeDB size:', Math.round(json.length/1024), 'KB');
+    await jsonbinRequest('PUT', dbComprimido);
+    console.log('writeDB OK');
   } catch(e) {
     console.error('writeDB error:', e.message);
+    throw e;
   }
 }
 
@@ -121,18 +150,6 @@ function getEquipeNome(db, id) {
 function getViaturaPlacar(db, id) {
   const v = db.viaturas.find(v => v.id == id);
   return v ? v.placa : '';
-}
-
-// ✅ Verifica se checklist pertence à equipe (motorista OU BA)
-function checklistDaEquipe(c, equipe) {
-  const nomeSimples = equipe;
-  const nomeCompleto = 'Equipe ' + equipe;
-  return (
-    c.equipe === nomeSimples ||
-    c.equipe === nomeCompleto ||
-    c.nome_chefe === equipe ||
-    c.equipe_chefe === equipe
-  );
 }
 
 // AUTH
@@ -225,13 +242,11 @@ app.delete('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
   await writeDB(db); res.json({ ok: true });
 });
 
-// ✅ CHECKLISTS PÚBLICO — retorna TODOS sem filtro para o chefe filtrar no frontend
+// CHECKLISTS PÚBLICO
 app.get('/api/checklists/publico', async (req, res) => {
   try {
     const db = await readDB();
-    let data = [...db.checklists];
-    // Sem filtro — o chefe.html filtra no frontend por equipe e nome_chefe
-    res.json(data.reverse());
+    res.json([...db.checklists].reverse());
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
@@ -248,25 +263,17 @@ app.get('/api/checklists/publico/:id', async (req, res) => {
   }
 });
 
-// ✅ CHECKLISTS AUTENTICADO — admin vê todos, filtra por equipe corretamente
+// CHECKLISTS AUTENTICADO
 app.get('/api/checklists', requireAuth(), async (req, res) => {
   try {
     const db = await readDB();
     let data = [...db.checklists];
-
-    if (req.query.mes) {
-      data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
-    }
-
+    if (req.query.mes) data = data.filter(c => c.data && c.data.startsWith(req.query.mes));
     if (req.query.viatura_id) {
       const placa = getViaturaPlacar(db, req.query.viatura_id);
       data = data.filter(c => c.viatura_id == req.query.viatura_id || c.placa === placa);
     }
-
-    if (req.query.status) {
-      data = data.filter(c => c.status === req.query.status);
-    }
-
+    if (req.query.status) data = data.filter(c => c.status === req.query.status);
     if (req.query.equipe_id) {
       const eq = db.equipes.find(e => e.id == req.query.equipe_id);
       if (eq) {
@@ -280,29 +287,37 @@ app.get('/api/checklists', requireAuth(), async (req, res) => {
         );
       }
     }
-
     res.json(data.reverse());
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
 });
 
+// ✅ SALVAR CHECKLIST — com log de erro detalhado
 app.post('/api/checklists', async (req, res) => {
   try {
     const db = await readDB();
-    const r = { id: Date.now(), ...req.body };
+    const r = {
+      id: Date.now(),
+      ...req.body,
+      sigMotorista: comprimirSig(req.body.sigMotorista),
+      sigChefe: comprimirSig(req.body.sigChefe)
+    };
+    console.log('Salvando checklist:', r.formulario_id, r.preenchidoPor, r.equipe, r.nome);
     db.checklists.push(r);
     if (r.nc > 0) {
       db.alertas = db.alertas || [];
       db.alertas.push({
         id: Date.now()+1, tipo: 'nok',
-        msg: `${r.nc} NC na viatura ${r.placa} — ${r.nome||r.motorista} (${r.preenchidoPor==='nome_guerra_ba2'?'BA-2':'Motorista'})`,
+        msg: `${r.nc} NC — ${r.placa} — ${r.nome} (${r.preenchidoPor==='nome_guerra_ba2'?'BA-2':'Motorista'})`,
         checklist_id: r.id, data: r.data, lido: false
       });
     }
     await writeDB(db);
+    console.log('Checklist salvo com sucesso! Total:', db.checklists.length);
     res.json(r);
   } catch(e) {
+    console.error('Erro ao salvar checklist:', e.message);
     res.status(500).json({ erro: e.message });
   }
 });
@@ -323,7 +338,11 @@ app.post('/api/checklists/:id/aprovar', async (req, res) => {
     const db = await readDB();
     const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
     if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
-    db.checklists[idx] = { ...db.checklists[idx], ...req.body };
+    db.checklists[idx] = {
+      ...db.checklists[idx],
+      ...req.body,
+      sigChefe: comprimirSig(req.body.sigChefe)
+    };
     await writeDB(db);
     res.json(db.checklists[idx]);
   } catch(e) {
