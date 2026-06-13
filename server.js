@@ -9,41 +9,47 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const BIN_ID  = '6a2c1f77da38895dfeb57148';
-const API_KEY = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
+const BIN_ID      = '6a2c1f77da38895dfeb57148'; // dados principais
+const BIN_SIG_ID  = '6a2cb778f5f4af5e29e9e355'; // assinaturas
+const API_KEY     = '$2a$10$kDDWOTN5bSV1mLSlepmCO.jDEVAN4Am3UN52MgFRcX8lB3Nr/zeTO';
 
 function hash(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
-// ✅ Comprime assinatura base64 para caber no JSONBin
-function comprimirSig(sig) {
-  if (!sig || typeof sig !== 'string') return '';
-  if (sig.length > 20000) return sig.substring(0, 20000);
-  return sig;
-}
-
-// ✅ Remove assinaturas grandes do DB antes de salvar
-function prepararParaSalvar(db) {
-  const dbCopy = JSON.parse(JSON.stringify(db));
-  dbCopy.checklists = dbCopy.checklists.map(c => ({
-    ...c,
-    sigMotorista: comprimirSig(c.sigMotorista),
-    sigChefe: comprimirSig(c.sigChefe)
-  }));
-  return dbCopy;
-}
-
-function jsonbinRequest(method, data=null) {
+function jsonbinGet(binId) {
   return new Promise((resolve, reject) => {
-    const body = data ? JSON.stringify(data) : null;
-    const bodyBuffer = body ? Buffer.from(body, 'utf8') : null;
     const options = {
       hostname: 'api.jsonbin.io',
-      path: `/v3/b/${BIN_ID}`,
-      method,
+      path: `/v3/b/${binId}`,
+      method: 'GET',
+      headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' }
+    };
+    const req = https.request(options, res => {
+      let raw = '';
+      res.on('data', d => raw += d);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.message && !parsed.record) { reject(new Error(parsed.message)); return; }
+          resolve(parsed.record);
+        } catch(e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.end();
+  });
+}
+
+function jsonbinPut(binId, data) {
+  return new Promise((resolve, reject) => {
+    const bodyBuffer = Buffer.from(JSON.stringify(data), 'utf8');
+    const options = {
+      hostname: 'api.jsonbin.io',
+      path: `/v3/b/${binId}`,
+      method: 'PUT',
       headers: {
         'X-Master-Key': API_KEY,
         'Content-Type': 'application/json',
-        ...(bodyBuffer ? { 'Content-Length': bodyBuffer.length } : {})
+        'Content-Length': bodyBuffer.length
       }
     };
     const req = https.request(options, res => {
@@ -53,23 +59,24 @@ function jsonbinRequest(method, data=null) {
         try {
           const parsed = JSON.parse(raw);
           if (parsed.message && !parsed.record) {
-            console.error('JSONBin error:', parsed.message);
+            console.error('JSONBin PUT error:', parsed.message, 'size:', Math.round(bodyBuffer.length/1024)+'KB');
             reject(new Error(parsed.message));
             return;
           }
-          resolve(method === 'GET' ? parsed.record : parsed);
+          resolve(parsed);
         } catch(e) { reject(e); }
       });
     });
     req.on('error', reject);
-    if (bodyBuffer) req.write(bodyBuffer);
+    req.write(bodyBuffer);
     req.end();
   });
 }
 
+// ── DB PRINCIPAL (sem assinaturas) ──
 async function readDB() {
   try {
-    const d = await jsonbinRequest('GET');
+    const d = await jsonbinGet(BIN_ID);
     if (!d.usuarios)   d.usuarios   = defaultDB().usuarios;
     if (!d.equipes)    d.equipes    = defaultDB().equipes;
     if (!d.viaturas)   d.viaturas   = defaultDB().viaturas;
@@ -84,14 +91,61 @@ async function readDB() {
 
 async function writeDB(db) {
   try {
-    const dbComprimido = prepararParaSalvar(db);
-    const json = JSON.stringify(dbComprimido);
-    console.log('writeDB size:', Math.round(json.length/1024), 'KB');
-    await jsonbinRequest('PUT', dbComprimido);
+    // Remove assinaturas antes de salvar no bin principal
+    const dbSemSig = JSON.parse(JSON.stringify(db));
+    dbSemSig.checklists = dbSemSig.checklists.map(c => ({
+      ...c,
+      sigMotorista: c.sigMotorista ? 'SIM' : '',
+      sigChefe: c.sigChefe ? 'SIM' : ''
+    }));
+    const size = Buffer.byteLength(JSON.stringify(dbSemSig), 'utf8');
+    console.log('writeDB size:', Math.round(size/1024), 'KB');
+    await jsonbinPut(BIN_ID, dbSemSig);
     console.log('writeDB OK');
   } catch(e) {
     console.error('writeDB error:', e.message);
     throw e;
+  }
+}
+
+// ── BIN DE ASSINATURAS ──
+async function readSigs() {
+  try {
+    const d = await jsonbinGet(BIN_SIG_ID);
+    if (!d.assinaturas) d.assinaturas = [];
+    return d;
+  } catch(e) {
+    console.error('readSigs error:', e.message);
+    return { assinaturas: [] };
+  }
+}
+
+async function writeSigs(sigs) {
+  try {
+    await jsonbinPut(BIN_SIG_ID, sigs);
+    console.log('writeSigs OK');
+  } catch(e) {
+    console.error('writeSigs error:', e.message);
+  }
+}
+
+async function getSig(checklistId) {
+  try {
+    const d = await readSigs();
+    return d.assinaturas.find(s => String(s.id) === String(checklistId)) || null;
+  } catch(e) { return null; }
+}
+
+async function saveSig(checklistId, sigMotorista, sigChefe) {
+  try {
+    const d = await readSigs();
+    const idx = d.assinaturas.findIndex(s => String(s.id) === String(checklistId));
+    const entry = { id: checklistId, sigMotorista: sigMotorista||'', sigChefe: sigChefe||'' };
+    if (idx >= 0) d.assinaturas[idx] = entry;
+    else d.assinaturas.push(entry);
+    await writeSigs(d);
+  } catch(e) {
+    console.error('saveSig error:', e.message);
   }
 }
 
@@ -150,6 +204,23 @@ function getEquipeNome(db, id) {
 function getViaturaPlacar(db, id) {
   const v = db.viaturas.find(v => v.id == id);
   return v ? v.placa : '';
+}
+
+// ── HELPER: junta checklist com assinatura ──
+async function enrichWithSig(checklists) {
+  try {
+    const sigs = await readSigs();
+    return checklists.map(c => {
+      const sig = sigs.assinaturas.find(s => String(s.id) === String(c.id));
+      return {
+        ...c,
+        sigMotorista: sig ? sig.sigMotorista : '',
+        sigChefe: sig ? sig.sigChefe : ''
+      };
+    });
+  } catch(e) {
+    return checklists;
+  }
 }
 
 // AUTH
@@ -246,7 +317,8 @@ app.delete('/api/viaturas/:id', requireAuth(['admin']), async (req, res) => {
 app.get('/api/checklists/publico', async (req, res) => {
   try {
     const db = await readDB();
-    res.json([...db.checklists].reverse());
+    const enriched = await enrichWithSig(db.checklists);
+    res.json([...enriched].reverse());
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
@@ -257,7 +329,8 @@ app.get('/api/checklists/publico/:id', async (req, res) => {
     const db = await readDB();
     const c = db.checklists.find(c => String(c.id) === String(req.params.id));
     if (!c) return res.status(404).json({ erro: 'Não encontrado' });
-    res.json(c);
+    const sig = await getSig(c.id);
+    res.json({ ...c, sigMotorista: sig?.sigMotorista||'', sigChefe: sig?.sigChefe||'' });
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
@@ -287,21 +360,24 @@ app.get('/api/checklists', requireAuth(), async (req, res) => {
         );
       }
     }
-    res.json(data.reverse());
+    const enriched = await enrichWithSig(data);
+    res.json(enriched.reverse());
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
 });
 
-// ✅ SALVAR CHECKLIST — com log de erro detalhado
 app.post('/api/checklists', async (req, res) => {
   try {
     const db = await readDB();
+    const id = Date.now();
+    const sigMotorista = req.body.sigMotorista || '';
+    const sigChefe = req.body.sigChefe || '';
     const r = {
-      id: Date.now(),
+      id,
       ...req.body,
-      sigMotorista: comprimirSig(req.body.sigMotorista),
-      sigChefe: comprimirSig(req.body.sigChefe)
+      sigMotorista: sigMotorista ? 'SIM' : '',
+      sigChefe: sigChefe ? 'SIM' : ''
     };
     console.log('Salvando checklist:', r.formulario_id, r.preenchidoPor, r.equipe, r.nome);
     db.checklists.push(r);
@@ -314,8 +390,9 @@ app.post('/api/checklists', async (req, res) => {
       });
     }
     await writeDB(db);
-    console.log('Checklist salvo com sucesso! Total:', db.checklists.length);
-    res.json(r);
+    await saveSig(id, sigMotorista, sigChefe);
+    console.log('Checklist salvo! Total:', db.checklists.length);
+    res.json({ ...r, sigMotorista, sigChefe });
   } catch(e) {
     console.error('Erro ao salvar checklist:', e.message);
     res.status(500).json({ erro: e.message });
@@ -338,13 +415,17 @@ app.post('/api/checklists/:id/aprovar', async (req, res) => {
     const db = await readDB();
     const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
     if (idx === -1) return res.status(404).json({ erro: 'Não encontrado' });
+    const sigChefe = req.body.sigChefe || '';
     db.checklists[idx] = {
       ...db.checklists[idx],
       ...req.body,
-      sigChefe: comprimirSig(req.body.sigChefe)
+      sigChefe: sigChefe ? 'SIM' : ''
     };
     await writeDB(db);
-    res.json(db.checklists[idx]);
+    // Atualiza assinatura do chefe no bin de assinaturas
+    const sigAtual = await getSig(req.params.id);
+    await saveSig(req.params.id, sigAtual?.sigMotorista||'', sigChefe);
+    res.json({ ...db.checklists[idx], sigChefe });
   } catch(e) {
     res.status(500).json({ erro: e.message });
   }
@@ -429,7 +510,6 @@ app.get('/api/export/csv', requireAuth(), async (req, res) => {
     const db = await readDB();
     let data = [...db.checklists];
     if (req.query.mes) data = data.filter(c=>c.data&&c.data.startsWith(req.query.mes));
-    if (req.query.viatura_id) data = data.filter(c=>c.viatura_id==req.query.viatura_id||c.placa==getViaturaPlacar(db,req.query.viatura_id));
     data.sort((a,b)=>a.data>b.data?1:-1);
     const header=['ID','Data','Placa','Modelo','Tipo','Equipe','Nome','Status','NC','Observacao'];
     const rows=data.map(c=>[
