@@ -14,13 +14,11 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;font-size:16px;}
-
 header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
 .header-logo img{height:36px;object-fit:contain;}
 .header-info{flex:1;}
 .header-title{font-size:15px;font-weight:800;letter-spacing:.3px;}
 .header-sub{font-size:10px;opacity:.75;margin-top:1px;}
-
 .step-bar{background:var(--branco);border-bottom:1px solid var(--cinza-borda);padding:0 16px;display:flex;overflow-x:auto;gap:0;-webkit-overflow-scrolling:touch;}
 .step{display:flex;align-items:center;gap:6px;padding:10px 12px;font-size:12px;color:var(--texto-sec);border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;}
 .step.active{color:var(--laranja);border-bottom-color:var(--laranja);font-weight:700;}
@@ -28,10 +26,8 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10p
 .step-num{width:20px;height:20px;border-radius:50%;background:var(--cinza-claro);border:1.5px solid var(--cinza-borda);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
 .step.active .step-num{background:var(--laranja);border-color:var(--laranja);color:#fff;}
 .step.done .step-num{background:var(--verde);border-color:var(--verde);color:#fff;}
-
 .page{display:none;padding:16px;max-width:600px;margin:0 auto;}
 .page.active{display:block;}
-
 .viaturas-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
 .viatura-card{background:var(--branco);border:2px solid var(--cinza-borda);border-radius:14px;padding:16px 12px;cursor:pointer;transition:all .15s;text-align:center;}
 .viatura-card:active{transform:scale(.97);}
@@ -40,7 +36,6 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10p
 .vc-placa{font-size:16px;font-weight:800;color:var(--laranja);letter-spacing:1px;}
 .vc-modelo{font-size:11px;color:var(--texto-sec);margin-top:2px;}
 .vc-cci{font-size:10px;background:var(--laranja-claro);color:var(--laranja);padding:2px 6px;border-radius:20px;display:inline-block;margin-top:4px;}
-
 .form-selector{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
 .form-option{background:var(--branco);border:2px solid var(--cinza-borda);border-radius:12px;padding:16px;cursor:pointer;}
 .form-option:active{transform:scale(.98);}
@@ -48,23 +43,19 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10p
 .fo-title{font-size:15px;font-weight:700;}
 .fo-sub{font-size:12px;color:var(--texto-sec);margin-top:3px;}
 .fo-itens{font-size:11px;color:var(--laranja);margin-top:5px;font-weight:600;}
-
 .equipes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 .equipe-card{border:2px solid var(--cinza-borda);border-radius:10px;padding:12px;cursor:pointer;text-align:center;background:var(--branco);}
 .equipe-card:active{transform:scale(.97);}
 .equipe-card.selected{border-color:var(--laranja);background:var(--laranja-claro);}
 .equipe-nome{font-size:16px;font-weight:800;color:var(--laranja);}
 .equipe-chefe{font-size:11px;color:var(--texto-sec);margin-top:2px;}
-
 .card{background:var(--branco);border:1px solid var(--cinza-borda);border-radius:12px;padding:16px;margin-bottom:14px;}
 .card-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-
 .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .form-group label{font-size:12px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
 .form-group input,.form-group select,.form-group textarea{padding:12px 14px;border:1.5px solid var(--cinza-borda);border-radius:10px;font-size:16px;color:var(--texto);background:var(--branco);font-family:inherit;-webkit-appearance:none;}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--laranja-borda);}
 .form-group textarea{resize:vertical;min-height:80px;}
-
 .form-header-box{background:var(--laranja2);color:#fff;padding:10px 14px;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
 .form-info-bar{background:var(--laranja-claro);border:1px solid var(--laranja-borda);border-top:none;padding:8px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;}
 .fib-label{font-weight:700;color:var(--laranja2);font-size:9px;text-transform:uppercase;}
@@ -74,7 +65,6 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10p
 .leg-c{border-color:var(--verde);color:var(--verde);background:var(--verde-claro);}
 .leg-nc{border-color:var(--vermelho);color:var(--vermelho);background:var(--vermelho-claro);}
 .leg-na{border-color:var(--cinza);color:var(--cinza);background:var(--cinza-claro);}
-
 .checklist-table-wrap{overflow-x:auto;border:1px solid var(--cinza-borda);border-top:none;border-radius:0 0 10px 10px;-webkit-overflow-scrolling:touch;}
 table.cl-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px;}
 .cl-table th{background:#E8ECF4;padding:6px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--texto-sec);border-right:1px solid var(--cinza-borda);}
@@ -84,7 +74,6 @@ table.cl-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500p
 .cl-table td.td-item{font-size:11px;font-weight:500;padding:6px 10px;}
 .cl-table td.td-status{text-align:center;width:90px;padding:4px;}
 .cl-table tr:last-child td{border-bottom:none;}
-
 .status-btn-group{display:flex;gap:3px;justify-content:center;}
 .sbtn{width:26px;height:26px;border-radius:5px;border:1.5px solid;font-size:9px;font-weight:800;cursor:pointer;background:transparent;display:flex;align-items:center;justify-content:center;}
 .sbtn-c{border-color:#5A9E2F;color:#5A9E2F;}
@@ -93,11 +82,9 @@ table.cl-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500p
 .sbtn-nc.active{background:#C53030;color:#fff;}
 .sbtn-na{border-color:#9CA3AF;color:#9CA3AF;}
 .sbtn-na.active{background:#9CA3AF;color:#fff;}
-
 .progress-wrap{background:var(--cinza-borda);border-radius:20px;height:8px;margin:10px 0 4px;overflow:hidden;}
 .progress-bar{height:100%;background:var(--laranja);border-radius:20px;transition:width .3s;}
 .progress-info{display:flex;justify-content:space-between;font-size:12px;color:var(--texto-sec);}
-
 .sig-grid{display:grid;grid-template-columns:1fr;gap:14px;}
 .sig-box{display:flex;flex-direction:column;gap:6px;}
 .sig-label-top{font-size:11px;font-weight:700;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.4px;}
@@ -105,34 +92,27 @@ table.cl-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500p
 canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-action:none;}
 .sig-name-label{font-size:12px;color:var(--laranja);text-align:center;padding:3px;border-top:1px solid var(--cinza-borda);font-weight:500;}
 .sig-clear{font-size:11px;color:var(--texto-sec);cursor:pointer;background:none;border:none;padding:0;text-align:right;display:block;margin-top:2px;font-family:inherit;}
-
 .btn{padding:14px 22px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .12s;width:100%;display:block;text-align:center;}
 .btn-primary{background:var(--laranja);color:#fff;}
 .btn-primary:active{background:var(--laranja2);}
 .btn-outline{background:transparent;border:1.5px solid var(--cinza-borda);color:var(--texto);margin-bottom:10px;}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
 .btns-row{display:flex;gap:10px;flex-direction:column;}
-
 .badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
 .badge-ok{background:var(--verde-claro);color:var(--verde);}
 .badge-nc{background:var(--vermelho-claro);color:var(--vermelho);}
 .badge-pendente{background:#FEF3C7;color:#92400E;}
-
 .alert{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;}
 .alert-info{background:var(--laranja-claro);color:var(--laranja);}
 .alert-warn{background:#FEF3C7;color:#92400E;}
 .alert-success{background:var(--verde-claro);color:var(--verde);}
-
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--branco);border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-height:90vh;overflow-y:auto;}
 .modal-title{font-size:18px;font-weight:700;margin-bottom:16px;text-align:center;}
-
 .nc-item{padding:8px 10px;background:var(--vermelho-claro);border-radius:8px;font-size:13px;color:var(--vermelho);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
-
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
 .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:10px;}
 .page-title{font-size:20px;font-weight:700;}
 .page-sub{font-size:13px;color:var(--texto-sec);margin-top:2px;}
@@ -269,7 +249,6 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
     <div><div class="page-title">Assinatura</div><div class="page-sub">Assine para confirmar a inspeção</div></div>
     <button class="btn btn-outline" onclick="goPage(4)" style="width:auto;padding:8px 14px;font-size:12px;">← Voltar</button>
   </div>
-
   <div class="card">
     <div class="card-title">✍️ Assinatura do Responsável</div>
     <div class="sig-grid">
@@ -281,12 +260,10 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
       </div>
     </div>
   </div>
-
   <div class="card" id="resumo-nc" style="display:none;">
     <div class="card-title">⚠️ Itens Não Conformes</div>
     <div id="nc-list"></div>
   </div>
-
   <div class="btns-row" style="padding-bottom:30px;">
     <button class="btn btn-outline" onclick="goPage(4)">← Voltar</button>
     <button class="btn btn-primary" id="btn-salvar" onclick="salvarChecklist()">✅ Salvar e Encaminhar ao Chefe</button>
@@ -304,14 +281,15 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
       <button class="btn btn-primary" onclick="novoChecklist()">+ Novo Checklist</button>
     </div>
   </div>
-</div><script src="formularios.js"></script>
+</div>
+
+<script src="formularios.js"></script>
 <script>
 let state = {
   viaturaKey: null, formularioId: null, formulario: null, viatura: null,
   itens: {}, data: '', mes: '', dia: '', nome: '', obs: '', equipe: '', chefe: ''
 };
 
-// Inicializa data de hoje
 const now = new Date();
 const hoje = now.toISOString().slice(0,10);
 
@@ -321,7 +299,6 @@ function sincronizarData() {
   state.data = dataVal;
   state.mes  = dataVal.slice(0,7);
   state.dia  = String(parseInt(dataVal.slice(8,10)));
-  // Atualiza na tela de inspeção
   const mesStr = new Date(dataVal+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
   document.getElementById('fi-data').textContent = mesStr + ' (dia ' + state.dia + ')';
 }
@@ -390,7 +367,6 @@ function selectFormulario(id) {
   state.itens = {};
   document.getElementById('id-viatura').value = state.viatura.placa;
   document.getElementById('id-modelo').value = state.viatura.modelo;
-  // Define data padrão como hoje
   document.getElementById('id-data').value = hoje;
   sincronizarData();
   const sig1Labels = {
@@ -542,6 +518,11 @@ async function salvarChecklist() {
       gi++;
     });
   });
+
+  // ✅ JPEG com qualidade reduzida para caber no JSONBin
+  const canvas = document.getElementById('canvas-motorista');
+  const sigMotorista = canvas.toDataURL('image/jpeg', 0.4);
+
   const registro={
     data: state.data,
     dataFormatada: dataFormatada,
@@ -562,7 +543,7 @@ async function salvarChecklist() {
     itens: itensDetalhados,
     nc,
     status: nc>0?'nok':'ok',
-    sigMotorista: document.getElementById('canvas-motorista').toDataURL(),
+    sigMotorista: sigMotorista,
     sigChefe: ''
   };
   try {
