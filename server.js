@@ -176,7 +176,25 @@ app.delete('/api/viaturas/:id', requireAuth(['admin']), (req, res) => {
   writeDB(db); res.json({ ok: true });
 });
 
-// CHECKLISTS
+// ✅ ROTA PÚBLICA — deve vir ANTES de /api/checklists e /api/checklists/:id
+app.get('/api/checklists/publico', (req, res) => {
+  const db = readDB();
+  let data = [...db.checklists];
+  if (req.query.equipe) data = data.filter(c => c.equipe === req.query.equipe);
+  res.json(data.reverse());
+});
+
+// ✅ APROVAR CHECKLIST — deve vir ANTES de /api/checklists/:id genérico
+app.post('/api/checklists/:id/aprovar', (req, res) => {
+  const db = readDB();
+  const idx = db.checklists.findIndex(c => String(c.id) === String(req.params.id));
+  if (idx === -1) return res.status(404).json({ error: 'Nao encontrado' });
+  db.checklists[idx] = { ...db.checklists[idx], ...req.body };
+  writeDB(db);
+  res.json(db.checklists[idx]);
+});
+
+// CHECKLISTS (autenticado)
 app.get('/api/checklists', requireAuth(), (req, res) => {
   const db = readDB();
   let data = [...db.checklists];
@@ -186,6 +204,7 @@ app.get('/api/checklists', requireAuth(), (req, res) => {
   if (req.query.equipe_id)  data = data.filter(c => c.equipe_id == req.query.equipe_id);
   res.json(data.reverse());
 });
+
 app.post('/api/checklists', (req, res) => {
   const db = readDB();
   const r = { id: Date.now(), ...req.body };
@@ -200,6 +219,7 @@ app.post('/api/checklists', (req, res) => {
   }
   writeDB(db); res.json(r);
 });
+
 app.delete('/api/checklists/:id', requireAuth(['admin','chefe']), (req, res) => {
   const db = readDB();
   db.checklists = db.checklists.filter(c => c.id != req.params.id);
@@ -264,32 +284,6 @@ app.get('/api/dashboard', requireAuth(['admin','chefe']), (req, res) => {
   });
 });
 
-// CHECKLISTS PUBLICO PARA CHEFE
-app.get('/api/checklists/publico',(req,res)=>{
-  const db=readDB();
-  let data=[...db.checklists];
-  if(req.query.equipe)data=data.filter(c=>c.equipe===req.query.equipe);
-  res.json(data);
-});
-
-// APROVAR CHECKLIST
-app.post('/api/checklists/:id/aprovar',(req,res)=>{
-  const db=readDB();
-  const idx=db.checklists.findIndex(c=>String(c.id)===String(req.params.id));
-  if(idx===-1)return res.status(404).json({error:'Nao encontrado'});
-  db.checklists[idx]={...db.checklists[idx],...req.body};
-  writeDB(db);
-  res.json(db.checklists[idx]);
-});
-// APROVAR CHECKLIST
-app.post('/api/checklists/:id/aprovar',(req,res)=>{
-  const db=readDB();
-  const idx=db.checklists.findIndex(c=>String(c.id)===String(req.params.id));
-  if(idx===-1)return res.status(404).json({error:'Nao encontrado'});
-  db.checklists[idx]={...db.checklists[idx],...req.body};
-  writeDB(db);
-  res.json(db.checklists[idx]);
-});
 // EXPORT CSV
 app.get('/api/export/csv', requireAuth(), (req, res) => {
   const db = readDB();

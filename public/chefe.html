@@ -54,6 +54,20 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
 .alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
 .alert-error{background:var(--vermelho-claro);color:var(--vermelho);}
 .alert-success{background:var(--verde-claro);color:var(--verde);}
+
+/* Banner de notificação */
+.notif-banner{
+  position:fixed;top:0;left:0;right:0;
+  background:#FF6F00;color:#fff;
+  padding:14px 20px;
+  font-weight:700;font-size:14px;
+  z-index:9999;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 8px rgba(0,0,0,0.25);
+  animation: slideDown .3s ease;
+}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.notif-banner button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:0 6px;}
 </style>
 </head>
 <body>
@@ -165,7 +179,7 @@ async function carregarChecklists() {
   lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto-sec);">Carregando...</div>';
 
   try {
-    const r = await fetch('/api/checklists/publico?equipe='+equipeLogada);
+    const r = await fetch('/api/checklists/publico?equipe=' + encodeURIComponent(equipeLogada));
     const todos = await r.json();
     const meus = todos.filter(c => c.equipe === equipeLogada);
 
@@ -174,7 +188,16 @@ async function carregarChecklists() {
       return;
     }
 
-    lista.innerHTML = meus.sort((a,b) => new Date(b.data) - new Date(a.data)).map(c => {
+    // Verifica checklists com itens pendentes e notifica
+    const comPendencia = meus.filter(c => !c.assinatura_chefe_aprovado && c.nc > 0);
+    if (comPendencia.length > 0) {
+      mostrarNotificacao(`⚠️ ${comPendencia.length} checklist(s) com não conformidades aguardando sua revisão!`);
+    }
+
+    // guarda em memória para abrirChecklist usar diretamente
+    window._checklistsCarregados = meus;
+
+    lista.innerHTML = meus.sort((a,b) => new Date(b.data) - new Date(a.data)).map((c, idx) => {
       const assinado = c.assinatura_chefe_aprovado;
       const statusBadge = assinado
         ? '<span class="badge badge-assinado">✅ Aprovado</span>'
@@ -182,13 +205,16 @@ async function carregarChecklists() {
           ? `<span class="badge badge-nc">⚠ ${c.nc} NC</span>`
           : '<span class="badge badge-ok">✓ Conforme</span>';
 
-      return `<div class="checklist-item" onclick="abrirChecklist('${c.id}')">
+      return `<div class="checklist-item" onclick="abrirChecklistPorIdx(${idx})">
         <div class="checklist-header">
           <div>
             <div class="checklist-title">${c.formulario_titulo}</div>
             <div class="checklist-meta">📅 ${c.data} • 🚑 ${c.placa} — ${c.modelo} • 👤 ${c.nome}</div>
           </div>
-          ${statusBadge}
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${statusBadge}
+            <span style="font-size:11px;color:var(--azul);font-weight:600;">👁 Ver</span>
+          </div>
         </div>
       </div>`;
     }).join('');
@@ -197,11 +223,22 @@ async function carregarChecklists() {
   }
 }
 
+// ✅ Abre checklist diretamente da memória, sem nova requisição
+function abrirChecklistPorIdx(idx) {
+  const lista = window._checklistsCarregados;
+  if (!lista || !lista[idx]) { alert('Checklist não encontrado.'); return; }
+  checklistAtual = lista[idx];
+  _exibirModalChecklist();
+}
+
 async function abrirChecklist(id) {
-  const r = await fetch('/api/checklists');
-  const todos = await r.json();
-  checklistAtual = todos.find(c => c.id == id);
-  if (!checklistAtual) return;
+  const lista = window._checklistsCarregados || [];
+  checklistAtual = lista.find(c => String(c.id) === String(id));
+  if (!checklistAtual) { alert('Checklist não encontrado.'); return; }
+  _exibirModalChecklist();
+}
+
+function _exibirModalChecklist() {
 
   document.getElementById('modal-titulo').textContent = checklistAtual.formulario_titulo;
 
@@ -253,6 +290,21 @@ async function abrirChecklist(id) {
   if (!checklistAtual.assinatura_chefe_aprovado) {
     setTimeout(() => initCanvas(), 100);
   }
+}
+
+// ✅ NOVO: exibe banner de notificação para o chefe
+function mostrarNotificacao(mensagem) {
+  const bannerExistente = document.getElementById('notif-banner');
+  if (bannerExistente) bannerExistente.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'notif-banner';
+  banner.className = 'notif-banner';
+  banner.innerHTML = `<span>🔔 ${mensagem}</span><button onclick="this.parentElement.remove()" title="Fechar">✕</button>`;
+  document.body.prepend(banner);
+
+  // Remove automaticamente após 8 segundos
+  setTimeout(() => { if (banner.parentElement) banner.remove(); }, 8000);
 }
 
 function initCanvas() {
