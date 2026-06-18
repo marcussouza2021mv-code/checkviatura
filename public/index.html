@@ -3,21 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>CheckViatura — SCI Cuiabá</title>
+<title>ENSEG — Inspeção de Viaturas</title>
 <style>
 :root{
-  --laranja:#E8520A;--laranja2:#C43D00;--laranja-claro:#FFF0E8;--laranja-borda:#F47B3A;
+  --laranja:#E8442E;--laranja2:#C4321F;--laranja-claro:#FFEDE9;--laranja-borda:#F47B5E;
   --verde:#2D7D32;--verde-claro:#E8F5E9;
   --vermelho:#9B1C1C;--vermelho-claro:#FEE2E2;
   --cinza:#6B7280;--cinza-claro:#F9F5F2;--cinza-borda:#E2D5CC;
-  --texto:#1A0A00;--texto-sec:#6B5A52;--branco:#fff;--bg:#FBF5F0;
+  --texto:#1A0A00;--texto-sec:#6B5A52;--branco:#fff;--bg:#FBF1EE;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;font-size:16px;}
-header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
-.header-logo img{height:36px;object-fit:contain;}
-.header-info{flex:1;}
-.header-title{font-size:15px;font-weight:800;letter-spacing:.3px;}
+header{background:linear-gradient(135deg,#C4321F,#E8442E);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;overflow:hidden;position:relative;}
+header::after{content:'';position:absolute;right:-10px;top:0;bottom:0;width:90px;background:repeating-linear-gradient(70deg,rgba(255,255,255,.18) 0 2px,transparent 2px 9px);pointer-events:none;}
+.header-logo{font-size:20px;font-weight:900;font-style:italic;color:#fff;letter-spacing:-0.5px;white-space:nowrap;}
+.header-info{flex:1;border-left:1px solid rgba(255,255,255,.3);padding-left:12px;margin-left:2px;}
+.header-title{font-size:13px;font-weight:800;letter-spacing:.3px;}
 .header-sub{font-size:10px;opacity:.75;margin-top:1px;}
 .step-bar{background:var(--branco);border-bottom:1px solid var(--cinza-borda);padding:0 16px;display:flex;overflow-x:auto;gap:0;-webkit-overflow-scrolling:touch;}
 .step{display:flex;align-items:center;gap:6px;padding:10px 12px;font-size:12px;color:var(--texto-sec);border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;}
@@ -67,7 +68,7 @@ header{background:linear-gradient(135deg,#C43D00,#E8520A);color:#fff;padding:10p
 .leg-na{border-color:var(--cinza);color:var(--cinza);background:var(--cinza-claro);}
 .checklist-table-wrap{overflow-x:auto;border:1px solid var(--cinza-borda);border-top:none;border-radius:0 0 10px 10px;-webkit-overflow-scrolling:touch;}
 table.cl-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px;}
-.cl-table th{background:#E8ECF4;padding:6px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--texto-sec);border-right:1px solid var(--cinza-borda);}
+.cl-table th{background:#F4D9D2;padding:6px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--texto-sec);border-right:1px solid var(--cinza-borda);}
 .cl-table th.th-item{text-align:left;min-width:160px;}
 .cl-table td{padding:6px;border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;vertical-align:middle;}
 .cl-table td.td-num{text-align:center;color:var(--texto-sec);font-weight:600;width:28px;background:#FAFAFA;}
@@ -119,9 +120,9 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
 </style>
 </head>
 <body><header>
-  <div class="header-logo"><img src="/Med+.png" alt="med+ Group"></div>
+  <div class="header-logo">ENSEG</div>
   <div class="header-info">
-    <div class="header-title">CheckViatura — SCI Cuiabá</div>
+    <div class="header-title">Inspeção de Viaturas — SCI Cuiabá</div>
     <div class="header-sub">Formulário MMS.BR.BA.FOR.007 • Versão 00</div>
   </div>
 </header>
@@ -193,7 +194,7 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
   <div style="margin-top:16px;">
     <div class="form-header-box">
       <div>
-        <div style="font-size:9px;opacity:.7;margin-bottom:2px;">med+ Group — FORMULÁRIO</div>
+        <div style="font-size:9px;opacity:.7;margin-bottom:2px;">ENSEG — FORMULÁRIO</div>
         <div id="form-titulo" style="font-size:13px;font-weight:700;">Checklist Inspeção Viaturas</div>
       </div>
       <div style="text-align:right;font-size:10px;opacity:.85;">
@@ -221,7 +222,7 @@ canvas.sig-canvas{display:block;width:100%;height:120px;cursor:crosshair;touch-a
         <thead>
           <tr>
             <th class="th-item" colspan="2">ITEM A INSPECIONAR</th>
-            <th style="background:#D4E0F0;color:var(--laranja2);width:90px;">STATUS</th>
+            <th style="background:#E8C4BA;color:var(--laranja2);width:90px;">STATUS</th>
           </tr>
         </thead>
         <tbody id="cl-tbody"></tbody>
@@ -401,7 +402,7 @@ function buildTable() {
   let gi = 0;
   state.formulario.secoes.forEach(sec => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td colspan="3" style="background:#E8ECF4;font-size:10px;font-weight:700;color:var(--laranja2);padding:6px 10px;text-transform:uppercase;">${sec.nome}</td>`;
+    tr.innerHTML = `<td colspan="3" style="background:#F4D9D2;font-size:10px;font-weight:700;color:var(--laranja2);padding:6px 10px;text-transform:uppercase;">${sec.nome}</td>`;
     tbody.appendChild(tr);
     sec.itens.forEach(it => {
       const key = `item-${gi}`;
@@ -478,7 +479,7 @@ function initCanvas(id) {
   c.width = c.offsetWidth*dpr;
   c.height = 120*dpr;
   ctx.scale(dpr,dpr);
-  ctx.strokeStyle='#E8520A';
+  ctx.strokeStyle='#E8442E';
   ctx.lineWidth=2.5;
   ctx.lineCap='round';
   ctx.lineJoin='round';
