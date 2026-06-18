@@ -1,41 +1,20 @@
 {
+  "usuarios": [
+    { "id": 1, "nome": "Gerente", "login": "admin", "senha": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", "role": "admin" },
+    { "id": 2, "nome": "Chefe Alpha", "login": "chefe1", "senha": "24b00d8b9e577e2dfd6a08e2e32fe3938ead3bddb29da76fae0b1db9a9c09253", "role": "chefe", "equipe_id": 1 }
+  ],
   "equipes": [
-    {
-      "id": 1,
-      "nome": "Equipe Alpha",
-      "chefe": "Carlos Souza"
-    },
-    {
-      "id": 2,
-      "nome": "Equipe Beta",
-      "chefe": "Mariana Lima"
-    }
+    { "id": 1, "nome": "Equipe Alfa", "chefe": "Cerqueira" },
+    { "id": 2, "nome": "Equipe Bravo", "chefe": "Savio" },
+    { "id": 3, "nome": "Equipe Charlie", "chefe": "Cleber" },
+    { "id": 4, "nome": "Equipe Delta", "chefe": "Douglas" }
   ],
   "viaturas": [
-    {
-      "id": 1,
-      "placa": "ABC-1234",
-      "modelo": "Ford Ranger",
-      "equipe_id": 1
-    },
-    {
-      "id": 2,
-      "placa": "DEF-5678",
-      "modelo": "Fiat Ducato",
-      "equipe_id": 1
-    },
-    {
-      "id": 3,
-      "placa": "GHI-9012",
-      "modelo": "Chevrolet S10",
-      "equipe_id": 2
-    },
-    {
-      "id": 4,
-      "placa": "JKL-3456",
-      "modelo": "Toyota Hilux",
-      "equipe_id": 2
-    }
+    { "id": 1, "placa": "CRS", "modelo": "IVECO DAILY", "equipe_id": 1 },
+    { "id": 2, "placa": "DOSA 318", "modelo": "IVECO MAGIRUS X6", "cci": "02", "equipe_id": 2 },
+    { "id": 3, "placa": "AP-2", "modelo": "FÊNIX", "cci": "03", "equipe_id": 3 },
+    { "id": 4, "placa": "DOSA 371", "modelo": "IVECO MAGIRUS X6", "cci": "01", "equipe_id": 4 }
   ],
-  "checklists": []
+  "checklists": [],
+  "alertas": []
 }
