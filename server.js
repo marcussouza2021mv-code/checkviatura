@@ -124,9 +124,11 @@ function newSession(user) {
   sessions[token] = { ...user, ts: Date.now() };
   return token;
 }
+// ✅ CORRIGIDO: lê o token tanto do header Authorization quanto da query string (?token=)
 function getSession(req) {
   const auth = req.headers.authorization || '';
-  const token = auth.replace('Bearer ', '');
+  let token = auth.replace('Bearer ', '');
+  if (!token && req.query.token) token = req.query.token;
   const s = sessions[token];
   if (!s) return null;
   if (Date.now() - s.ts > 8 * 60 * 60 * 1000) { delete sessions[token]; return null; }
