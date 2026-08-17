@@ -8,14 +8,14 @@ import { createHash, randomBytes } from "crypto"
 // Domínio de autorização por país. Brasil = com.br.
 // Outros: com.ar, com.mx, com.co, com.cl, etc.
 export const ML_AUTH_DOMAIN =
-  process.env.ML_AUTH_DOMAIN || "https://auth.mercadolivre.com.br"
+  process.env.ML_AUTH_DOMAIN?.trim() || "https://auth.mercadolivre.com.br"
 
 export const ML_API_BASE = "https://api.mercadolibre.com"
 
 // O projeto pode ter as credenciais sob dois nomes diferentes.
 // Aceitamos ambos para evitar inconsistência entre ML_* e MERCADOLIVRE_*.
-export const ML_CLIENT_ID = process.env.ML_CLIENT_ID || process.env.MERCADOLIVRE_CLIENT_ID
-export const ML_CLIENT_SECRET = process.env.ML_CLIENT_SECRET || process.env.MERCADOLIVRE_CLIENT_SECRET
+export const ML_CLIENT_ID = (process.env.ML_CLIENT_ID || process.env.MERCADOLIVRE_CLIENT_ID)?.trim()
+export const ML_CLIENT_SECRET = (process.env.ML_CLIENT_SECRET || process.env.MERCADOLIVRE_CLIENT_SECRET)?.trim()
 
 /**
  * A redirect_uri precisa ser IDÊNTICA à cadastrada na sua aplicação
@@ -23,7 +23,7 @@ export const ML_CLIENT_SECRET = process.env.ML_CLIENT_SECRET || process.env.MERC
  * Se ML_REDIRECT_URI não estiver definida, derivamos da origem da requisição.
  */
 export function getRedirectUri(origin: string) {
-  return process.env.ML_REDIRECT_URI || `${origin}/api/auth/mercadolivre/callback`
+  return process.env.ML_REDIRECT_URI?.trim() || `${origin}/api/auth/mercadolivre/callback`
 }
 
 export function isConfigured() {
