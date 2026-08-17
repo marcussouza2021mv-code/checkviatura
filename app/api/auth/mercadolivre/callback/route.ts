@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     cookieStore.set("ml_session", String(token.user_id), {
       httpOnly: true,
       secure: true,
-      sameSite: "none", // permite envio do cookie em requisições dentro de iframe (preview)
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 180, // 180 dias
     })
