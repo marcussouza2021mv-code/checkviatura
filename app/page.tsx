@@ -11,7 +11,7 @@ export default async function Page({
 }) {
   const { erro } = await searchParams
   const cookieStore = await cookies()
-  const jaConectado = Boolean(cookieStore.get("ml_access_token"))
+  const jaConectado = Boolean(cookieStore.get("ml_session"))
   const configurado = isConfigured()
 
   return (
