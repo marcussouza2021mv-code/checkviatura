@@ -11,6 +11,10 @@ export interface MLTokenResponse {
   refresh_token: string
 }
 
+export function isConfigured(): boolean {
+  return Boolean(process.env.ML_CLIENT_ID && process.env.ML_CLIENT_SECRET)
+}
+
 export async function exchangeCodeForToken(code: string, redirectUri: string): Promise<MLTokenResponse> {
   const response = await fetch(`${ML_API_BASE}/oauth/token`, {
     method: "POST",
