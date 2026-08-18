@@ -2,7 +2,7 @@
 
 const ML_API_BASE = "https://api.mercadolibre.com"
 
-interface TokenResponse {
+export interface MLTokenResponse {
   access_token: string
   token_type: string
   expires_in: number
@@ -11,7 +11,7 @@ interface TokenResponse {
   refresh_token: string
 }
 
-export async function exchangeCodeForToken(code: string, redirectUri: string): Promise<TokenResponse> {
+export async function exchangeCodeForToken(code: string, redirectUri: string): Promise<MLTokenResponse> {
   const response = await fetch(`${ML_API_BASE}/oauth/token`, {
     method: "POST",
     headers: {
@@ -35,7 +35,7 @@ export async function exchangeCodeForToken(code: string, redirectUri: string): P
   return response.json()
 }
 
-export async function refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
+export async function refreshAccessToken(refreshToken: string): Promise<MLTokenResponse> {
   const response = await fetch(`${ML_API_BASE}/oauth/token`, {
     method: "POST",
     headers: {
